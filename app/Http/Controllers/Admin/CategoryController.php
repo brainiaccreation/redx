@@ -28,7 +28,7 @@ class CategoryController extends Controller
                     ';
                 })
                 ->addColumn('action', function ($row) {
-                    return '<a href="'.route('admin.category.edit',$row->id).'" class="btn btn-sm btn-info">Edit</a>';
+                    return '<a href="'.route('admin.category.edit',$row->id).'" class="action_btn edit-item"><i class="ri-edit-line"></i></a>';
                 })
                 ->rawColumns(['status','action'])
                 ->make(true);
@@ -53,7 +53,7 @@ class CategoryController extends Controller
         $category->status = $request->has('status') ? 1 : 0;
         $category->save();
 
-        return redirect()->route('admin.categories.list')->with('success', 'Category created successfully.');
+        return redirect()->route('admin.categories.list')->with('success', 'Request has been completed');
     }
 
     public function edit($id){
@@ -75,12 +75,12 @@ class CategoryController extends Controller
         $category->status = $request->has('status') ? 1 : 0;
         $category->update();
 
-        return redirect()->route('admin.categories.list')->with('success', 'Category updated successfully.');
+        return redirect()->route('admin.categories.list')->with('success', 'Request has been completed');
     }
 
     public function status($id, Request $request) {
         Category::where('id', $id)->update(['status' => $request->status]);
-        return response()->json(['message' => 'Caregory Status Updated', 'status' => 200]);
+        return response()->json(['message' => 'Request has been completed', 'status' => 200]);
     }
 
 }

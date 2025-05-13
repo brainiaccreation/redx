@@ -34,8 +34,8 @@
                                 required>
                         </div>
                         <div class="col-md-4">
-                            <input type="number" id="price" class="form-control" placeholder="Price (MYR)"
-                                required>
+                            <input type="number" id="price" class="form-control" name="price" step="0.01"
+                                min="0" placeholder="Price (MYR)" required>
                         </div>
                     </div>
 
