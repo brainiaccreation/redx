@@ -46,8 +46,23 @@ class ProductController extends Controller
                     return ucfirst($product->status);
                 })
                 ->addColumn('action', function ($product) {
-                    return '<a href="'.route('admin.product.edit', $product->id).'" class=" action_btn edit-item"><i class="ri-edit-line"></i></a>';
+                    return '
+                        <div style="display: flex; gap: 8px;">
+                            <a href="' . route('admin.product.edit', $product->id) . '" class="action_btn edit-item">
+                                <i class="ri-edit-line"></i>
+                            </a>
+                            <form method="POST" action="' . route('admin.product.destroy', $product->id) . '" style="display:inline;">
+                                ' . csrf_field() . method_field('DELETE') . '
+                                <button type="submit" class="action_btn delete-item show_confirm" data-name="Product">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    ';
                 })
+
+
+
                 ->rawColumns(['image', 'action'])
                 ->make(true);
         }
@@ -169,7 +184,7 @@ class ProductController extends Controller
         $variantOrders = $request->variant_order;
 
         $updatedVariantIds = [];
-        return $request->variant_id;
+
         if (is_array($variantNames)) {
             foreach ($variantNames as $index => $name) {
                 $variantId = $variantIds[$index] ?? null;
@@ -203,7 +218,21 @@ class ProductController extends Controller
         }
 
 
-        return redirect()->route('admin.products.list')->with('success', 'Product updated successfully');
+        return redirect()->route('admin.products.list')->with('success', 'Request has been completed');
+    }
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+
+        if ($product->featured_image && file_exists(public_path($product->featured_image))) {
+            unlink(public_path($product->featured_image));
+        }
+
+        ProductVariant::where('product_id', $product->id)->delete();
+
+        $product->delete();
+
+        return redirect()->back()->with('success', 'Request has been completed');
     }
 
 }

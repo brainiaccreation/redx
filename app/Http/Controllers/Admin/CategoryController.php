@@ -28,7 +28,17 @@ class CategoryController extends Controller
                     ';
                 })
                 ->addColumn('action', function ($row) {
-                    return '<a href="'.route('admin.category.edit',$row->id).'" class="action_btn edit-item"><i class="ri-edit-line"></i></a>';
+                    return '<div style="display: flex; gap: 8px;">
+                        <a href="' . route('admin.category.edit', $row->id) . '" class="action_btn edit-item">
+                            <i class="ri-edit-line"></i>
+                        </a>
+                        <form method="POST" action="' . route('admin.category.destroy', $row->id) . '" style="display:inline;">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button type="submit" class="action_btn delete-item show_confirm" data-name="Category">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </form>
+                    </div>';
                 })
                 ->rawColumns(['status','action'])
                 ->make(true);
@@ -83,4 +93,11 @@ class CategoryController extends Controller
         return response()->json(['message' => 'Request has been completed', 'status' => 200]);
     }
 
+    public function destroy($id)
+    {
+        $category = Category::findOrFail($id);
+        $category->delete();
+
+        return redirect()->back()->with('success', 'Request has been completed');
+    }
 }

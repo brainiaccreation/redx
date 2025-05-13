@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
 /*
@@ -67,6 +68,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('admin.category.edit');
             Route::put('/update/{id}', [CategoryController::class, 'update'])->name('admin.category.update');
             Route::post('/status/{id}', [CategoryController::class, 'status'])->name('admin.category.status');
+            Route::delete('/delete/{id}', [CategoryController::class, 'destroy'])->name('admin.category.destroy');
         });
         // products routes
         Route::get('/products', [ProductController::class, 'list'])->name('admin.products.list');
@@ -77,7 +79,10 @@ Route::prefix('admin')->group(function () {
             Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('admin.product.edit');
             Route::put('/update/{id}', [ProductController::class, 'update'])->name('admin.product.update');
             Route::post('/status/{id}', [ProductController::class, 'status'])->name('admin.product.status');
+            Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
+
         });
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
+        Route::get('/profile-settings', [ProfileController::class, 'settings'])->name('admin.profile.settings');
     });
 });

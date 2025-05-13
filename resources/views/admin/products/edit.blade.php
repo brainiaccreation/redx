@@ -65,7 +65,7 @@
 
                                 <div class="col-md-4">
                                     <label class="form-label">&nbsp;</label>
-                                    <div class="form-check mt-3">
+                                    <div class="form-check mt-2">
                                         <input class="form-check-input" type="checkbox" id="formCheck2" name="is_featured"
                                             {{ $product->is_featured ? 'checked' : '' }}>
                                         <label class="form-check-label" for="formCheck2">Featured Product</label>
