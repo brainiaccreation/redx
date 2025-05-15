@@ -5,6 +5,9 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Front\HomeController;
+use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
@@ -23,9 +26,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/', [HomeController::class, 'index'])->name('front.home');
+Route::get('/about', [HomeController::class, 'about'])->name('front.about');
+Route::get('/shop', [HomeController::class, 'shop'])->name('front.shop');
+Route::get('/contact', [HomeController::class, 'contact'])->name('front.contact');
+Route::get('/product/{slug}', [App\Http\Controllers\Front\ProductController::class, 'show'])->name('product.detail');
+Route::get('/product-search-suggestions', [App\Http\Controllers\Front\ProductController::class, 'autocomplete'])->name('product.autocomplete');
+Route::get('/ajax-filter-products', [App\Http\Controllers\Front\ProductController::class, 'ajaxFilter'])->name('ajax.filter.products');
+Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');
+Route::get('/cart', [CartController::class, 'showCart'])->name('front.cart');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Auth::routes(['verify' => true]);
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
@@ -41,14 +56,14 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 
-Route::post('/email/verification-notification', 
-    [EmailVerificationController::class, 'send']
-)->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
 
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
+
+Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
 
 // Admin routes with 'admin' prefix
 Route::prefix('admin')->group(function () {
@@ -84,5 +99,17 @@ Route::prefix('admin')->group(function () {
         });
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
         Route::get('/profile-settings', [ProfileController::class, 'settings'])->name('admin.profile.settings');
+        Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
+        // users management
+         Route::get('/users', [UserController::class, 'list'])->name('admin.users.list');
+        Route::get('/users/get', [UserController::class, 'get'])->name('admin.users.get');
+        Route::prefix('user')->group(function () {
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.user.edit');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('admin.user.update');
+            Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.user.status');
+            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+            Route::post('/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('admin.user.toggle_suspend');
+
+        });
     });
 });

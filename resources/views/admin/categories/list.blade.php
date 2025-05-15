@@ -43,8 +43,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -90,21 +90,27 @@
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                         searchable: false,
-                        orderable: false
+                        orderable: false,
+                        width: '8%'
                     },
                     {
                         data: 'name',
-                        name: 'name'
+                        name: 'name',
+                        width: '62%'
                     },
                     {
                         data: 'status',
-                        name: 'status'
+                        name: 'status',
+                        orderable: false,
+                        searchable: false,
+                        width: '15%'
                     },
                     {
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        width: '15%'
                     }
                 ],
                 language: {

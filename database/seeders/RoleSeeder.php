@@ -39,6 +39,7 @@ class RoleSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => Hash::make('admin123'),
             'role_id' => 1,
+            'email_verified_at' => now(),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

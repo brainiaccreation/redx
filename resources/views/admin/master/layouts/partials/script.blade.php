@@ -58,6 +58,17 @@
      });
  </script>
  <script>
+     //  $(document).ready(function() {
+     //      $('form').on('submit', function(e) {
+     //          const submitButton = $(this).find('button[type="submit"]');
+     //          submitButton.prop('disabled', true);
+     //          submitButton.text('Please wait...');
+     //      });
+     //  });
+ </script>
+
+
+ <script>
      @if (Session::has('success'))
          toastr.options = {
              "closeButton": true,

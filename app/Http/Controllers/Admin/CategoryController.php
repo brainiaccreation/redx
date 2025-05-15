@@ -20,7 +20,7 @@ class CategoryController extends Controller
                 ->addIndexColumn()
                  ->addColumn('status', function ($row) {
                     $checked = $row->status == 1 ? 'checked' : '';
-                    return '<div class="text-center">
+                    return '<div class="d-flex justify-content-center">
                                 <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
                                 <input type="checkbox" class="form-check-input status" id="customSwitchsizemd" data-id="' . $row->id .'" ' . $checked . '>
                             </div>
@@ -28,7 +28,7 @@ class CategoryController extends Controller
                     ';
                 })
                 ->addColumn('action', function ($row) {
-                    return '<div style="display: flex; gap: 8px;">
+                    return '<div style="display: flex;justify-content:center; gap: 8px;">
                         <a href="' . route('admin.category.edit', $row->id) . '" class="action_btn edit-item">
                             <i class="ri-edit-line"></i>
                         </a>

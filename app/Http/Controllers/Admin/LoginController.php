@@ -32,9 +32,9 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            // Check if user has admin role (role_id = 1)
             if (Auth::user()->role_id === 1) {
                 $request->session()->regenerate();
+                
                 return redirect()->intended('admin/dashboard');
             } else {
                 Auth::logout();

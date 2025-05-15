@@ -23,7 +23,7 @@
                     </a>
                 </div>
 
-                <button type="button"
+                {{-- <button type="button"
                     class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger material-shadow-none"
                     id="topnav-hamburger-icon">
                     <span class="hamburger-icon">
@@ -31,7 +31,32 @@
                         <span></span>
                         <span></span>
                     </span>
+                </button> --}}
+                <button type="button" class="btn btn-sm header-item vertical-menu-btn topnav-hamburger"
+                    id="topnav-hamburger-icon">
+                    <span class="hamburger-icon">
+                        <svg class="ham_ico_mob" width="25" height="20" viewBox="0 0 25 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.875 2.125H23M2 10H23H5.9375M2 17.875H15.125" stroke="black" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+
+                        <svg class="ham_ico_web" width="13" height="13" viewBox="0 0 16 13" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M3.02436 5.69233C2.73146 5.98522 2.73146 6.46009 3.02436 6.75299L7.79733 11.526C8.09022 11.8189 8.5651 11.8189 8.85799 11.526C9.15088 11.2331 9.15088 10.7582 8.85799 10.4653L4.61535 6.22266L8.85799 1.98002C9.15088 1.68712 9.15088 1.21225 8.85799 0.919355C8.5651 0.626462 8.09022 0.626462 7.79733 0.919355L3.02436 5.69233ZM15.9991 5.47266H3.55469V6.97266H15.9991V5.47266Z"
+                                fill="black" />
+                            <line x1="0.75" y1="-3.27835e-08" x2="0.750001" y2="12.4444" stroke="black"
+                                stroke-width="1.5" />
+                        </svg>
+                    </span>
                 </button>
+                <div class="welcom_note_web">
+                    <div class="flex-grow-1 mx-3">
+                        <h4 class="mb-1 topbar-heading">{{ greetings() }}, {{ auth()->user()->name }}!</h4>
+                        <p class="topbar-muted mb-0">Here's what's happening with your dashboard today.</p>
+                    </div>
+                </div>
 
                 <!-- App Search-->
                 {{-- <form class="app-search d-none d-md-block">
@@ -790,7 +815,8 @@
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="d-flex align-items-center">
                             <img class="rounded-circle header-profile-user"
-                                src="{{ URL('admin/assets') }}/images/users/avatar-1.jpg" alt="Header Avatar">
+                                src="{{ auth()->user()->avatar ? URL(auth()->user()->avatar) : URL('admin/assets/images/users/avatar-1.jpg') }}"
+                                alt="Header Avatar">
                             <span class="text-start ms-xl-2">
                                 <span
                                     class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ auth()->user()->name }}</span>
