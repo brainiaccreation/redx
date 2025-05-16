@@ -15,6 +15,7 @@ class CartController extends Controller
         $variantId = $request->variant_id;
         $productId = $request->product_id;
         $price = $request->price;
+        $game_user_id = $request->game_user_id;
         $quantity = $request->quantity ?? 1;
         if (Auth::check()) {
             Cart::updateOrCreate(
@@ -25,7 +26,8 @@ class CartController extends Controller
                 [
                     'product_id' => $productId,
                     'quantity' => DB::raw('quantity + ' . $quantity),
-                    'price' => $price
+                    'price' => $price,
+                    'game_user_id' => $game_user_id,
                 ]
             );
         } else {
@@ -98,27 +100,28 @@ class CartController extends Controller
 
         return response()->json(['cartHtml' => $cartHtml]);
     }
-    public function checkout(Request $request)
-    {
-        $cartItems = Cart::where('user_id',auth()->id())->get();
-        $order = Order::create([
-            'user_id' => auth()->id(),
-            'total' => $cartItems->sum(fn ($item) => $item->price * $item->quantity)
-        ]);
+    // public function checkout(Request $request)
+    // {
+    //     $cartItems = Cart::where('user_id',auth()->id())->get();
+    //     $order = Order::create([
+    //         'user_id' => auth()->id(),
+    //         'total' => $cartItems->sum(fn ($item) => $item->price * $item->quantity)
+    //     ]);
 
-        foreach ($cartItems as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item->product_id,
-                'variant_id' => $item->product_variant_id,
-                'price' => $item->price,
-                'quantity' => $item->quantity,
-            ]);
-        }
+    //     foreach ($cartItems as $item) {
+    //         OrderItem::create([
+    //             'order_id' => $order->id,
+    //             'product_id' => $item->product_id,
+    //             'variant_id' => $item->product_variant_id,
+    //             'price' => $item->price,
+    //             'quantity' => $item->quantity,
+    //         ]);
+    //     }
 
-        Cart::truncate();
+    //     Cart::truncate();
 
-        return redirect()->route('order.success')->with('success', 'Order placed successfully!');
-    }
+    //     return redirect()->route('order.success')->with('success', 'Order placed successfully!');
+    // }
+    
 
 }

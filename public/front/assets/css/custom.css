@@ -55,3 +55,6 @@
         background: #fff;
         border: 1px solid #ff0000;
     }
+    .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single textarea, .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single .country-select, .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single input{
+      text-transform: none !important;
+    }

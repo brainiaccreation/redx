@@ -7,6 +7,13 @@
     <div class="cart-section section-padding">
         <div class="container">
             <div class="cart-list-area">
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <div class="table-responsive">
                     <table class="table common-table">
                         <thead data-aos="fade-down">
@@ -68,10 +75,7 @@
                         <button type="submit" class="custom-rdxbtnr">Apply</button>
                     </form>
                     <button type="button" class="custom-rdxbtnr">Update Cart</button>
-                    <form method="POST" action="{{ route('cart.checkout') }}">
-                        @csrf
-                        <button type="submit" class="custom-rdxbtnr">Checkout</button>
-                    </form>
+                    <a href="{{ route('checkout') }}" class="custom-rdxbtnr">Checkout</a>
                 </div>
             </div>
         </div>
@@ -83,25 +87,29 @@
             const row = $(this).closest('tr');
             const input = row.find('.quantityValue');
             let quantity = parseInt(input.val());
-            quantity = $(this).hasClass('quantityIncrement') ? quantity + 1 : quantity - 1;
+            quantity = $(this).hasClass('quantityIncrement') ? quantity : quantity;
             if (quantity < 1) quantity = 1;
 
-            const productId = row.data('product-id');
-            const variantId = row.data('variant-id');
+            input.val(quantity);
+            const price = parseFloat(row.find('.price-usd').first().text().replace(/[^\d.]/g, ''));
+            const subtotal = price * quantity;
 
-            $.ajax({
-                url: $('#update-cart-url').val(),
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    product_id: productId,
-                    variant_id: variantId,
-                    quantity: quantity
-                },
-                success: function(response) {
-                    $('#cart-container').html(response.cartHtml);
-                }
-            });
+            row.find('.price-usd').last().text('$' + subtotal.toFixed(2) + ' USD');
+
+            updateCartTotal();
         });
+
+        function updateCartTotal() {
+            let total = 0;
+
+            $('.price-quantity').each(function() {
+                const row = $(this).closest('tr');
+                const price = parseFloat(row.find('.price-usd').first().text().replace(/[^\d.]/g, ''));
+                const quantity = parseInt(row.find('.quantityValue').val());
+                total += price * quantity;
+            });
+
+            $('h2:contains("Total:")').text('Total: $' + total.toFixed(2));
+        }
     </script>
 @endsection

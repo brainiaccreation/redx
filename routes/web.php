@@ -6,8 +6,10 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ManageOrderController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\CartController;
+use App\Http\Controllers\Front\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
@@ -38,7 +40,12 @@ Route::get('/cart', [CartController::class, 'showCart'])->name('front.cart');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+Route::post('/checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
+Route::get('/payment/return', [OrderController::class, 'handlePaymentReturn'])->name('payment.return');
+Route::post('/payment/callback', [OrderController::class, 'handlePaymentCallback'])->name('payment.callback');
+Route::post('/webhook/stripe', [OrderController::class, 'handleWebhook'])->name('webhook.stripe');
+Route::get('/payment/success', [OrderController::class, 'handlePaymentSuccess'])->name('payment.success');
 Auth::routes();
 
 
@@ -109,7 +116,9 @@ Route::prefix('admin')->group(function () {
             Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.user.status');
             Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
             Route::post('/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('admin.user.toggle_suspend');
-
         });
+        Route::get('/orders', [ManageOrderController::class, 'list'])->name('admin.orders.list');
+        Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');
+        Route::get('/order/details/{id}', [ManageOrderController::class, 'detail'])->name('admin.order.details');
     });
 });

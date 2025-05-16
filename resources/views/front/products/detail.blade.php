@@ -98,15 +98,20 @@
                                 </div>
                                 <h3 id="product_price">0.00</h3>
                             </div>
+                            <div class="cart-quantity">
+                                <label for="user_id" class="form-label">User ID <span class="text-danger">*</span> </label>
+                                <input type='text' name='user_id' placeholder="Please enter your User ID here"
+                                    class='form-control'>
+                            </div>
                             <div class="cart-wrp">
                                 <div class="cart-quantity">
                                     <form id='myform' method='POST' class='quantity' action='#'>
                                         <input type='button' value='-' class='qtyminus minus'>
-                                        <input type='text' name='quantity' value='0' class='qty'>
+                                        <input type='number' name='quantity' value='0' class='qty'>
                                         <input type='button' value='+' class='qtyplus plus'>
                                     </form>
                                 </div>
-                                <a href="product-details.html" class="icon">
+                                <a href="javascript:void(0);" class="icon">
                                     <i class="far fa-heart"></i>
                                 </a>
                                 <div class="social-profile">
@@ -398,7 +403,12 @@
                     alert('Please select a variant.');
                     return;
                 }
+                var userId = $("input[name='user_id']").val().trim();
 
+                if (userId === '') {
+                    alert('Please enter your User ID.');
+                    return;
+                }
                 var variant = {
                     id: selected.data('id'),
                     name: selected.data('name'),
@@ -417,7 +427,8 @@
                         variant_id: variant.id,
                         product_id: variant.product_id,
                         price: variant.price,
-                        quantity: 1
+                        quantity: 1,
+                        game_user_id: userId
                     },
                     success: function(response) {
                         alert('Item added to cart successfully');

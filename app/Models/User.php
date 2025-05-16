@@ -20,6 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
         'role_id',
@@ -54,6 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(Cart::class,'user_id','id');
     }
 
     /**
