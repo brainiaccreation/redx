@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg"
+    data-sidebar-image="none" data-preloader="disable" data-theme="default" data-theme-colors="default">
 
 @include('admin.master.layouts.partials.head')
 
@@ -8,8 +9,8 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-       @include('admin.master.layouts.partials.topbar')
-       @include('admin.master.layouts.partials.sidebar')
+        @include('admin.master.layouts.partials.topbar')
+        @include('admin.master.layouts.partials.sidebar')
 
 
         <!-- ============================================================== -->
@@ -18,10 +19,10 @@
 
         <div class="main-content">
 
-           
+
             @yield('page-content')
             <!-- End Page-content -->
-        
+
             @include('admin.master.layouts.partials.footer')
         </div>
         <!-- end main content-->
@@ -32,9 +33,9 @@
 
 
     <!--start back-to-top-->
-    <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
+    {{-- <button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
         <i class="ri-arrow-up-line"></i>
-    </button>
+    </button> --}}
     <!--end back-to-top-->
 
     <!--preloader-->
@@ -990,7 +991,7 @@
         </div> 
     --}}
 
-   @include('admin.master.layouts.partials.script')
+    @include('admin.master.layouts.partials.script')
 </body>
 
 

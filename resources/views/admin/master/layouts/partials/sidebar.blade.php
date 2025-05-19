@@ -5,19 +5,19 @@
          <!-- Dark Logo-->
          <a href="index.html" class="logo logo-dark">
              <span class="logo-sm">
-                 <img src="{{ URL('admin/assets') }}/images/logo-sm.png" alt="" height="22">
+                 <img src="{{ URL('admin/assets') }}/images/logo-sm.jpg" alt="" height="30">
              </span>
              <span class="logo-lg">
-                 <img src="{{ URL('admin/assets') }}/images/logo-dark.png" alt="" height="17">
+                 <img src="{{ URL('admin/assets') }}/images/logo-dark.png" alt="" height="35">
              </span>
          </a>
          <!-- Light Logo-->
          <a href="index.html" class="logo logo-light">
              <span class="logo-sm">
-                 <img src="{{ URL('admin/assets') }}/images/logo-sm.png" alt="" height="22">
+                 <img src="{{ URL('admin/assets') }}/images/logo-sm.jpg" alt="" height="30">
              </span>
              <span class="logo-lg">
-                 <img src="{{ URL('admin/assets') }}/images/logo-light.png" alt="" height="17">
+                 <img src="{{ URL('admin/assets') }}/images/logo-light.png" alt="" height="35">
              </span>
          </a>
          <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
@@ -78,23 +78,34 @@
              <div id="two-column-menu">
              </div>
              <ul class="navbar-nav" id="navbar-nav">
-                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                  <li class="nav-item">
                      <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                          href="{{ route('admin.dashboard') }}">
-                         <i class="ri-apps-2-line"></i> <span data-key="t-dashboards">Dashboard</span>
+                         <i class="ri-dashboard-line"></i> <span data-key="t-dashboards">Dashboard</span>
                      </a>
                  </li>
                  <li class="nav-item">
                      <a class="nav-link menu-link {{ request()->routeIs('admin.categories*', 'admin.category*') ? 'active' : '' }}"
                          href="{{ route('admin.categories.list') }}">
-                         <i class="ri-honour-line"></i> <span data-key="t-widgets">Categories</span>
+                         <i class="ri-list-unordered"></i> <span data-key="t-widgets">Categories</span>
                      </a>
                  </li>
                  <li class="nav-item">
                      <a class="nav-link menu-link {{ request()->routeIs('admin.products*', 'admin.product*') ? 'active' : '' }}"
                          href="{{ route('admin.products.list') }}">
-                         <i class="ri-honour-line"></i> <span data-key="t-widgets">Products</span>
+                         <i class="ri-gamepad-line"></i> <span data-key="t-widgets">Products</span>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
+                         href="{{ route('admin.orders.list') }}">
+                         <i class="bx bx-archive"></i> <span data-key="t-widgets">Orders</span>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
+                         href="{{ route('admin.users.list') }}">
+                         <i class=" ri-user-3-line"></i> <span data-key="t-widgets">Users</span>
                      </a>
                  </li>
 

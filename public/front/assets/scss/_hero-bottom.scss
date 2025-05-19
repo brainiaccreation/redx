@@ -1,0 +1,378 @@
+/* Hero Global ---------------------------------- */
+.th-hero-wrapper {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    margin-top: 150px;
+}
+
+.th-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+}
+/* Hero 1 ---------------------------------- */
+.hero-title {
+    font-weight: 700;
+    line-height: 1.119;
+    margin-bottom: 19px;
+    margin-top: -0.2em;
+}
+.hero-text {
+    margin-bottom: 40px;
+    font-size: 18px;
+}
+.hero-1 {
+    &:after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(100.89% 100.89% at 50.83% 52.56%, rgba(11, 14, 19, 0.00) 0%, rgba(11, 14, 19, 0.83) 0%, #0B0E13 63%);
+    }    
+}
+.hero-cta-slider1 {
+    margin-top: -300px;
+    margin-bottom: -50px;
+    position: relative;
+    z-index: 2;
+    .hero-shape-area {
+        position: relative;
+        padding: 155px 0;
+        margin-top: 140px;
+        .hero-bg-shape {
+            position: absolute;
+            inset: 0;
+            svg {
+                height: 100%;
+                width: 100%;
+            }
+            .hero-bg-border-anime {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(10deg, $theme-color, $theme-color2);
+                background-size: 200% 120%;
+                z-index: 1;
+                animation: lineBg 7s linear infinite;
+            }
+        }
+        .title-area {
+            max-width: 711px;
+            text-align: center;
+            margin: 0 auto;
+        }
+    }
+    .hero-img1,
+    .hero-img2 {
+        position: absolute;
+        bottom: 2px;
+        left: -62px;
+        z-index: 1;
+    }
+    .hero-img2 {
+        left: auto;
+        right: -62px;
+    }
+    .swiper-pagination-bullets {
+        position: absolute;
+        bottom: 18px;
+        .swiper-pagination-bullet {
+            --swiper-pagination-bullet-horizontal-gap: 12px;
+        }
+    }
+}
+.hero-style1 {
+    position: relative;
+    z-index: 6;
+    padding: 157px 0 300px;
+    .sub-title {
+        margin-bottom: 25px;
+        font-weight: 500;
+        margin-bottom: 18px;
+        letter-spacing: 0.8px;
+    }
+    .hero-title {
+        color: $white-color;
+        span {
+            display: block;
+        }
+        .title1 {
+            display: inline-block;
+            padding: 12.5px 0px;
+            width: 940px;
+            background-size: 100% 100%;
+        }
+        .title2 {
+            color: $theme-color;
+            margin-top: -10px;
+        }
+    }
+    .btn-group {
+        margin-top: 8px;
+    }
+}
+@keyframes lineBg {
+    0% {
+      background-position: 0% 0%;
+    }
+    
+    40% {
+        background-position: -80% 100%;
+    }
+    60% {
+        background-position: -150% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+}
+@media (max-width: 1700px) {
+    .hero-cta-slider1 {
+        .hero-img1 {
+            left: -20px;
+        }
+        .hero-img2 {
+            right: -20px;
+        }
+    }
+}
+@include xxl {
+    .hero-cta-slider1 {
+        .hero-img1,
+        .hero-img2 {
+            bottom: 4px;
+            img {
+                height: 470px;
+            }
+        }
+        .hero-shape-area {
+            padding: 95px 0;
+        }
+        .hero-shape-area .title-area {
+            max-width: 570px;
+        }
+    }
+}
+@include ml {
+    .hero-style1 {
+        padding: 137px 0 350px;
+    }
+    .hero-cta-slider1 {
+        .hero-shape-area {
+            padding: 76px 0;
+            margin-top: 50px;
+        }
+        .hero-img1, 
+        .hero-img2 {
+            bottom: 2px;
+            img {
+                height: 405px;
+            }
+        }
+        .hero-img1 {
+            left: 0;
+        }
+        .hero-img2 {
+            right: 0px;
+        }
+    }
+}
+@include lg {
+    .hero-1 {
+        margin-bottom: 90px;
+    }
+    .hero-cta-slider1 {
+        margin-bottom: 80px;
+        .hero-shape-area .hero-bg-shape {
+            position: relative;
+            margin-bottom: 50px;
+            .verses-thumb {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    } 
+    .hero-style1 {
+        padding: 117px 0 240px;
+    }
+}
+@include md {
+    .hero-cta-slider1 .hero-shape-area {
+        margin-top: 20px;
+    }
+    .hero-style1 .hero-title .title1 {
+        width: auto;
+        padding: 16.5px 100px;
+    }
+    .hero-cta-slider1 .hero-img1, 
+    .hero-cta-slider1 .hero-img2 {
+        img {
+            height: 290px;
+        }
+    }
+    .hero-cta-slider1 .hero-shape-area .hero-bg-shape .verses-thumb {
+        width: 100px;
+    }
+}
+@include sm {
+    .hero-style1 .hero-title .title1 {
+        width: auto;
+        padding: 16.5px 50px;
+    }
+    .hero-cta-slider1 .hero-img1, 
+    .hero-cta-slider1 .hero-img2 {
+        img {
+            height: 215px;
+        }
+    }
+    .hero-cta-slider1 .hero-shape-area .hero-bg-shape .verses-thumb {
+        width: 60px;
+    }
+    .hero-cta-slider1 .hero-shape-area {
+        margin-top: 0px;
+    }
+}
+@include xs {
+    .hero-style1 .btn-group {
+        justify-content: center;
+    }
+    .hero-style1 .hero-title .title1 {
+        background-image: none !important;
+        padding: 16.5px 0 0;
+    }
+    .hero-style1 .hero-title .title2 {
+        margin-top: 0;
+    }
+    .hero-cta-slider1 .hero-img1, 
+    .hero-cta-slider1 .hero-img2 {
+        img {
+            height: 180px;
+        }
+    }
+    .hero-cta-slider1 .hero-shape-area .title-area .sec-title {
+        font-size: 24px;
+    }
+    .hero-cta-slider1 .hero-shape-area {
+        padding: 76px 0 50px;
+        .hero-bg-shape {
+            margin-bottom: 30px;
+        }
+        .title-area .sec-title {
+            margin-bottom: -20px;
+        }
+    }
+}
+@include vxs {
+    .hero-cta-slider1 .hero-img1, 
+    .hero-cta-slider1 .hero-img2 {
+        img {
+            height: 150px;
+        }
+    }
+    .hero-cta-slider1 .hero-shape-area .hero-bg-shape .verses-thumb {
+        width: 40px;
+    }
+    .hero-cta-slider1 .hero-shape-area {
+        padding: 56px 0 50px;
+    }
+}
+/* Hero 2 ---------------------------------- */
+.hero-2 {
+    margin-top: 0;
+}
+.hero-style2 {
+    text-align: center;
+    padding: 40px 0 120px;
+    .hero-title-thumb {
+        .character {
+            margin-bottom: -410px;
+            position: relative;
+        }
+        .title-img {
+            position: relative;
+            display: inline-block;
+            z-index: -1;
+            .title-img-mask {
+                display: inline-block;
+                height: 100%;
+                width: 100%;
+                mix-blend-mode: color;
+                background: $theme-color;
+                position: absolute;
+                top: 0;
+            }
+        }
+        .title-img-1 {
+            margin-bottom: 40px;
+        }
+        .title-img-2 {
+            position: relative;
+            z-index: 2;
+        }
+    }
+    .btn-group {
+        margin-top: 30px;
+    }
+}
+@include ml {
+    .hero-style2 {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+}
+@include xl {
+    .hero-style2 .hero-title-thumb .character {
+        img {
+            width: 720px;
+        }
+    }
+}
+@include lg {
+    .hero-style2 .hero-title-thumb .character {
+        margin-bottom: -360px;
+        img {
+            width: 640px;
+        }
+    }
+}
+@include md {
+    .hero-style2 .hero-title-thumb .character {
+        margin-bottom: -240px;
+        img {
+            width: 440px;
+        }
+    }
+}
+@include sm {
+    .hero-style2 .hero-title-thumb .character {
+        margin-bottom: -200px;
+        img {
+            width: 350px;
+        }
+    }
+}
+@include xs {
+    .hero-style2 {
+        padding: 40px 0 80px;
+    }
+    .hero-style2 .hero-title-thumb .character {
+        margin-bottom: -120px;
+        img {
+            width: 240px;
+        }
+    }
+    .hero-style2 .hero-title-thumb .title-img-1 {
+        margin-bottom: 20px;
+    }
+}
+@include vxs {
+    .hero-style2 .hero-title-thumb .character {
+        margin-bottom: -140px;
+    }
+}

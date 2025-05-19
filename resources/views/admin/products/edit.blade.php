@@ -1,22 +1,13 @@
 @extends('admin.master.layouts.app')
 @section('page-title')
-    Edit Category
+    Edit Product
 @endsection
 @section('head')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-    <link href="{{ URL('admin/assets') }}/css/datatable.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://jeremyfagis.github.io/dropify/dist/css/dropify.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 @endsection
 @section('page-content')
-    {{-- @component('admin.master.layouts.partials.breadcrumb')
-        @slot('li_1')
-            Category
-        @endslot
-        @slot('title')
-            Add
-        @endslot
-    @endcomponent --}}
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
@@ -25,52 +16,89 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <div class="p-0">
-                                    <h4 class="card-title mb-0 flex-grow-1">Category Edit</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">Product Edit</h4>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form class="row g-3" method="POST" action="{{ route('admin.category.update',$category->id) }}">
-                                @method('PUT')
+                            <form class="row g-3" method="POST" action="{{ route('admin.product.update', $product->id) }}"
+                                enctype="multipart/form-data">
                                 @csrf
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{ $category->name }}"
-                                        required>
-                                    @error('name') 
-                                        <div class="invalid-feedback">
-                                            {{ $message }} 
-                                        </div>
-                                    @enderror
+                                @method('PUT')
+
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Product Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        value="{{ old('name', $product->name) }}" required>
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
+
+                                <div class="col-md-6">
                                     <label for="slug" class="form-label">Slug <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="slug" name="slug" placeholder="Slug" value="{{ $category->slug }}"
-                                        required>
-                                    @error('slug') 
-                                        <div class="invalid-feedback">
-                                            {{ $message }} 
-                                        </div>
-                                    @enderror
+                                    <input type="text" class="form-control" id="slug" name="slug"
+                                        value="{{ old('slug', $product->slug) }}" required>
                                 </div>
-                                <div class="col-sm-12">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea type="text" class="form-control" rows="3" id="description" name="description" placeholder="Description">{{ $category->description }}</textarea>
-                                    @error('description') 
-                                        <div class="invalid-feedback">
-                                            {{ $message }} 
-                                        </div>
-                                    @enderror
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Category <span class="text-danger">*</span></label>
+                                    <select class="js-example-basic-single" name="category_id">
+                                        <option disabled>Select Category</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}"
+                                                {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                
-                                <div class="col-lg-4">
-                                    <div class="form-check form-check-right mb-2">
-                                        <input class="form-check-input" type="checkbox" name="status" id="status1" {{ $category->status == 1 ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="status1">
-                                            Status
-                                        </label>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select class="js-example-basic-single" name="status">
+                                        <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>Active
+                                        </option>
+                                        <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>
+                                            Inactive</option>
+                                        <option value="draft" {{ $product->status == 'draft' ? 'selected' : '' }}>Draft
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="formCheck2" name="is_featured"
+                                            {{ $product->is_featured ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="formCheck2">Featured Product</label>
                                     </div>
                                 </div>
+
+                                <div class="col-sm-12">
+                                    <label class="form-label">Short Description</label>
+                                    <textarea class="form-control" rows="3" name="short_description">{{ old('short_description', $product->short_description) }}</textarea>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description">{{ old('description', $product->description) }}</textarea>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <label class="form-label">Featured Image</label>
+                                    <input type="file" name="featured_image" class="dropify"
+                                        data-default-file="{{ asset($product->featured_image) }}" id="featured_image"
+                                        data-height="180" accept=".jpg, .jpeg, .png, .webp">
+                                </div>
+
+                                <h3>Product Variants</h3>
+                                <div class="col-md-12">
+                                    <div class="text-end">
+                                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
+                                            data-bs-target="#variantModal">+ Add Variant</button>
+                                    </div>
+                                </div>
+
+                                <ul id="variant-list" class="list-group mt-4"></ul>
+
                                 <div class="col-12">
                                     <div class="text-right">
                                         <button class="btn btn-danger" type="submit">Update</button>
@@ -79,127 +107,194 @@
                             </form>
                         </div>
                     </div>
-                </div><!--end col-->
-            </div><!--end row-->
+                </div>
+            </div>
         </div>
     </div>
-@endsection
-@section('scripts')
-    <!--datatable js-->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
-    <script src="{{ URL('admin/assets') }}/js/pages/datatables.init.js"></script>
+    @include('admin.products.modal')
+@endsection
+
+@section('scripts')
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
+    <script type="text/javascript" src="https://jeremyfagis.github.io/dropify/dist/js/dropify.min.js"></script>
+    <script src="{{ URL('admin/assets') }}/libs/sortablejs/Sortable.min.js"></script>
+    <script src="{{ URL('admin/assets') }}/js/pages/nestable.init.js"></script>
     <script>
         $(document).ready(function() {
-            var table = $('#categories-table').DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                autoWidth: false,
-                ajax: {
-                    url: "{{ route('admin.categories.get') }}",
-                    type: "GET",
-                    error: function(xhr, error, code) {
-                        console.error(xhr.responseText);
-                    }
-                },
-                dom: "<'d-flex align-items-center justify-content-start'<'search-container me-1'><'dropdown-container ms-1 position-relative'>>" +
-                    "<'row'<'col-md-12'tr>>" +
-                    "<'row'<'col-md-5'i><'col-md-7'p>>",
-                order: [],
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        searchable: false,
-                        orderable: false
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ],
-                language: {
-                    paginate: {
-                        previous: "Previous",
-                        next: "Next"
-                    },
-                    search: ""
-                },
-                fnInitComplete: function() {
-                    $('#SaleTable').removeClass('d-none').fadeIn();
-
-                    // Custom Search Input
-                    let searchWrapper = $(
-                        '<div class="search-wrapper position-relative"></div>');
-                    searchWrapper.append(`
-                        <svg class="search-icon position-absolute" width="13" height="13" viewBox="0 0 18 18" fill="none">
-                        <path d="M17 17L15.4 15.4M8.6 16.2C9.6 16.2 10.6 16 11.5 15.6C12.4 15.2 13.2 14.6 13.9 13.9C14.6 13.2 15.2 12.4 15.6 11.5C16 10.6 16.2 9.6 16.2 8.6C16.2 7.6 16 6.6 15.6 5.7C15.2 4.7 14.6 3.9 13.9 3.2C13.2 2.5 12.4 2 11.5 1.6C10.6 1.2 9.6 1 8.6 1C6.6 1 4.7 1.8 3.2 3.2C1.8 4.6 1 6.6 1 8.6C1 10.6 1.8 12.5 3.2 13.9C4.6 15.4 6.6 16.2 8.6 16.2Z" stroke="#26303B" stroke-opacity="0.5" stroke-width="1.5"></path>
-                    </svg>
-                    `);
-                    let searchInput = $(
-                        '<input type="text" class="form-control custom-search-input" placeholder="Search...">'
-                    );
-                    searchInput.on('keyup', function() {
-                        table.search(this.value).draw();
-                    });
-                    searchWrapper.append(searchInput);
-                    $('.search-container').html(searchWrapper);
-                    // Custom Dropdown
-                    let dropdownWrapper = $(
-                        '<div class="dropdown-wrapper position-relative"></div>');
-                    dropdownWrapper.append(`
-                <svg class="dropdown-icon position-absolute" width="9" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10.149 1.47725e-06L0.531852 2.318e-06C0.434483 0.000307502 0.339041 0.0271625 0.2558 0.0776758C0.172557 0.128189 0.104668 0.200448 0.059439 0.286674C0.0142091 0.372902 -0.00664777 0.469832 -0.00088566 0.567031C0.0048755 0.66423 0.0370363 0.758017 0.0921348 0.838297L4.90071 7.78402C5.1 8.072 5.57979 8.072 5.77961 7.78402L10.5882 0.838296C10.6438 0.758183 10.6765 0.664349 10.6826 0.566988C10.6886 0.469627 10.6679 0.372464 10.6226 0.286054C10.5774 0.199645 10.5093 0.127293 10.4258 0.0768614C10.3423 0.0264302 10.2466 -0.00015255 10.149 1.47725e-06Z" fill="#26303B" fill-opacity="0.7"/>
-                </svg>
-            `);
-                    let dropdown = $('<select class="form-select"></select>');
-                    dropdown.append('<option value="10">10</option>');
-                    dropdown.append('<option value="25">25</option>');
-                    dropdown.append('<option value="50">50</option>');
-                    dropdown.append('<option value="100">100</option>');
-                    dropdown.val(table.page.len());
-                    dropdown.on('change', function() {
-                        table.page.len(this.value).draw();
-                    });
-                    dropdownWrapper.append(dropdown);
-                    $('.dropdown-container').html(dropdownWrapper);
-
+            let drEvent = $('#featured_image').dropify({
+                messages: {
+                    'default': 'Drag and drop a file here or click',
+                    'replace': 'Drag and drop or click to replace',
+                    'remove': 'Remove',
+                    'error': 'Ooops, something wrong happened.'
                 }
             });
 
-            $('#name').on('input', function () {
-                let name = $(this).val();
-                let slug = name
+            drEvent.on('change', function(e) {
+                let file = e.target.files[0];
+
+                if (file) {
+                    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                    const maxSize = 10 * 1024 * 1024;
+
+                    if (!allowedTypes.includes(file.type)) {
+                        toastr.error('Invalid file type. Only JPG, JPEG, PNG, and WEBP are allowed.');
+                        $(this).val('');
+                        $('.dropify-clear').click();
+                        return;
+                    }
+
+                    if (file.size > maxSize) {
+                        toastr.error('File size exceeds 10MB limit.');
+                        $(this).val('');
+                        $('.dropify-clear').click();
+                        return;
+                    }
+                }
+            });
+
+            $('#description').summernote({
+                placeholder: 'Add description here',
+                tabsize: 2,
+                height: 200,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['color', ['color']]
+                ]
+            });
+
+            $('.js-example-basic-single').select2();
+
+            $('#name').on('input', function() {
+                const name = $(this).val();
+                const slug = name
                     .toLowerCase()
+                    .trim()
                     .replace(/[^a-z0-9\s-]/g, '')
                     .replace(/\s+/g, '-')
                     .replace(/-+/g, '-');
 
                 $('#slug').val(slug);
             });
-            $('#slug').on('input', function () {
-                let cleanSlug = $(this).val().replace(/[^a-zA-Z0-9-]/g, '');
-                $(this).val(cleanSlug);
+
+            $('#slug').on('input', function() {
+                const cleanedSlug = $(this).val()
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, '')
+                    .replace(/-+/g, '-');
+
+                $(this).val(cleanedSlug);
             });
 
+        });
+        const existingVariants = @json($product->variants);
+        let variants = existingVariants.map((v, i) => ({
+            ...v
+        }));
+
+        function renderVariants() {
+            const list = $('#variant-list');
+            list.empty();
+
+            variants.forEach((variant, index) => {
+                list.append(`
+            <li class="list-group-item d-flex justify-content-between align-items-center variant-item" data-index="${index}">
+                <span><strong>${variant.name}</strong> (${variant.region})</span>
+                <span class="variant-actions">
+                    <a class="edit-variant me-2" data-index="${index}" title="Edit" style="cursor:pointer;">
+                        <i class="ri-edit-line"></i>
+                    </a>
+                    <a class="delete-variant me-2" data-index="${index}" title="Delete" style="cursor:pointer;">
+                        <i class="bx bx-trash"></i>
+                    </a>
+                </span>
+                <input type="hidden" name="variant_id[]" value="${variant.id || ''}">
+                <input type="hidden" name="variant_name[]" value="${variant.name}">
+                <input type="hidden" name="variant_sku[]" value="${variant.sku}">
+                <input type="hidden" name="variant_region[]" value="${variant.region}">
+                <input type="hidden" name="variant_denomination[]" value="${variant.denomination}">
+                <input type="hidden" name="variant_price[]" value="${variant.price}">
+                <input type="hidden" name="variant_order[]" value="${index}">
+            </li>
+        `);
+            });
+        }
+
+        function sortVariants() {
+            const newOrder = [];
+            $('#variant-list .variant-item').each(function() {
+                const index = $(this).data('index');
+                newOrder.push({
+                    ...variants[index]
+                });
+            });
+            variants = newOrder;
+            renderVariants();
+        }
+
+        $(document).ready(function() {
+            renderVariants();
+
+            $('#variantForm').on('submit', function(e) {
+                e.preventDefault();
+                const editIndex = $('#editIndex').val();
+
+                const variantData = {
+                    name: $('#variantName').val(),
+                    sku: $('#sku').val(),
+                    region: $('#region').val(),
+                    denomination: $('#denomination').val(),
+                    price: $('#price').val()
+                };
+
+                if (editIndex !== "") {
+                    // Preserve the original ID when editing existing variants
+                    variantData.id = variants[editIndex].id || null;
+                    variants[editIndex] = variantData;
+                } else {
+                    // For new variants, no ID is assigned
+                    variants.push(variantData);
+                }
+
+                renderVariants();
+                $('#variantForm')[0].reset();
+                $('#editIndex').val('');
+                $('#variantModal').modal('hide');
+            });
+
+            $(document).on('click', '.delete-variant', function() {
+                const index = $(this).data('index');
+                variants.splice(index, 1);
+                renderVariants();
+            });
+
+            $(document).on('click', '.edit-variant', function() {
+                const index = $(this).data('index');
+                const variant = variants[index];
+                $('#variantName').val(variant.name);
+                $('#sku').val(variant.sku);
+                $('#region').val(variant.region);
+                $('#denomination').val(variant.denomination);
+                $('#price').val(variant.price);
+                $('#editIndex').val(index);
+                $('#variantModal').modal('show');
+            });
+
+            $(function() {
+                $('#variant-list').sortable({
+                    update: sortVariants
+                });
+            });
+
+            $('#variantModal').on('hidden.bs.modal', function() {
+                $('#variantForm')[0].reset();
+                $('#editIndex').val('');
+            });
         });
     </script>
 @endsection

@@ -29,13 +29,14 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form class="row g-3" method="POST" action="{{ route('admin.product.store') }}">
+                            <form class="row g-3" method="POST" action="{{ route('admin.product.store') }}"
+                                enctype="multipart/form-data">
                                 @csrf
                                 <div class="col-md-6 col-lg-6 col-sm-12">
                                     <label for="name" class="form-label">Product Name <span
                                             class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Name" required>
+                                        placeholder="Name" required value="{{ old('name') }}">
                                     @error('name')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -45,7 +46,7 @@
                                 <div class="col-md-6 col-lg-6 col-sm-12">
                                     <label for="slug" class="form-label">Slug <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="slug" name="slug"
-                                        placeholder="Slug" required>
+                                        placeholder="Slug" required value="{{ old('slug') }}">
                                     @error('slug')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -56,9 +57,12 @@
                                     <label for="name" class="form-label">Category <span
                                             class="text-danger">*</span></label>
                                     <select class="js-example-basic-single" name="category_id">
-                                        <option selected disabled>Select Category</option>
+                                        <option disabled {{ old('category_id') ? '' : 'selected' }}>Select Category</option>
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            <option value="{{ $category->id }}"
+                                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
                                         @endforeach
                                     </select>
                                     @error('category_id')
@@ -71,9 +75,13 @@
                                     <label for="name" class="form-label">Status <span
                                             class="text-danger">*</span></label>
                                     <select class="js-example-basic-single" name="status">
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
-                                        <option value="draft">Draft</option>
+                                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active
+                                        </option>
+                                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>
+                                            Inactive
+                                        </option>
+                                        <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft
+                                        </option>
                                     </select>
                                     @error('status')
                                         <div class="invalid-feedback">
@@ -84,11 +92,14 @@
                                 <div class="col-md-4 col-lg-4 col-sm-12">
                                     <label for="featured" class="form-label"></label>
                                     <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" id="formCheck2" name="is_featured">
+                                        <input class="form-check-input" type="checkbox" id="formCheck2" name="is_featured"
+                                            {{ old('is_featured') ? 'checked' : '' }}>
+
                                         <label class="form-check-label" for="formCheck2">
                                             Featured Product
                                         </label>
                                     </div>
+
                                     @error('is_featured')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -98,7 +109,7 @@
                                 <div class="col-sm-12">
                                     <label for="short_description" class="form-label">Short Description</label>
                                     <textarea type="text" class="form-control" rows="3" id="short_description" name="short_description"
-                                        placeholder="Short Description"></textarea>
+                                        placeholder="Short Description">{{ old('short_description') }}</textarea>
                                     @error('short_description')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -107,7 +118,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <label for="description" class="form-label">Description</label>
-                                    <textarea type="text" class="form-control" id="description" name="description" placeholder="Description"></textarea>
+                                    <textarea type="text" class="form-control" id="description" name="description" placeholder="Description">{{ old('description') }}</textarea>
                                     @error('description')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -128,11 +139,12 @@
                                 <p>Add different variants based on region and denomination</p>
                                 <div class="col-md-12">
                                     <div class="text-end">
-                                        <button class="btn btn-primary" data-bs-toggle="modal"
+                                        <button class="btn btn-primary" type="button" data-bs-toggle="modal"
                                             data-bs-target="#variantModal">+ Add
                                             Variant</button>
                                     </div>
                                 </div>
+                                <input type="hidden" name="variants[]" value="">
 
                                 <ul id="variant-list" class="list-group mt-4"></ul>
 
@@ -181,7 +193,6 @@
                                     </div>
                                 </div> --}}
 
-                                <hr>
                                 <div class="col-12">
                                     <div class="text-right">
                                         <button class="btn btn-danger" type="submit">Submit</button>
@@ -284,38 +295,34 @@
             <li class="list-group-item d-flex justify-content-between align-items-center variant-item" data-index="${index}">
                 <span><strong>${variant.name}</strong> (${variant.region})</span>
                 <span class="variant-actions">
-                    <a class="edit-variant me-2" data-index="${index}" title="Edit">
+                    <a class="edit-variant me-2" data-index="${index}" title="Edit" style="cursor:pointer;">
                         <i class="ri-edit-line"></i>
                     </a>
-                    <a class="delete-variant me-2" data-index="${index}" title="Delete">
+                    <a class="delete-variant me-2" data-index="${index}" title="Delete" style="cursor:pointer;">
                         <i class="bx bx-trash"></i>
                     </a>
                 </span>
+
+                <!-- Hidden Inputs for Backend -->
+                <input type="hidden" name="variant_name[]" value="${variant.name}">
+                <input type="hidden" name="variant_sku[]" value="${variant.sku}">
+                <input type="hidden" name="variant_region[]" value="${variant.region}">
+                <input type="hidden" name="variant_denomination[]" value="${variant.denomination}">
+                <input type="hidden" name="variant_price[]" value="${variant.price}">
+                <input type="hidden" name="variant_order[]" value="${index}">
             </li>
         `);
             });
-
-            $('#variant_data').val(JSON.stringify(variants));
-
-            // Refresh sortable
-            if (list.hasClass('ui-sortable')) {
-                list.sortable('destroy');
-            }
-
-            list.sortable({
-                update: sortVariants
-            });
         }
-
-
 
         function sortVariants() {
             const newOrder = [];
             $('#variant-list .variant-item').each(function() {
-                newOrder.push(variants[$(this).data('index')]);
+                const index = $(this).data('index');
+                newOrder.push(variants[index]);
             });
             variants = newOrder;
-            renderVariants();
+            renderVariants(); // re-render with updated order
         }
 
         $('#variantForm').on('submit', function(e) {
@@ -332,9 +339,9 @@
             const editIndex = $('#editIndex').val();
 
             if (editIndex !== "") {
-                variants[editIndex] = variantData;
+                variants[editIndex] = variantData; // Update existing
             } else {
-                variants.push(variantData);
+                variants.push(variantData); // Add new
             }
 
             renderVariants();
@@ -370,6 +377,8 @@
                 }
             });
         });
+
+        // Reset form on modal close
         $('#variantModal').on('hidden.bs.modal', function() {
             $('#variantForm')[0].reset();
             $('#editIndex').val('');

@@ -1,0 +1,68 @@
+.is-invalid {
+    border: 1px solid red !important;
+}
+.invalid-feedback {
+    display: block !important;
+    text-align: left !important;
+    font-family: sans-serif !important;
+    font-weight: 300 !important;
+}
+    .pricing-card {
+        border-radius: 15px;
+        padding: 11px;
+        color: #000;
+        transition: transform 0.3s;
+        border: 1px solid rgb(1 1 1 / 25%);
+        height: 100%;
+        font-family: "General Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        cursor: pointer;
+    }
+
+    .pricing-card:hover {
+      /* transform: translateY(-5px); */
+      box-shadow: 0px 1px 7px 0px #ff00003b;
+    }
+
+    .price {
+      font-weight: 400;
+      color: #000;
+      font-size: 0.8rem;
+    }
+
+    .lattice-count {
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .icon-container {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-container {
+      margin-bottom: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .card-container {
+        margin-bottom: 30px;
+      }
+    }
+    .pricing-card.active {
+        background: #fff;
+        border: 1px solid #ff0000;
+    }
+    .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single textarea, .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single .country-select, .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single input{
+      text-transform: none !important;
+    }
+
+    .toast-message{
+      font-family: "General Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      font-size: 16px;
+    }
+    li.active > a{
+      color: #fb0000 !important;
+  }

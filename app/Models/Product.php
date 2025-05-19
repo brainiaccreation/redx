@@ -14,9 +14,9 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function variants()
+  public function variants()
     {
-        return $this->hasMany(ProductVariant::class);
+        return $this->hasMany(ProductVariant::class)->orderBy('order', 'asc');
     }
 
 }
