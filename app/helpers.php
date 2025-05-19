@@ -59,6 +59,16 @@ if (!function_exists('topBarCarts')) {
             $cartItems = session('cart', []);
         }
 
-        return $cartItems;
+        return $cartItems ?? null;
+    }
+}
+if (!function_exists('product_price_range')) {
+    function product_price_range($product){
+
+        $prices = $product->variants->pluck('price');
+        if ($prices->isEmpty()) return 'N/A';
+        $min = number_format($prices->min(), 2);
+        $max = number_format($prices->max(), 2);
+        return $min === $max ? config('app.currency')." $min" : config('app.currency')." $min - $max";
     }
 }

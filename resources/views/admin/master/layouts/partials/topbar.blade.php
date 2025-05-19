@@ -493,12 +493,12 @@
                     </button>
                 </div>
 
-                <div class="ms-1 header-item">
+                {{-- <div class="ms-1 header-item">
                     <button type="button"
                         class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle light-dark-mode">
                         <i class='bx bx-moon fs-22'></i>
                     </button>
-                </div>
+                </div> --}}
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button"

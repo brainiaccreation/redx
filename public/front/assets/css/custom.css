@@ -58,3 +58,11 @@
     .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single textarea, .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single .country-select, .checkout-wrapper .checkout-single-wrapper .checkout-single .checkout-single-form .input-single input{
       text-transform: none !important;
     }
+
+    .toast-message{
+      font-family: "General Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+      font-size: 16px;
+    }
+    li.active > a{
+      color: #fb0000 !important;
+  }

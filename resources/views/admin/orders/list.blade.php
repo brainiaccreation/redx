@@ -1,6 +1,6 @@
 @extends('admin.master.layouts.app')
 @section('page-title')
-    Orders
+    Manage Orders
 @endsection
 @section('head')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
@@ -14,7 +14,7 @@
             Dashboard
         @endslot
         @slot('title')
-            Orders
+            Manage Orders
         @endslot
     @endcomponent
     <div class="page-content">
@@ -25,7 +25,7 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <div class="p-0">
-                                    <h4 class="card-title mb-0 flex-grow-1">Orders</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">Manage Orders</h4>
                                 </div>
 
                             </div>

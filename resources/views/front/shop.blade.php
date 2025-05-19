@@ -20,7 +20,7 @@
                                     <div class="range-input">
                                         <input type="range" class="range-min" min="0" max="10000"
                                             value="2500">
-                                        <input type="range" class="range-max" min="100" max="10000"
+                                        <input type="range" class="range-max" min="1" max="10000"
                                             value="7500">
                                     </div>
                                     <div class="range-items">
@@ -279,7 +279,7 @@
                                             <div class="product-image">
                                                 <img src="{{ $product->featured_image ? asset($product->featured_image) : URL('front/assets/img/product/01.jpg') }}"
                                                     alt="{{ $product->name }}">
-                                                <div class="badge">35%</div>
+                                                {{-- <div class="badge">35%</div> --}}
                                             </div>
                                             <div class="product-content text-center">
                                                 <h4>
@@ -289,13 +289,14 @@
                                                 <p class="product-reviews"><span class="product-stars">★★★★★</span> 0
                                                     Reivews
                                                 </p>
-                                                <span class="product-price">$19.00</span> <span
-                                                    class="product-cross-price">$19.00</span>
+                                                <span class="product-price">{{ product_price_range($product) }}</span>
+                                                {{-- <span
+                                                    class="product-cross-price">$19.00</span> --}}
                                             </div>
-                                            <div class="product-btn">
+                                            {{-- <div class="product-btn">
                                                 <a href="{{ route('front.cart') }}" class="custom-rdxbtnp">Add To
                                                     Cart</a>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 @endforeach
@@ -303,15 +304,35 @@
                             <div id="filtered-products" class="row g-4">
                             </div>
                         </div>
-                        <div class="page-nav-wrap">
-                            <ul>
-                                <li class="active"><a class="page-numbers" href="#">1</a></li>
-                                <li><a class="page-numbers" href="#">2</a></li>
-                                <li><a class="page-numbers" href="#">3</a></li>
-                                <li><a class="page-numbers" href="#"><i
-                                            class="fa-solid fa-arrow-right-long"></i></a></li>
-                            </ul>
-                        </div>
+                        @if ($products->lastPage() > 1)
+                            <div class="page-nav-wrap">
+                                <ul>
+                                    @if ($products->onFirstPage())
+                                        <li><span class="page-numbers disabled"><i
+                                                    class="fa-solid fa-arrow-left-long"></i></span></li>
+                                    @else
+                                        <li><a class="page-numbers" href="{{ $products->previousPageUrl() }}"><i
+                                                    class="fa-solid fa-arrow-left-long"></i></a></li>
+                                    @endif
+
+                                    @for ($i = 1; $i <= $products->lastPage(); $i++)
+                                        <li class="{{ $i == $products->currentPage() ? 'active' : '' }}">
+                                            <a class="page-numbers"
+                                                href="{{ $products->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endfor
+
+                                    @if ($products->hasMorePages())
+                                        <li><a class="page-numbers" href="{{ $products->nextPageUrl() }}"><i
+                                                    class="fa-solid fa-arrow-right-long"></i></a></li>
+                                    @else
+                                        <li><span class="page-numbers disabled"><i
+                                                    class="fa-solid fa-arrow-right-long"></i></span></li>
+                                    @endif
+                                </ul>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </div>

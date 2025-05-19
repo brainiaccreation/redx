@@ -131,9 +131,9 @@
                                     <span> Add to cart</span>
 
                                 </a>
-                                <a href="product-details.html" class="custom-rdxbtnbl">
+                                {{-- <a href="product-details.html" class="custom-rdxbtnbl">
                                     <span> Buy now</span>
-                                </a>
+                                </a> --}}
                             </div>
                             {{-- <h6 class="details-info"><span>SKU:</span> <a href="product-details.html">124224</a></h6> --}}
                             <h6 class="details-info"><span>Categories:</span> <a
@@ -316,7 +316,7 @@
                                 <div class="product-image">
                                     <img src="{{ $relatedProduct->featured_image ? asset($relatedProduct->featured_image) : URL('front/assets/img/product/01.jpg') }}"
                                         alt="{{ $relatedProduct->name }}">
-                                    <div class="badge">35%</div>
+                                    {{-- <div class="badge">35%</div> --}}
                                 </div>
                                 <div class="product-content text-center">
                                     <h4>
@@ -324,12 +324,13 @@
                                             href="{{ route('product.detail', $relatedProduct->slug) }}">{{ $relatedProduct->name }}</a>
                                     </h4>
                                     <p class="product-reviews"><span class="product-stars">★★★★★</span> 0 Reivews</p>
-                                    <span class="product-price">$19.00</span> <span
-                                        class="product-cross-price">$19.00</span>
+                                    <span class="product-price">{{ product_price_range($relatedProduct) }}</span>
+                                    {{-- <span
+                                        class="product-cross-price">$19.00</span> --}}
                                 </div>
-                                <div class="product-btn">
+                                {{-- <div class="product-btn">
                                     <a href="{{ route('front.cart') }}" class="custom-rdxbtnp">Add To Cart</a>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     @endforeach
@@ -400,13 +401,15 @@
                 var selected = $('.pricing-card.selected');
 
                 if (selected.length === 0) {
-                    alert('Please select a variant.');
+                    // alert('Please select a variant.');
+                    toastr.error('Please select a variant.');
                     return;
                 }
                 var userId = $("input[name='user_id']").val().trim();
 
                 if (userId === '') {
-                    alert('Please enter your User ID.');
+                    // alert('Please enter your User ID.');
+                    toastr.error('Please enter your User ID.');
                     return;
                 }
                 var variant = {
@@ -431,10 +434,14 @@
                         game_user_id: userId
                     },
                     success: function(response) {
-                        alert('Item added to cart successfully');
+                        toastr.success('Item added to cart successfully.');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 450);
                     },
                     error: function(xhr) {
-                        alert('Failed to add to cart');
+                        // alert('Failed to add to cart');
+                        toastr.error('Failed to add to cart.');
                     }
                 });
             });

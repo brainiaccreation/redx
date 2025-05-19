@@ -9,10 +9,13 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\CartController;
+use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -62,7 +65,9 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     }
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
-
+Route::get('/my-account', [AccountController::class, 'index'])->name('myaccount');
+Route::post('/account-update/{id}', [AccountController::class, 'update'])->name('user.updateProfile');
+Route::get('/order/detail/{id}', [AccountController::class, 'order_detail'])->name('user.order.details');
 
 
 
@@ -102,13 +107,12 @@ Route::prefix('admin')->group(function () {
             Route::put('/update/{id}', [ProductController::class, 'update'])->name('admin.product.update');
             Route::post('/status/{id}', [ProductController::class, 'status'])->name('admin.product.status');
             Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
-
         });
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
         Route::get('/profile-settings', [ProfileController::class, 'settings'])->name('admin.profile.settings');
         Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
         // users management
-         Route::get('/users', [UserController::class, 'list'])->name('admin.users.list');
+        Route::get('/users', [UserController::class, 'list'])->name('admin.users.list');
         Route::get('/users/get', [UserController::class, 'get'])->name('admin.users.get');
         Route::prefix('user')->group(function () {
             Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.user.edit');

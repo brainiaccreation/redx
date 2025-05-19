@@ -191,17 +191,17 @@
                         <div class="main-menu">
                             <nav id="mobile-menu" style="display: block;">
                                 <ul>
-                                    <li class="has-dropdown active">
+                                    <li class="has-dropdown {{ request()->routeIs('front.home') ? 'active' : '' }}">
                                         <a href="{{ route('front.home') }}">
                                             Home
                                         </a>
                                     </li>
-                                    <li class="has-dropdown">
+                                    <li class="has-dropdown {{ request()->routeIs('front.about') ? 'active' : '' }}">
                                         <a href="{{ route('front.about') }}">
                                             About Us
                                         </a>
                                     </li>
-                                    <li class="has-dropdown">
+                                    <li class="has-dropdown  {{ request()->routeIs('front.shop') ? 'active' : '' }}">
                                         <a href="{{ route('front.shop') }}">
                                             Shop
                                         </a>
@@ -221,21 +221,32 @@
                                             Blog
                                         </a>
                                     </li>
-                                    <li>
+                                    <li
+                                        class="has-dropdown {{ request()->routeIs('front.contact') ? 'active' : '' }}">
                                         <a href="{{ route('front.contact') }}">Contact Us</a>
                                     </li>
+                                    <li
+                                        class="has-dropdown {{ request()->routeIs('myaccount', 'user.order.details') ? 'active' : '' }}">
+                                        @auth
+                                            <a href="{{ route('myaccount') }}">My Account</a>
+                                        @else
+                                            <a href="{{ route('login') }}">Login</a>
+                                        @endauth
+                                    </li>
+
+
                                 </ul>
                             </nav>
                         </div>
                     </div>
                     <a href="#0" class="search-trigger search-icon"><i
                             class="fa-regular fa-magnifying-glass"></i></a>
-                    <ul class="header-icon">
+                    {{-- <ul class="header-icon">
 
                         <li>
                             <a href="#"><i class="fa-regular fa-heart"></i><span class="number">4</span></a>
                         </li>
-                    </ul>
+                    </ul> --}}
                     <div class="menu-cart style-2">
                         <div class="cart-box">
                             @php
@@ -258,10 +269,19 @@
                                     </li>
                                 </ul>
                             @endforeach
-                            <div class="shopping-items">
-                                <span>Total :</span>
-                                <span>${{ number_format($totalPrice, 2) }}</span>
-                            </div>
+
+                            @if (!empty(topBarCarts()) && count(topBarCarts()) > 0)
+                                <div class="shopping-items">
+                                    <span>Total :</span>
+                                    <span>{{ config('app.currency') }} {{ number_format($totalPrice, 2) }}</span>
+                                </div>
+                            @else
+                                <div class="text-center mt-3">
+                                    <h4>
+                                        No Items in Cart
+                                    </h4>
+                                </div>
+                            @endif
                             <div class="cart-button mb-4">
                                 <a href="{{ route('front.cart') }}" class="custom-rdxbtnp">
                                     View Cart

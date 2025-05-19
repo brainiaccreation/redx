@@ -34,7 +34,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             if (Auth::user()->role_id === 1) {
                 $request->session()->regenerate();
-                
+
                 return redirect()->intended('admin/dashboard');
             } else {
                 Auth::logout();

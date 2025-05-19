@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderHistory;
 use Yajra\DataTables\Facades\DataTables;
 class ManageOrderController extends Controller
 {
@@ -20,7 +21,7 @@ class ManageOrderController extends Controller
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('order_id', function ($order) {
-                    return '<a href="javascript:void(0);">'.$order->order_number.'</a>';
+                    return '<a href="'.route('admin.order.details',$order->unique_id).'">'.$order->order_number.'</a>';
 
                 })
                 ->addColumn('customer', function ($order) {
@@ -30,7 +31,15 @@ class ManageOrderController extends Controller
                     return \Carbon\Carbon::parse($order->created_at)->format('d M, Y h:i A');
                 })
                 ->addColumn('status', function ($order) {
-                    return ucfirst($order->status);
+                    $statusClasses = [
+                        'pending'    => 'badge bg-warning-subtle text-warning fw-medium',
+                        'processing' => 'badge bg-info-subtle text-info fw-medium',
+                        'completed'  => 'badge bg-success-subtle text-success fw-medium',
+                        'failed'     => 'badge bg-danger-subtle text-danger fw-medium',
+                        'cancelled'  => 'badge bg-secondary-subtle text-secondary fw-medium',
+                    ];
+                    $badgeClass = $statusClasses[$order->status] ?? 'badge bg-primary-subtle text-primary';
+                    return '<h5><span class="'.$badgeClass.'">'.ucfirst($order->status).'</span></h5>';
                 })
                 ->addColumn('payment_method', function ($order) {
                     return ucfirst($order->payment_method);
@@ -81,6 +90,20 @@ class ManageOrderController extends Controller
         if($order){
             $order->status = $request->status;
             $order->update();
+            $statusMessages = [
+                'pending'    => 'Order marked as Pending.',
+                'processing' => 'Order is now Processing.',
+                'completed'  => 'Order has been Completed.',
+                'failed'     => 'Order has Failed.',
+                'cancelled'  => 'Order has been Cancelled.',
+            ];
+            $historyText = $statusMessages[$order->status] ?? 'Order status updated.';
+            OrderHistory::create([
+                'order_id' => $order->id,
+                'user_id' => $order->user_id,
+                'status' => $order->status,
+                'notes' => $historyText,
+            ]);
         }
             return redirect()->back()->with('success','Request has been completed.');
         
