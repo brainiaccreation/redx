@@ -18,6 +18,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
     'currency' => env('DEFAULT_CURRENCY', 'MYR'),
+    'order_ref' => env('ORDER_REF_NO', 'OR-REDX'),
 
     /*
     |--------------------------------------------------------------------------

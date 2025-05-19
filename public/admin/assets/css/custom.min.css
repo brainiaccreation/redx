@@ -376,6 +376,9 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, table.dataT
 .header-item {
     height: 44px;
 }
-.page-content {
+/* .page-content {
     padding: calc(28px + var(--vz-grid-gutter-width)) calc(var(--vz-grid-gutter-width) * 0.5) 60px calc(var(--vz-grid-gutter-width) * 0.5) !important;
+} */
+ .bg-danger {
+    background-color: rgb(255 0 0) !important;
 }

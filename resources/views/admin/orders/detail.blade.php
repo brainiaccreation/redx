@@ -2,33 +2,20 @@
 @section('page-title')
     Order Details
 @endsection
-@section('head')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
-    <link href="{{ URL('admin/assets') }}/css/datatable.min.css" rel="stylesheet" type="text/css" />
-@endsection
+
 @section('page-content')
-    @component('admin.master.layouts.partials.breadcrumb')
-        @slot('li_1')
-            Dashboard
-        @endslot
-        @slot('title')
-            Order Details
-        @endslot
-    @endcomponent
     <div class="page-content">
         <div class="container-fluid">
+
             <div class="row">
                 <div class="col-xl-9">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <h5 class="card-title flex-grow-1 mb-0">Order #{{ $order->order_number }}</h5>
-                                {{-- <div class="flex-shrink-0">
-                                    <a href="apps-invoices-details.html" class="btn btn-success btn-sm"><i
-                                            class="ri-download-2-fill align-middle me-1"></i> Invoice</a>
-                                </div> --}}
+                                <div class="flex-shrink-0">
+                                    <h4><span class="{{ $badgeClass }}">{{ ucfirst($status) }}</span></h4>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">
@@ -111,7 +98,7 @@
                         <div class="card-header">
                             <div class="d-sm-flex align-items-center">
                                 <h5 class="card-title flex-grow-1 mb-0">Order Status</h5>
-                                <div class="flex-shrink-0 mt-2 mt-sm-0">
+                                {{-- <div class="flex-shrink-0 mt-2 mt-sm-0">
                                     <a href="javascript:void(0);"
                                         class="btn btn-soft-info material-shadow-none btn-sm mt-2 mt-sm-0"><i
                                             class="ri-map-pin-line align-middle me-1"></i> Change Address</a>
@@ -119,7 +106,7 @@
                                         class="btn btn-soft-danger material-shadow-none btn-sm mt-2 mt-sm-0"><i
                                             class="mdi mdi-archive-remove-outline align-middle me-1"></i> Cancel
                                         Order</a>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <div class="card-body">
@@ -131,116 +118,28 @@
                                                 href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                                 <div class="d-flex align-items-center">
                                                     <div class="flex-shrink-0 avatar-xs">
-                                                        <div class="avatar-title bg-success rounded-circle material-shadow">
-                                                            <i class="ri-shopping-bag-line"></i>
+                                                        <div class="avatar-title bg-danger rounded-circle material-shadow">
+                                                            <i class="bx bx-category-alt"></i>
                                                         </div>
                                                     </div>
                                                     <div class="flex-grow-1 ms-3">
                                                         <h6 class="fs-15 mb-0 fw-semibold">Order Placed - <span
-                                                                class="fw-normal">Wed, 15 Dec 2021</span></h6>
+                                                                class="fw-normal">{{ $order->created_at->format('D, d M Y') }}</span>
+                                                        </h6>
                                                     </div>
                                                 </div>
                                             </a>
                                         </div>
                                         <div id="collapseOne" class="accordion-collapse collapse show"
                                             aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                            <div class="accordion-body ms-2 ps-5 pt-0">
-                                                <h6 class="mb-1">An order has been placed.</h6>
-                                                <p class="text-muted">Wed, 15 Dec 2021 - 05:34PM</p>
-
-                                                <h6 class="mb-1">Seller has processed your order.</h6>
-                                                <p class="text-muted mb-0">Thu, 16 Dec 2021 - 5:48AM</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="accordion-item border-0">
-                                        <div class="accordion-header" id="headingTwo">
-                                            <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse"
-                                                href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0 avatar-xs">
-                                                        <div class="avatar-title bg-success rounded-circle material-shadow">
-                                                            <i class="mdi mdi-gift-outline"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
-                                                        <h6 class="fs-15 mb-1 fw-semibold">Packed - <span
-                                                                class="fw-normal">Thu, 16 Dec 2021</span></h6>
-                                                    </div>
+                                            @foreach ($order->history as $history)
+                                                <div class="accordion-body ms-2 ps-5 pt-0">
+                                                    <h6 class="mb-1">{{ $history->notes }}</h6>
+                                                    <p class="text-muted">
+                                                        {{ \Carbon\Carbon::parse($history->created_at)->format('D, d M Y - h:ia') }}
+                                                    </p>
                                                 </div>
-                                            </a>
-                                        </div>
-                                        <div id="collapseTwo" class="accordion-collapse collapse show"
-                                            aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                            <div class="accordion-body ms-2 ps-5 pt-0">
-                                                <h6 class="mb-1">Your Item has been picked up by courier partner
-                                                </h6>
-                                                <p class="text-muted mb-0">Fri, 17 Dec 2021 - 9:45AM</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="accordion-item border-0">
-                                        <div class="accordion-header" id="headingThree">
-                                            <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse"
-                                                href="#collapseThree" aria-expanded="false"
-                                                aria-controls="collapseThree">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0 avatar-xs">
-                                                        <div
-                                                            class="avatar-title bg-success rounded-circle material-shadow">
-                                                            <i class="ri-truck-line"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
-                                                        <h6 class="fs-15 mb-1 fw-semibold">Shipping - <span
-                                                                class="fw-normal">Thu, 16 Dec 2021</span></h6>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <div id="collapseThree" class="accordion-collapse collapse show"
-                                            aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                            <div class="accordion-body ms-2 ps-5 pt-0">
-                                                <h6 class="fs-14">RQK Logistics - MFDS1400457854</h6>
-                                                <h6 class="mb-1">Your item has been shipped.</h6>
-                                                <p class="text-muted mb-0">Sat, 18 Dec 2021 - 4.54PM</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="accordion-item border-0">
-                                        <div class="accordion-header" id="headingFour">
-                                            <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse"
-                                                href="#collapseFour" aria-expanded="false">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0 avatar-xs">
-                                                        <div
-                                                            class="avatar-title bg-light text-success rounded-circle material-shadow">
-                                                            <i class="ri-takeaway-fill"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
-                                                        <h6 class="fs-14 mb-0 fw-semibold">Out For Delivery</h6>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="accordion-item border-0">
-                                        <div class="accordion-header" id="headingFive">
-                                            <a class="accordion-button p-2 shadow-none" data-bs-toggle="collapse"
-                                                href="#collapseFile" aria-expanded="false">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0 avatar-xs">
-                                                        <div
-                                                            class="avatar-title bg-light text-success rounded-circle material-shadow">
-                                                            <i class="mdi mdi-package-variant"></i>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
-                                                        <h6 class="fs-14 mb-0 fw-semibold">Delivered</h6>
-                                                    </div>
-                                                </div>
-                                            </a>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>
@@ -293,8 +192,7 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0"><i
-                                    class="ri-secure-payment-line align-bottom me-1 text-muted"></i>
+                            <h5 class="card-title mb-0"><i class="ri-secure-payment-line align-bottom me-1 text-muted"></i>
                                 Payment
                                 Details</h5>
                         </div>
@@ -304,7 +202,7 @@
                                     <p class="text-muted mb-0">Transactions:</p>
                                 </div>
                                 <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">#VLZ124561278124</h6>
+                                    <h6 class="mb-0">#{{ config('app.order_ref') }}000{{ $order->payment->id }}</h6>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center mb-2">
@@ -312,10 +210,10 @@
                                     <p class="text-muted mb-0">Payment Method:</p>
                                 </div>
                                 <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">Debit Card</h6>
+                                    <h6 class="mb-0">{{ ucfirst($order->payment->payment_gateway) }}</h6>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center mb-2">
+                            {{-- <div class="d-flex align-items-center mb-2">
                                 <div class="flex-shrink-0">
                                     <p class="text-muted mb-0">Card Holder Name:</p>
                                 </div>
@@ -330,15 +228,58 @@
                                 <div class="flex-grow-1 ms-2">
                                     <h6 class="mb-0">xxxx xxxx xxxx 2456</h6>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
                                     <p class="text-muted mb-0">Total Amount:</p>
                                 </div>
                                 <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-0">$415.96</h6>
+                                    <h6 class="mb-0">
+                                        {{ $order->payment->currency }} {{ number_format($order->payment->amount, 2) }}
+                                    </h6>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <!--end card-->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="ri-shield-flash-line align-bottom me-1 text-muted"></i>
+                                Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('admin.order.status', $order->id) }}" method="post">
+                                @csrf
+                                <div class="mb-2">
+                                    <div class="flex-shrink-0">
+                                        <select name="status" class="form-select mb-3">
+                                            <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>
+                                                Pending
+                                            </option>
+                                            <option value="processing"
+                                                {{ $order->status === 'processing' ? 'selected' : '' }}>
+                                                Processing</option>
+                                            <option value="completed"
+                                                {{ $order->status === 'completed' ? 'selected' : '' }}>
+                                                Completed</option>
+                                            <option value="failed" {{ $order->status === 'failed' ? 'selected' : '' }}>
+                                                Failed
+                                            </option>
+                                            <option value="cancelled"
+                                                {{ $order->status === 'cancelled' ? 'selected' : '' }}>
+                                                Cancelled</option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                @if ($status != 'completed')
+                                    <div class="d-flex align-items-center justify-content-end mb-2">
+                                        <div class="flex-shrink-0">
+                                            <button type="submit" class="btn btn-danger">Submit</button>
+                                        </div>
+                                    </div>
+                                @endif
+                            </form>
                         </div>
                     </div>
                     <!--end card-->
@@ -351,21 +292,9 @@
         <!--end row-->
 
     </div><!-- container-fluid -->
-    </div><!-- End Page-content -->
 @endsection
 @section('scripts')
     <!--datatable js-->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-
-    <script src="{{ URL('admin/assets') }}/js/pages/datatables.init.js"></script>
     <script>
         $(document).ready(function() {
             var table = $('#orders-table').DataTable({

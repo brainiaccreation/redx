@@ -54,11 +54,35 @@ class ManageOrderController extends Controller
                 ->make(true);
         }
     }
+
     public function detail($unique_id) {
         $order = Order::where('unique_id',$unique_id)->first();
         if($order){
             $order_items = OrderItem::where('order_id',$order->id)->get();
+            $status = $order->status;
+            $statusClasses = [
+                'pending'    => 'badge bg-warning-subtle text-warning fw-medium',
+                'processing' => 'badge bg-info-subtle text-info fw-medium',
+                'completed'  => 'badge bg-success-subtle text-success fw-medium',
+                'failed'     => 'badge bg-danger-subtle text-danger fw-medium',
+                'cancelled'  => 'badge bg-secondary-subtle text-secondary fw-medium',
+            ];
+            $badgeClass = $statusClasses[$order->status] ?? 'badge bg-primary-subtle text-primary';
+           
         }
-        return view('admin.orders.detail',compact('order','order_items'));
+        return view('admin.orders.detail',compact('order','order_items','badgeClass','status'));
+    }
+
+    public function status($id, Request $request) {
+        $order = Order::find($id);
+        if($order->status === $request->status){
+            return redirect()->back();
+        }
+        if($order){
+            $order->status = $request->status;
+            $order->update();
+        }
+            return redirect()->back()->with('success','Request has been completed.');
+        
     }
 }

@@ -235,7 +235,7 @@ class OrderController extends Controller
                 'user_id' => $user->id,
                 'total_amount' => $totalAmount,
                 'payment_method' => 'paydibs',
-                'status' => 'pending',
+                'status' => 'processing',
             ]);
 
             // Create order items
@@ -255,8 +255,8 @@ class OrderController extends Controller
             OrderHistory::create([
                 'order_id' => $order->id,
                 'user_id' => $user->id,
-                'status' => 'completed',
-                'notes' => 'Order completed after successful Paydibs payment',
+                'status' => 'pending',
+                'notes' => 'Order placed after successful Paydibs payment',
             ]);
 
             // Create payment record
@@ -368,8 +368,8 @@ class OrderController extends Controller
                         OrderHistory::create([
                             'order_id' => $order->id,
                             'user_id' => $user->id,
-                            'status' => 'completed',
-                            'notes' => 'Order completed via Paydibs callback',
+                            'status' => 'pending',
+                            'notes' => 'Order placed via Paydibs callback',
                         ]);
 
                         Payment::create([
@@ -440,7 +440,7 @@ class OrderController extends Controller
                 'user_id' => $user ? $user->id : null,
                 'total_amount' => $totalAmount,
                 'payment_method' => 'stripe',
-                'status' => 'pending',
+                'status' => 'processing',
             ]);
 
             foreach ($cartItems as $item) {
@@ -458,8 +458,8 @@ class OrderController extends Controller
             OrderHistory::create([
                 'order_id' => $order->id,
                 'user_id' => $user ? $user->id : null,
-                'status' => 'completed',
-                'notes' => 'Order completed after successful Stripe payment',
+                'status' => 'pending',
+                'notes' => 'Order placed after successful Stripe payment',
             ]);
 
             Payment::create([
@@ -546,8 +546,8 @@ class OrderController extends Controller
                             OrderHistory::create([
                                 'order_id' => $order->id,
                                 'user_id' => $user ? $user->id : null,
-                                'status' => 'completed',
-                                'notes' => 'Order completed via Stripe webhook',
+                                'status' => 'pending',
+                                'notes' => 'Order placed via Stripe webhook',
                             ]);
 
                             Payment::create([

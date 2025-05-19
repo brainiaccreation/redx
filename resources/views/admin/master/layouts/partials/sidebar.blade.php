@@ -97,6 +97,12 @@
                      </a>
                  </li>
                  <li class="nav-item">
+                     <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
+                         href="{{ route('admin.orders.list') }}">
+                         <i class="bx bx-archive"></i> <span data-key="t-widgets">Orders</span>
+                     </a>
+                 </li>
+                 <li class="nav-item">
                      <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
                          href="{{ route('admin.users.list') }}">
                          <i class=" ri-user-3-line"></i> <span data-key="t-widgets">Users</span>

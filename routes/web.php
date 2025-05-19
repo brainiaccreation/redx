@@ -120,5 +120,6 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders', [ManageOrderController::class, 'list'])->name('admin.orders.list');
         Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');
         Route::get('/order/details/{id}', [ManageOrderController::class, 'detail'])->name('admin.order.details');
+        Route::post('/order/status/{id}', [ManageOrderController::class, 'status'])->name('admin.order.status');
     });
 });
