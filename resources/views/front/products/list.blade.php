@@ -11,8 +11,18 @@
                 <a href="{{ route('product.detail', $product->slug) }}">{{ $product->name }}</a>
             </h4>
             <p class="product-reviews"><span class="product-stars">★★★★★</span> 0 Reivews</p>
-            <span class="product-price">{{ product_price_range($product) }}</span>
-            {{-- <span class="product-cross-price">$19.00</span> --}}
+            @if (auth()->check() && auth()->user()->account_type === 'reseller')
+                <span class="product-price">
+                    {{ product_price_range($product) }}
+                </span>
+                <span class="product-cross-price">
+                    {{ normal_product_price_range($product) }}
+                </span>
+            @else
+                <span class="product-price">
+                    {{ normal_product_price_range($product) }}
+                </span>
+            @endif
         </div>
         {{-- <div class="product-btn">
             <a href="{{ route('front.cart') }}" class="custom-rdxbtnp">Add To Cart</a>

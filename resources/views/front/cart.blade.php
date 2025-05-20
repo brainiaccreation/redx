@@ -44,7 +44,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <span class="price-usd">
-                                                    {{ number_format($cartItem->price, 2) }} {{ config('app.currency') }}
+                                                    {{ calculatedPrice($cartItem->price) }} {{ config('app.currency') }}
                                                 </span>
                                             </td>
                                             <td class="price-quantity text-center">
@@ -58,7 +58,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <span class="price-usd">
-                                                    {{ number_format($cartItem->price * $cartItem->quantity, 2) }}
+                                                    {{ calculatedPrice($cartItem->price * $cartItem->quantity, 2) }}
                                                     {{ config('app.currency') }}
                                                 </span>
                                             </td>
@@ -67,9 +67,8 @@
                                 </tbody>
                             </table>
                         </div>
-                    @else
                         <div class="text-right">
-                            <h2>Total: ${{ number_format($total, 2) }}</h2>
+                            <h2>Total: {{ config('app.currency') }} {{ calculatedPrice($total) }}</h2>
                         </div>
                     @endif
 

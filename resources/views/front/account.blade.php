@@ -2,6 +2,9 @@
 @section('title')
     My Account
 @endsection
+@section('head')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+@endsection
 @section('content')
     <!-- My-account-Section Start -->
     <section class="my-account-section section-padding fix">
@@ -21,23 +24,29 @@
                                 </div>
                                 <ul class="nav">
                                     <li class="nav-item">
-                                        <a href="#Course" data-bs-toggle="tab" class="nav-link active">
+                                        <a href="#Account" data-bs-toggle="tab" class="nav-link active">
                                             <i class="fa-regular fa-user"></i>
                                             Account Details
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#Curriculum" data-bs-toggle="tab" class="nav-link">
+                                        <a href="#order" data-bs-toggle="tab" class="nav-link">
                                             <i class="fa-sharp fa-regular fa-bag-shopping"></i>
                                             Your Orders
                                         </a>
                                     </li>
                                     {{-- <li class="nav-item">
-                                        <a href="#Instructors" data-bs-toggle="tab" class="nav-link">
-                                            <i class="fa-regular fa-location-dot"></i>
-                                            My Address
+                                        <a href="#wallet" data-bs-toggle="tab" class="nav-link">
+                                            <i class="fa-sharp fa-regular fa-bag-shopping"></i>
+                                            My Wallet
                                         </a>
                                     </li> --}}
+                                    <li class="nav-item">
+                                        <a href="#wallet" data-bs-toggle="tab" class="nav-link">
+                                            <i class="fa-solid fa-wallet"></i>
+                                            My Wallet &nbsp; &nbsp;
+                                        </a>
+                                    </li>
                                     <li class="nav-item">
                                         <a href="javascript:void();" class="nav-link"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -58,7 +67,7 @@
                     </div>
                     <div class="col-lg-8">
                         <div class="tab-content">
-                            <div id="Course" class="tab-pane fade show active">
+                            <div id="Account" class="tab-pane fade show active">
                                 <div class="account-details">
                                     {{-- <form action="#" id="contact-form2" method="POST"> --}}
                                     <div class="account-info">
@@ -207,7 +216,7 @@
                                     {{-- </form> --}}
                                 </div>
                             </div>
-                            <div id="Curriculum" class="tab-pane fade">
+                            <div id="order" class="tab-pane fade">
                                 <div class="cart-list-area">
                                     <div class="table-responsive">
                                         <table class="table common-table">
@@ -257,61 +266,51 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div id="Instructors" class="tab-pane fade">
+                            <div id="wallet" class="tab-pane fade">
                                 <div class="axil-dashboard-address">
-                                    <p class="notice-text">The following addresses will be used on the checkout page by
-                                        default.</p>
+                                    {{-- <p class="notice-text">The following addresses will be used on the checkout page by
+                                        default.</p> --}}
                                     <div class="row g-4">
-                                        <div class="col-lg-6">
-                                            <div class="address-info">
-                                                <div
-                                                    class="addrss-header d-flex align-items-center justify-content-between">
-                                                    <h4 class="title">Shipping Address</h4>
-                                                    <a href="#" class="address-edit"><i
-                                                            class="far fa-edit"></i></a>
+                                        <div class="col-lg-12">
+                                            <div class="wallet-container">
+                                                <div class="wallet-header">
+                                                    <h2>My Wallet</h2>
+                                                    <button class="top-up-btn" data-bs-toggle="modal"
+                                                        data-bs-target="#topUpModal">TOP UP</button>
                                                 </div>
-                                                <ul class="address-details">
-                                                    <li>Name: Annie Mario</li>
-                                                    <li>
-                                                        <span>Email:</span>
-                                                        <a href="mailto:cartly@gmail.com">cartly@gmail.com</a>
-                                                    </li>
-                                                    <li>
-                                                        <span>Phone:</span>
-                                                        <a href="tel:+67041390762">+670 413 90 762</a>
-                                                    </li>
-                                                    <li class="style-2">7398 Smoke Ranch Road <br>
-                                                        Las Vegas, Nevada 89128</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="address-info">
-                                                <div
-                                                    class="addrss-header d-flex align-items-center justify-content-between">
-                                                    <h4 class="title">Shipping Address</h4>
-                                                    <a href="#" class="address-edit"><i
-                                                            class="far fa-edit"></i></a>
+                                                <div class="balance-section">
+                                                    <h3>{{ config('app.currency') }}
+                                                        {{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
                                                 </div>
-                                                <ul class="address-details">
-                                                    <li>Name: Annie Mario</li>
-                                                    <li>
-                                                        <span>Email:</span>
-                                                        <a href="mailto:cartly@gmail.com">cartly@gmail.com</a>
-                                                    </li>
-                                                    <li>
-                                                        <span>Phone:</span>
-                                                        <a href="tel:+67041390762">+670 413 90 762</a>
-                                                    </li>
-                                                    <li class="style-2">7398 Smoke Ranch Road <br>
-                                                        Las Vegas, Nevada 89128</li>
-                                                </ul>
+                                                <div class="account-status">
+                                                    <p>Account Status: {{ ucfirst(auth()->user()->account_type) }}</p>
+                                                    <p>Top up over RM 10,000 to automatically become a Reseller with 1%
+                                                        discount</p>
+                                                </div>
+                                                <div class="transaction-history">
+                                                    <h3>Transaction History</h3>
+                                                    <div class="table-responsive">
+
+                                                        <table class="table transaction-table" id="walletTable"
+                                                            style="width: 100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Transaction</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Date</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div id="Reviews" class="tab-pane fade">
+                            {{-- <div id="Reviews" class="tab-pane fade">
                                 <div class="account-wrapper">
                                     <div class="account-box">
                                         <h3 class="mb-3">Login to Sofia.</h3>
@@ -360,8 +359,175 @@
                             </div> --}}
                         </div>
                     </div>
+                    {{-- model --}}
+                    <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Wallet</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <form id="walletForm" action="{{ route('wallet.topup') }}" method="POST"
+                                    enctype="multipart/form-data">
+                                    @csrf
+
+                                    <div class="modal-body">
+                                        <label>Enter amount to add to your wallet (in RM):</label>
+                                        <input type="number" class="form-control" value="500.00" id="wallet_amount"
+                                            name="amount" step="0.1">
+
+                                        <label>Select payment method:</label>
+                                        <div class="payment-methods selected">
+                                            <div class="payment-option" data-method="bank">
+                                                <input type="radio" name="payment_method" value="bank" checked>
+                                                <label>ONLINE BANKING</label>
+                                                <p>Direct bank transfer</p>
+                                            </div>
+                                            <div class="payment-option" data-method="stripe">
+                                                <input type="radio" name="payment_method" value="stripe">
+                                                <label>Stripe</label>
+                                                <p>Visa, Mastercard, etc.</p>
+                                            </div>
+
+                                            <div class="payment-option" data-method="paydibs    ">
+                                                <input type="radio" name="payment_method" value="paydibs    ">
+                                                <label>Paydibs</label>
+                                                <p>Visa, Mastercard, et
+                                            </div>
+                                        </div>
+
+                                        <div id="payment-details">
+                                            <div class="method-details" id="method-card" style="display: none;">
+                                                {{-- <p>Enter your card info here.</p> --}}
+                                            </div>
+                                            <div class="method-details" id="method-bank" style="display: block;">
+                                                <p><b>Bank Name:</b> Maybank</p>
+                                                <p><b>Title of Account:</b> Test Bank</p>
+                                                <p><b>Account No:</b> 00000020023456789</p>
+                                                <p><b>IBAN:</b> MB00 0000 1111 2222 3333</p>
+                                                <p>Upload receipt</p>
+                                                <div class="mb-2">
+                                                    <input type="file" name="receipt_image" class="form-control"
+                                                        id="receipt_image" accept=".jpg, .jpeg, .png">
+                                                </div>
+                                            </div>
+                                            <div class="method-details" id="method-ewallet" style="display: none;">
+                                                {{-- <p>Select your preferred e-wallet to proceed.</p> --}}
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn-confirm">CONFIRM PAYMENT</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    {{-- model end --}}
                 </div>
             </div>
         </div>
     </section>
+@endsection
+@section('scripts')
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#walletTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: "{{ route('wallet.transactions.data') }}",
+                order: [
+                    [2, 'desc']
+                ],
+                columns: [{
+                        data: 'description',
+                        name: 'description'
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount'
+                    },
+                    {
+                        data: 'created_at_formatted',
+                        name: 'created_at'
+                    },
+                    {
+                        data: 'status_badge',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove(
+                    'selected'));
+
+                option.classList.add('selected');
+                option.querySelector('input[type="radio"]').checked = true;
+
+                const method = option.getAttribute('data-method');
+
+                document.querySelectorAll('.method-details').forEach(div => {
+                    div.style.display = 'none';
+                });
+
+                document.getElementById('method-' + method).style.display = 'block';
+            });
+        });
+
+        $(document).ready(function() {
+            $('#receipt_image').on('change', function() {
+                const file = this.files[0];
+
+                if (file) {
+                    const fileType = file.type;
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+                    if (!validTypes.includes(fileType)) {
+                        toastr.error('Invalid file type. Only JPG, JPEG, and PNG are allowed.');
+                        $(this).val('');
+                    }
+                }
+            });
+            $('#walletForm').on('submit', function(e) {
+                let amount = parseFloat($('#wallet_amount').val());
+                let method = $('input[name="payment_method"]:checked').val();
+                let receipt = $('#receipt_image')[0]?.files[0];
+
+                if (isNaN(amount) || amount < 20) {
+                    e.preventDefault();
+                    toastr.error('Minimum top-up amount is RM 20.');
+                    return;
+                }
+
+                if (method === 'bank') {
+                    if (!receipt) {
+                        e.preventDefault();
+                        toastr.error('Please upload your bank transfer receipt.');
+                        return;
+                    }
+
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(receipt.type)) {
+                        e.preventDefault();
+                        toastr.error('Invalid file type. Only JPG, JPEG, PNG are allowed.');
+                        $('#receipt_image').val('');
+                        return;
+                    }
+                }
+
+            });
+        });
+    </script>
 @endsection

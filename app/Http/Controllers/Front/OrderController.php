@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderHistory;
 use App\Models\Payment;
+use App\Models\Wallet;
 use Illuminate\Support\Str;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 
 class OrderController extends Controller
 {
-   public function checkout()
+    public function checkout()
     {
         $cartItems = auth()->user()->cartItems()->with('product', 'product_variant')->get();
         $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
@@ -34,7 +36,7 @@ class OrderController extends Controller
 
         // Calculate total amount
         $totalAmount = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-        if($payment_mode == "paydibs"){
+        if ($payment_mode == "paydibs") {
             // Paydibs configuration (replace with your actual Paydibs credentials)
             $paydibsConfig = [
                 'merchant_id' => config('paydibs.merchant_id'),
@@ -54,9 +56,9 @@ class OrderController extends Controller
                 'MerchantID' => $paydibsConfig['merchant_id'],
                 'MerchantPymtID' => $merchantPymtID,
                 'MerchantOrdID' => $merchantOrdID,
-                'MerchantOrdDesc' => 'Order payment for ' . $user->name.' '.$user->last_name,
+                'MerchantOrdDesc' => 'Order payment for ' . $user->name . ' ' . $user->last_name,
                 'MerchantTxnAmt' => number_format($totalAmount, 2, '.', ''),
-                'MerchantCurrCode' => 'MYR', 
+                'MerchantCurrCode' => 'MYR',
                 'MerchantRURL' => str_replace('&', ';', $paydibsConfig['return_url']),
                 'CustIP' => $request->ip(),
                 'CustName' => $user->name ?? 'Customer',
@@ -69,16 +71,16 @@ class OrderController extends Controller
 
             // Generate Sign
             $sourceString = $paydibsConfig['merchant_password'] .
-                            $paydibsData['TxnType'] .
-                            $paydibsData['MerchantID'] .
-                            $paydibsData['MerchantPymtID'] .
-                            $paydibsData['MerchantOrdID'] .
-                            $paydibsData['MerchantRURL'] .
-                            $paydibsData['MerchantTxnAmt'] .
-                            $paydibsData['MerchantCurrCode'] .
-                            $paydibsData['CustIP'] .
-                            $paydibsData['PageTimeout'] .
-                            $paydibsData['MerchantCallbackURL'];
+                $paydibsData['TxnType'] .
+                $paydibsData['MerchantID'] .
+                $paydibsData['MerchantPymtID'] .
+                $paydibsData['MerchantOrdID'] .
+                $paydibsData['MerchantRURL'] .
+                $paydibsData['MerchantTxnAmt'] .
+                $paydibsData['MerchantCurrCode'] .
+                $paydibsData['CustIP'] .
+                $paydibsData['PageTimeout'] .
+                $paydibsData['MerchantCallbackURL'];
 
             $paydibsData['Sign'] = hash('sha512', $sourceString);
 
@@ -103,14 +105,19 @@ class OrderController extends Controller
             $form .= '<script>document.frmPaydibs.submit();</script>';
         }
 
-        if($payment_mode == "stripe"){
-            return $this->stripeCheckout($totalAmount,$cartItems,$request);
+        if ($payment_mode == "stripe") {
+            return $this->stripeCheckout($totalAmount, $cartItems, $request);
+        }
+
+        if ($payment_mode == "wallet") {
+            return $this->processCheckoutWallet($totalAmount, $cartItems, $request);
         }
         return $form;
     }
 
 
-    private function stripeCheckout($totalAmount,$cartItems,$request) {
+    private function stripeCheckout($totalAmount, $cartItems, $request)
+    {
         Stripe::setApiKey(config('stripe.key'));
 
         $lineItems = $cartItems->map(function ($item) {
@@ -120,7 +127,7 @@ class OrderController extends Controller
                     'product_data' => [
                         'name' => $item->product->name,
                     ],
-                    'unit_amount' => $item->price * 100, 
+                    'unit_amount' => $item->price * 100,
                 ],
                 'quantity' => $item->quantity,
             ];
@@ -131,7 +138,7 @@ class OrderController extends Controller
         session([
             'checkout_data' => [
                 'cart_items' => $cartItems->toArray(),
-                'total_amount' => $totalAmount, 
+                'total_amount' => $totalAmount,
                 'merchant_ord_id' => $merchantOrdID,
                 'payment_method' => $request->payment_method,
                 // 'user_first_name' => $request->user_first_name,
@@ -194,14 +201,14 @@ class OrderController extends Controller
 
         // Verify Sign
         $sourceString = $paydibsConfig['merchant_password'] .
-                        $responseData['MerchantID'] .
-                        $responseData['MerchantPymtID'] .
-                        $responseData['PTxnID'] .
-                        $responseData['MerchantOrdID'] .
-                        $responseData['MerchantTxnAmt'] .
-                        $responseData['MerchantCurrCode'] .
-                        $responseData['PTxnStatus'] .
-                        $responseData['AuthCode'];
+            $responseData['MerchantID'] .
+            $responseData['MerchantPymtID'] .
+            $responseData['PTxnID'] .
+            $responseData['MerchantOrdID'] .
+            $responseData['MerchantTxnAmt'] .
+            $responseData['MerchantCurrCode'] .
+            $responseData['PTxnStatus'] .
+            $responseData['AuthCode'];
 
         $expectedSign = hash('sha512', $sourceString);
 
@@ -314,14 +321,14 @@ class OrderController extends Controller
 
         // Verify Sign
         $sourceString = $paydibsConfig['merchant_password'] .
-                        $responseData['MerchantID'] .
-                        $responseData['MerchantPymtID'] .
-                        $responseData['PTxnID'] .
-                        $responseData['MerchantOrdID'] .
-                        $responseData['MerchantTxnAmt'] .
-                        $responseData['MerchantCurrCode'] .
-                        $responseData['PTxnStatus'] .
-                        $responseData['AuthCode'];
+            $responseData['MerchantID'] .
+            $responseData['MerchantPymtID'] .
+            $responseData['PTxnID'] .
+            $responseData['MerchantOrdID'] .
+            $responseData['MerchantTxnAmt'] .
+            $responseData['MerchantCurrCode'] .
+            $responseData['PTxnStatus'] .
+            $responseData['AuthCode'];
 
         $expectedSign = hash('sha512', $sourceString);
 
@@ -531,37 +538,37 @@ class OrderController extends Controller
                         );
 
                         // if ($order->wasRecentlyCreated) {
-                            foreach ($cartItems as $item) {
-                                OrderItem::create([
-                                    'order_id' => $order->id,
-                                    'product_id' => $item['product_id'],
-                                    'product_variant_id' => $item['variant_id'],
-                                    'game_id' => $item['game_user_id'],
-                                    'quantity' => $item['quantity'],
-                                    'price' => $item['price'],
-                                    'delivery_method' => 'manual',
-                                ]);
-                            }
-
-                            OrderHistory::create([
+                        foreach ($cartItems as $item) {
+                            OrderItem::create([
                                 'order_id' => $order->id,
-                                'user_id' => $user ? $user->id : null,
-                                'status' => 'pending',
-                                'notes' => 'Order placed via Stripe webhook',
+                                'product_id' => $item['product_id'],
+                                'product_variant_id' => $item['variant_id'],
+                                'game_id' => $item['game_user_id'],
+                                'quantity' => $item['quantity'],
+                                'price' => $item['price'],
+                                'delivery_method' => 'manual',
                             ]);
+                        }
 
-                            Payment::create([
-                                'order_id' => $order->id,
-                                'amount' => $totalAmount,
-                                'payment_gateway' => 'stripe',
-                                'status' => 'completed',
-                                'transaction_id' => $session->payment_intent,
-                            ]);
+                        OrderHistory::create([
+                            'order_id' => $order->id,
+                            'user_id' => $user ? $user->id : null,
+                            'status' => 'pending',
+                            'notes' => 'Order placed via Stripe webhook',
+                        ]);
 
-                            if ($user) {
-                                $user->cartItems()->delete();
-                            }
-                            session()->forget('checkout_data');
+                        Payment::create([
+                            'order_id' => $order->id,
+                            'amount' => $totalAmount,
+                            'payment_gateway' => 'stripe',
+                            'status' => 'completed',
+                            'transaction_id' => $session->payment_intent,
+                        ]);
+
+                        if ($user) {
+                            $user->cartItems()->delete();
+                        }
+                        session()->forget('checkout_data');
                         // }
 
                         DB::commit();
@@ -583,5 +590,110 @@ class OrderController extends Controller
         } while (Order::where('unique_id', $id)->exists());
 
         return $id;
+    }
+
+    private function processCheckoutWallet($totalAmount, $cartItems, $request)
+    {
+        $user = auth()->user();
+        $cartTotal = $totalAmount;
+        $useWallet = $request->has('use_wallet');
+
+        $wallet = $user->wallet ?? Wallet::create(['user_id' => $user->id, 'balance' => $totalAmount]);
+        $walletBalance = $wallet ? $wallet->balance : 0;
+
+        $paidFromWallet = 0;
+        $remainingToPay = $cartTotal;
+
+        if ($walletBalance > 0) {
+            if ($walletBalance >= $cartTotal) {
+                $paidFromWallet = $cartTotal;
+                $remainingToPay = 0;
+            } else {
+                $paidFromWallet = $walletBalance;
+                $remainingToPay = $cartTotal - $walletBalance;
+            }
+
+
+
+            $wallet->transactions()->create([
+                'type' => 'debit',
+                'amount' => $paidFromWallet,
+                'payment_method' => 'wallet',
+                'description' => 'Used for order payment',
+                'status' => 'approved',
+            ]);
+            $user->wallet_balance -= $totalAmount;
+            $user->save();
+        }
+
+
+
+        // check
+
+        try {
+
+            DB::beginTransaction();
+
+            $user = auth()->user();
+
+            $orderNumber = 'ORD-' . strtoupper(Str::random(13));
+
+            $order = Order::create([
+                'unique_id' => $this->generateUniqueOrderId(),
+                'order_number' => $orderNumber,
+                'user_id' => $user ? $user->id : null,
+                'total_amount' => $totalAmount,
+                'payment_method' => 'wallet',
+                'status' => 'processing',
+            ]);
+
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'product_variant_id' => $item['variant_id'],
+                    'game_id' => $item['game_user_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'delivery_method' => 'manual',
+                ]);
+            }
+
+            OrderHistory::create([
+                'order_id' => $order->id,
+                'user_id' => $user ? $user->id : null,
+                'status' => 'pending',
+                'notes' => 'Order placed after successful Wallet payment',
+            ]);
+
+            Payment::create([
+                'order_id' => $order->id,
+                'amount' => $totalAmount,
+                'payment_gateway' => 'wallet',
+                'status' => 'completed'
+            ]);
+
+            if ($user) {
+                $user->cartItems()->delete();
+            }
+            session()->forget('checkout_data');
+
+            DB::commit();
+
+            return redirect()->route('front.home')->with('success', 'Order placed successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('front.cart')->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+
+        // Save order items...
+
+        // If any remaining, redirect to payment gateway (Stripe, etc.)
+        if ($remainingToPay > 0) {
+            // Redirect to payment gateway, pass $order->id
+            return redirect()->route('payment.gateway', ['order_id' => $order->id]);
+        }
+
+        return redirect()->route('order.success')->with('success', 'Order placed using wallet!');
     }
 }

@@ -26,12 +26,12 @@
                                     <div class="range-items">
                                         <div class="price-input d-flex">
                                             <div class="field">
-                                                <span>$</span>
+                                                <span>{{ config('app.currency') }} </span>
                                                 <input type="number" class="input-min" value="{{ $minPrice }}">
                                             </div>
                                             <div class="separators">-</div>
                                             <div class="field">
-                                                <span>$</span>
+                                                <span>{{ config('app.currency') }} </span>
                                                 <input type="number" class="input-max" value="{{ $maxPrice }}">
                                             </div>
                                         </div>

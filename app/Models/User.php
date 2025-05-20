@@ -26,7 +26,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'role_id',
         'avatar',
         'is_suspended',
-        'email_verified_at'
+        'email_verified_at',
+        'google_id',
+        'wallet_balance'
     ];
 
     /**
@@ -49,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-     /**
+    /**
      * Get the role that owns the user.
      */
     public function role()
@@ -59,7 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function cartItems()
     {
-        return $this->hasMany(Cart::class,'user_id','id');
+        return $this->hasMany(Cart::class, 'user_id', 'id');
     }
 
     /**

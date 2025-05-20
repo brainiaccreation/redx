@@ -41,7 +41,7 @@
                             <div class="account-item">
                                 <div class="google-image">
                                     <img src="{{ URL('front/assets') }}/img/google.png" alt="img">
-                                    <h6>Sign in with google</h6>
+                                    {{-- <h6>Sign in with google</h6> --}}
                                 </div>
                                 <div class="facebook">
                                     <i class="fa-brands fa-facebook"></i>

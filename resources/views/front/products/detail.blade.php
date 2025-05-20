@@ -88,10 +88,12 @@
                                         <div class="col-6 col-md-6 card-container">
                                             <div class="pricing-card" data-id="{{ $variant->id }}"
                                                 data-name="{{ $variant->name }}" data-sku="{{ $variant->sku }}"
-                                                data-price="{{ $variant->price }}"
+                                                data-price="{{ calculatedPrice($variant->price) }}"
                                                 data-product-id="{{ $variant->product_id }}">
                                                 <div class="lattice-count">{{ $variant->name }}</div>
-                                                <div class="price">RM {{ $variant->price }}</div>
+                                                <div class="price">{{ config('app.currency') }}
+                                                    {{ calculatedPrice($variant->price) }}
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -137,7 +139,7 @@
                             </div>
                             {{-- <h6 class="details-info"><span>SKU:</span> <a href="product-details.html">124224</a></h6> --}}
                             <h6 class="details-info"><span>Categories:</span> <a
-                                    href="product-details.html">{{ $product->category->name }}</a></h6>
+                                    href="javascript:void(0);">{{ $product->category->name }}</a></h6>
                             {{-- <h6 class="details-info style-2"><span>Tags:</span> <a href="product-details.html">
                                     <b>accessories</b> <b>business</b></a></h6> --}}
                         </div>
@@ -324,9 +326,18 @@
                                             href="{{ route('product.detail', $relatedProduct->slug) }}">{{ $relatedProduct->name }}</a>
                                     </h4>
                                     <p class="product-reviews"><span class="product-stars">★★★★★</span> 0 Reivews</p>
-                                    <span class="product-price">{{ product_price_range($relatedProduct) }}</span>
-                                    {{-- <span
-                                        class="product-cross-price">$19.00</span> --}}
+                                    @if (auth()->check() && auth()->user()->account_type === 'reseller')
+                                        <span class="product-price">
+                                            {{ product_price_range($relatedProduct) }}
+                                        </span>
+                                        <span class="product-cross-price">
+                                            {{ normal_product_price_range($relatedProduct) }}
+                                        </span>
+                                    @else
+                                        <span class="product-price">
+                                            {{ normal_product_price_range($relatedProduct) }}
+                                        </span>
+                                    @endif
                                 </div>
                                 {{-- <div class="product-btn">
                                     <a href="{{ route('front.cart') }}" class="custom-rdxbtnp">Add To Cart</a>

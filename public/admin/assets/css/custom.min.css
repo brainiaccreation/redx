@@ -382,3 +382,9 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before, table.dataT
  .bg-danger {
     background-color: rgb(255 0 0) !important;
 }
+.bg-warning-subtle {
+    background-color: #f7e44ba3 !important;
+}
+.text-warning {
+    color: rgb(192 138 46) !important;
+}

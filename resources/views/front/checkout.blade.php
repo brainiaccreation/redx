@@ -36,7 +36,8 @@
                                                 <div class="col-lg-12">
                                                     <div class="input-single">
                                                         <span>Country*</span>
-                                                        <input name="country" id="country" placeholder="Country">
+                                                        <input name="country" id="country" placeholder="Country"
+                                                            value="{{ auth()->check() ? auth()->user()->country : '' }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12">
@@ -112,7 +113,7 @@
                                         <div class="checkout-item d-flex align-items-center justify-content-between">
                                             <p>{{ $cart->product->name }} - {{ $cart->product_variant->name }}</p>
                                             <p>{{ config('app.currency') }}
-                                                {{ number_format($cart->price * $cart->quantity, 2) }}</p>
+                                                {{ calculatedPrice($cart->price * $cart->quantity) }}</p>
                                         </div>
                                     @endforeach
                                     {{-- <div class="checkout-item d-flex justify-content-between">
@@ -143,7 +144,7 @@
                                 </div> --}}
                                     <div class="checkout-item d-flex align-items-center justify-content-between">
                                         <p>Total</p>
-                                        <p>{{ config('app.currency') }} {{ number_format($total, 2) }}</p>
+                                        <p>{{ config('app.currency') }} {{ calculatedPrice($total) }}</p>
                                     </div>
                                     <div class="checkout-item-2">
                                         <div class="form-check-2 d-flex align-items-center from-customradio-2">
@@ -158,6 +159,15 @@
                                             payment reference. Your order will not be shipped until the funds have cleared
                                             in our account.
                                         </p>
+                                        @if (auth()->user()->wallet_balance && auth()->user()->wallet_balance > 0)
+                                            <div class="form-check-3 d-flex align-items-center from-customradio-2 mt-3">
+                                                <input class="form-check-input" type="radio" value="wallet"
+                                                    name="payment_mode" id="payment_mode12223">
+                                                <label class="form-check-label" for="payment_mode12223">
+                                                    Wallet
+                                                </label>
+                                            </div>
+                                        @endif
                                         <div class="form-check-3 d-flex align-items-center from-customradio-2 mt-3">
                                             <input class="form-check-input" type="radio" value="stripe"
                                                 name="payment_mode" id="payment_mode12224">
