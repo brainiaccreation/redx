@@ -196,17 +196,18 @@
                                             Home
                                         </a>
                                     </li>
-                                    <li class="has-dropdown {{ request()->routeIs('front.about') ? 'active' : '' }}">
-                                        <a href="{{ route('front.about') }}">
-                                            About Us
-                                        </a>
-                                    </li>
+
                                     <li class="has-dropdown  {{ request()->routeIs('front.shop') ? 'active' : '' }}">
                                         <a href="{{ route('front.shop') }}">
                                             Shop
                                         </a>
                                     </li>
-                                    <li class="has-dropdown">
+                                    <li class="has-dropdown {{ request()->routeIs('front.about') ? 'active' : '' }}">
+                                        <a href="{{ route('front.about') }}">
+                                            About Us
+                                        </a>
+                                    </li>
+                                    {{-- <li class="has-dropdown">
                                         <a href="#">
                                             Services
                                         </a>
@@ -220,7 +221,7 @@
                                         <a href="#">
                                             Blog
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li
                                         class="has-dropdown {{ request()->routeIs('front.contact') ? 'active' : '' }}">
                                         <a href="{{ route('front.contact') }}">Contact Us</a>
@@ -262,9 +263,11 @@
                                         <img src="{{ $topBarCart->product->featured_image ? asset($topBarCart->product->featured_image) : URL('front/assets/img/cart/03.jpg') }}"
                                             alt="image">
                                         <div class="cart-product">
-                                            <a href="#">{{ $topBarCart->product->name }} -
+                                            <a href="{{ route('product.detail', $topBarCart->product->slug) }}">{{ $topBarCart->product->name }}
+                                                -
                                                 {{ $topBarCart->product_variant->name }}</a>
-                                            <span>${{ number_format($topBarCart->price * $topBarCart->quantity, 2) }}</span>
+                                            <span>{{ config('app.currency') }}
+                                                {{ calculatedPrice($topBarCart->price * $topBarCart->quantity) }}</span>
                                         </div>
                                     </li>
                                 </ul>
@@ -273,7 +276,7 @@
                             @if (!empty(topBarCarts()) && count(topBarCarts()) > 0)
                                 <div class="shopping-items">
                                     <span>Total :</span>
-                                    <span>{{ config('app.currency') }} {{ number_format($totalPrice, 2) }}</span>
+                                    <span>{{ config('app.currency') }} {{ calculatedPrice($totalPrice) }}</span>
                                 </div>
                             @else
                                 <div class="text-center mt-3">

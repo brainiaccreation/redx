@@ -45,7 +45,7 @@
                                         </h1>
                                         <div class="hero-icon-item">
                                             <div class="herobtn">
-                                                <a href="contact.html" class="custom-rdxbtn">Our Games</a>
+                                                <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
                                             </div>
                                             <div class="icon-item style-2">
                                                 <div class="content">
@@ -90,7 +90,7 @@
                                         </h1>
                                         <div class="hero-icon-item">
                                             <div class="herobtn">
-                                                <a href="contact.html" class="custom-rdxbtn">Our Games</a>
+                                                <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
                                             </div>
                                             <div class="icon-item style-2">
                                                 <div class="content">
@@ -122,7 +122,7 @@
                     </div>
                     <div class="hero-icon-item d-flex gap-4 ms-5">
                         <div class="herobtn">
-                            <a href="contact.html" class="custom-rdxbtnb">View All Products</a>
+                            <a href="{{ route('front.shop') }}" class="custom-rdxbtnb">View All Products</a>
                         </div>
                         <div class="icon-item style-2">
                             <div class="content">
@@ -383,7 +383,7 @@
                                         gaming events, conferences, and conventions. and connect with each other.</p>
                                     <div class="btn-group custom-anim-top wow animated" data-wow-duration="1.3s"
                                         data-wow-delay="0.2s">
-                                        <a href="contact.html" class="custom-rdxbtn">Our Games</a>
+                                        <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
                                     </div>
                                 </div>
                             </div>
@@ -462,7 +462,7 @@
                                         gaming events, conferences, and conventions. and connect with each other.</p>
                                     <div class="btn-group custom-anim-top wow animated" data-wow-duration="1.3s"
                                         data-wow-delay="0.2s">
-                                        <a href="contact.html" class="custom-rdxbtn">Our Games</a>
+                                        <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
                                     </div>
                                 </div>
                             </div>
@@ -541,7 +541,7 @@
                                         gaming events, conferences, and conventions. and connect with each other.</p>
                                     <div class="btn-group custom-anim-top wow animated" data-wow-duration="1.3s"
                                         data-wow-delay="0.2s">
-                                        <a href="contact.html" class="custom-rdxbtn">Our Games</a>
+                                        <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
                                     </div>
                                 </div>
                             </div>

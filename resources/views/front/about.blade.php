@@ -93,8 +93,8 @@
                                     ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
                                     labore et dolore magna. dolore magna
                                 </p>
-                                <a href="about.html" class="theme-btn wow fadeInUp" data-wow-delay=".7s">More about us <i
-                                        class="fa-regular fa-arrow-right"></i></a>
+                                <a href="{{ route('front.about') }}" class="theme-btn wow fadeInUp"
+                                    data-wow-delay=".7s">More about us <i class="fa-regular fa-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>

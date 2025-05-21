@@ -3,39 +3,98 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\OrderItem;
 use App\Models\OrderHistory;
 use App\Models\Payment;
+use App\Models\Wallet;
 use Illuminate\Support\Str;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 
 class OrderController extends Controller
 {
-   public function checkout()
+    public function checkout()
     {
-        $cartItems = auth()->user()->cartItems()->with('product', 'product_variant')->get();
-        $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        $cartItems = [];
+        $total = 0;
+
+        if (auth()->check()) {
+            $cartItems = auth()->user()
+                ->cartItems()
+                ->with(['product', 'product_variant'])
+                ->get();
+
+            $total = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        } else {
+            $sessionCart = session('cart', []);
+
+            foreach ($sessionCart as $item) {
+                $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+
+                if ($variant) {
+                    $subtotal = $item['quantity'] * $item['price'];
+                    $total += $subtotal;
+
+                    $cartItems[] = (object) [
+                        'product' => $variant->product,
+                        'product_variant' => $variant,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                    ];
+                }
+            }
+        }
 
         return view('front.checkout', compact('cartItems', 'total'));
     }
+
     public function processCheckout(Request $request)
     {
         $payment_mode = $request->payment_mode;
         $user = auth()->user();
-        $cartItems = $user->cartItems()->with('product', 'product_variant')->get();
 
-        if ($cartItems->isEmpty()) {
-            return redirect()->route('cart')->with('error', 'Your cart is empty!');
+        $cartItems = [];
+        $totalAmount = 0;
+
+        if ($user) {
+            $cartItems = $user->cartItems()->with('product', 'product_variant')->get();
+
+            if ($cartItems->isEmpty()) {
+                return redirect()->route('checkout')->with('error', 'Your cart is empty!');
+            }
+
+            $totalAmount = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        } else {
+            $sessionCart = session('cart', []);
+
+            if (empty($sessionCart)) {
+                return redirect()->route('checkout')->with('error', 'Your cart is empty!');
+            }
+
+            foreach ($sessionCart as $item) {
+                $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+                if ($variant) {
+                    $subtotal = $item['price'] * $item['quantity'];
+                    $totalAmount += $subtotal;
+
+                    $cartItems[] = (object) [
+                        'product' => $variant->product,
+                        'product_variant' => $variant,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                    ];
+                }
+            }
+
+            $cartItems = collect($cartItems);
         }
 
-        // Calculate total amount
-        $totalAmount = $cartItems->sum(fn($item) => $item->price * $item->quantity);
-        if($payment_mode == "paydibs"){
-            // Paydibs configuration (replace with your actual Paydibs credentials)
+        if ($payment_mode === "paydibs") {
             $paydibsConfig = [
                 'merchant_id' => config('paydibs.merchant_id'),
                 'merchant_password' => config('paydibs.merchant_password'),
@@ -44,56 +103,59 @@ class OrderController extends Controller
                 'callback_url' => config('paydibs.callback_url'),
             ];
 
-            // Generate unique IDs
             $merchantPymtID = 'PYM-' . strtoupper(uniqid());
             $merchantOrdID = 'ORD-' . strtoupper(uniqid());
 
-            // Prepare Paydibs PAY request data
             $paydibsData = [
                 'TxnType' => 'PAY',
                 'MerchantID' => $paydibsConfig['merchant_id'],
                 'MerchantPymtID' => $merchantPymtID,
                 'MerchantOrdID' => $merchantOrdID,
-                'MerchantOrdDesc' => 'Order payment for ' . $user->name.' '.$user->last_name,
+                'MerchantOrdDesc' => 'Order payment',
                 'MerchantTxnAmt' => number_format($totalAmount, 2, '.', ''),
-                'MerchantCurrCode' => 'MYR', 
+                'MerchantCurrCode' => 'MYR',
                 'MerchantRURL' => str_replace('&', ';', $paydibsConfig['return_url']),
                 'CustIP' => $request->ip(),
-                'CustName' => $user->name ?? 'Customer',
-                'CustEmail' => $user->email ?? 'customer@example.com',
-                'CustPhone' => $user->phone ?? '60123456789',
+                'CustName' => $user->name ?? $request->name,
+                'CustEmail' => $user->email ?? $request->email,
+                'CustPhone' => $user->phone ?? $request->phone,
                 'MerchantCallbackURL' => str_replace('&', ';', $paydibsConfig['callback_url']),
                 'MerchantName' => config('app.name'),
                 'PageTimeout' => '300',
             ];
 
-            // Generate Sign
             $sourceString = $paydibsConfig['merchant_password'] .
-                            $paydibsData['TxnType'] .
-                            $paydibsData['MerchantID'] .
-                            $paydibsData['MerchantPymtID'] .
-                            $paydibsData['MerchantOrdID'] .
-                            $paydibsData['MerchantRURL'] .
-                            $paydibsData['MerchantTxnAmt'] .
-                            $paydibsData['MerchantCurrCode'] .
-                            $paydibsData['CustIP'] .
-                            $paydibsData['PageTimeout'] .
-                            $paydibsData['MerchantCallbackURL'];
+                $paydibsData['TxnType'] .
+                $paydibsData['MerchantID'] .
+                $paydibsData['MerchantPymtID'] .
+                $paydibsData['MerchantOrdID'] .
+                $paydibsData['MerchantRURL'] .
+                $paydibsData['MerchantTxnAmt'] .
+                $paydibsData['MerchantCurrCode'] .
+                $paydibsData['CustIP'] .
+                $paydibsData['PageTimeout'] .
+                $paydibsData['MerchantCallbackURL'];
 
             $paydibsData['Sign'] = hash('sha512', $sourceString);
 
-            // Store temporary checkout data in session to use after payment confirmation
             session([
                 'paydibs_checkout_data' => [
-                    'cart_items' => $cartItems->toArray(),
+                    'cart_items' => $cartItems,
                     'total_amount' => $totalAmount,
                     'merchant_pymt_id' => $merchantPymtID,
                     'merchant_ord_id' => $merchantOrdID,
-                    'payment_method' => $request->payment_method,
+                    'payment_method' => $payment_mode,
+                    'name' => $request->name,
+                    'last_name' => $request->last_name,
+                    'country' => $request->country,
+                    'address' => $request->address,
+                    'address2' => $request->address2,
+                    'towncity' => $request->towncity,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
                 ]
             ]);
 
-            // Generate Paydibs payment form
             $form = '<form name="frmPaydibs" method="post" action="' . $paydibsConfig['payment_url'] . '">';
             foreach ($paydibsData as $key => $value) {
                 $form .= '<input type="hidden" name="' . $key . '" value="' . htmlspecialchars($value) . '">';
@@ -101,16 +163,25 @@ class OrderController extends Controller
             $form .= '<input type="submit" value="Pay Now" style="display:none;">';
             $form .= '</form>';
             $form .= '<script>document.frmPaydibs.submit();</script>';
+
+            return $form;
         }
 
-        if($payment_mode == "stripe"){
-            return $this->stripeCheckout($totalAmount,$cartItems,$request);
+        if ($payment_mode === "stripe") {
+            return $this->stripeCheckout($totalAmount, $cartItems, $request);
         }
-        return $form;
+
+        if ($payment_mode === "wallet") {
+            return $this->processCheckoutWallet($totalAmount, $cartItems, $request);
+        }
+
+        return redirect()->route('checkout')->with('error', 'Invalid payment method selected.');
     }
 
 
-    private function stripeCheckout($totalAmount,$cartItems,$request) {
+
+    private function stripeCheckout($totalAmount, $cartItems, $request)
+    {
         Stripe::setApiKey(config('stripe.key'));
 
         $lineItems = $cartItems->map(function ($item) {
@@ -120,7 +191,7 @@ class OrderController extends Controller
                     'product_data' => [
                         'name' => $item->product->name,
                     ],
-                    'unit_amount' => $item->price * 100, 
+                    'unit_amount' => $item->price * 100,
                 ],
                 'quantity' => $item->quantity,
             ];
@@ -131,10 +202,12 @@ class OrderController extends Controller
         session([
             'checkout_data' => [
                 'cart_items' => $cartItems->toArray(),
-                'total_amount' => $totalAmount, 
+                'total_amount' => $totalAmount,
                 'merchant_ord_id' => $merchantOrdID,
                 'payment_method' => $request->payment_method,
                 // 'user_first_name' => $request->user_first_name,
+                'name' => $request->name,
+                'last_name' => $request->last_name,
                 'country' => $request->country,
                 'address' => $request->address,
                 'address2' => $request->address2,
@@ -150,7 +223,7 @@ class OrderController extends Controller
                 'line_items' => $lineItems,
                 'mode' => 'payment',
                 'success_url' => route('payment.success') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => route('front.cart'),
+                'cancel_url' => route('checkout'),
                 'customer_email' => $request->email,
                 'billing_address_collection' => 'required',
                 'metadata' => [
@@ -188,36 +261,36 @@ class OrderController extends Controller
         // Validate response
         foreach ($expectedFields as $field) {
             if (!isset($responseData[$field])) {
-                return redirect()->route('front.cart')->with('error', 'Invalid payment response from Paydibs.');
+                return redirect()->route('checkout')->with('error', 'Invalid payment response from Paydibs.');
             }
         }
 
         // Verify Sign
         $sourceString = $paydibsConfig['merchant_password'] .
-                        $responseData['MerchantID'] .
-                        $responseData['MerchantPymtID'] .
-                        $responseData['PTxnID'] .
-                        $responseData['MerchantOrdID'] .
-                        $responseData['MerchantTxnAmt'] .
-                        $responseData['MerchantCurrCode'] .
-                        $responseData['PTxnStatus'] .
-                        $responseData['AuthCode'];
+            $responseData['MerchantID'] .
+            $responseData['MerchantPymtID'] .
+            $responseData['PTxnID'] .
+            $responseData['MerchantOrdID'] .
+            $responseData['MerchantTxnAmt'] .
+            $responseData['MerchantCurrCode'] .
+            $responseData['PTxnStatus'] .
+            $responseData['AuthCode'];
 
         $expectedSign = hash('sha512', $sourceString);
 
         if ($expectedSign !== $responseData['Sign']) {
-            return redirect()->route('front.cart')->with('error', 'Invalid payment signature from Paydibs.');
+            return redirect()->route('checkout')->with('error', 'Invalid payment signature from Paydibs.');
         }
 
         // Check if payment was successful (PTxnStatus '0' indicates success)
         if ($responseData['PTxnStatus'] !== '0') {
-            return redirect()->route('front.cart')->with('error', 'Payment failed with status: ' . $responseData['PTxnStatus']);
+            return redirect()->route('checkout')->with('error', 'Payment failed with status: ' . $responseData['PTxnStatus']);
         }
 
         // Retrieve checkout data from session
         $checkoutData = session('paydibs_checkout_data');
         if (!$checkoutData || $checkoutData['merchant_pymt_id'] !== $responseData['MerchantPymtID']) {
-            return redirect()->route('front.cart')->with('error', 'Invalid checkout session data.');
+            return redirect()->route('checkout')->with('error', 'Invalid checkout session data.');
         }
 
         // Start database transaction
@@ -238,15 +311,28 @@ class OrderController extends Controller
                 'status' => 'processing',
             ]);
 
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'user_id' => $user ? $user->id : null,
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'towncity' => $request->towncity,
+                'country' => $request->country,
+                'address' => $request->address,
+                'address2' => $request->address2
+            ]);
+
             // Create order items
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
-                    'product_variant_id' => $item['variant_id'],
-                    'game_id' => $item['game_user_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
+                    'product_id' => $item['product_id'] ?? $item->product_id,
+                    'product_variant_id' => $item['variant_id'] ?? $item->variant_id,
+                    'game_id' => $item['game_user_id'] ?? $item->game_user_id,
+                    'quantity' => $item['quantity'] ?? $item->quantity,
+                    'price' => $item['price'] ?? $item->price,
                     'delivery_method' => 'manual',
                 ]);
             }
@@ -280,7 +366,7 @@ class OrderController extends Controller
             return redirect()->route('front.home')->with('success', 'Order placed successfully!');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->route('front.cart')->with('error', 'Something went wrong. Please try again.');
+            return redirect()->route('checkout')->with('error', 'Something went wrong. Please try again.');
         }
     }
 
@@ -314,14 +400,14 @@ class OrderController extends Controller
 
         // Verify Sign
         $sourceString = $paydibsConfig['merchant_password'] .
-                        $responseData['MerchantID'] .
-                        $responseData['MerchantPymtID'] .
-                        $responseData['PTxnID'] .
-                        $responseData['MerchantOrdID'] .
-                        $responseData['MerchantTxnAmt'] .
-                        $responseData['MerchantCurrCode'] .
-                        $responseData['PTxnStatus'] .
-                        $responseData['AuthCode'];
+            $responseData['MerchantID'] .
+            $responseData['MerchantPymtID'] .
+            $responseData['PTxnID'] .
+            $responseData['MerchantOrdID'] .
+            $responseData['MerchantTxnAmt'] .
+            $responseData['MerchantCurrCode'] .
+            $responseData['PTxnStatus'] .
+            $responseData['AuthCode'];
 
         $expectedSign = hash('sha512', $sourceString);
 
@@ -402,18 +488,18 @@ class OrderController extends Controller
 
         $sessionId = $request->query('session_id');
         if (!$sessionId) {
-            return redirect()->route('front.cart')->with('error', 'Invalid payment session.');
+            return redirect()->route('checkout')->with('error', 'Invalid payment session.');
         }
 
         try {
             $session = Session::retrieve($sessionId);
             if ($session->payment_status !== 'paid') {
-                return redirect()->route('front.cart')->with('error', 'Payment not completed.');
+                return redirect()->route('checkout')->with('error', 'Payment not completed.');
             }
 
             $checkoutData = session('checkout_data');
             if (!$checkoutData || $checkoutData['merchant_ord_id'] !== $session->metadata->merchant_ord_id) {
-                return redirect()->route('front.cart')->with('error', 'Invalid checkout session data.');
+                return redirect()->route('checkout')->with('error', 'Invalid checkout session data.');
             }
 
             DB::beginTransaction();
@@ -442,18 +528,36 @@ class OrderController extends Controller
                 'payment_method' => 'stripe',
                 'status' => 'processing',
             ]);
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'user_id' => $user ? $user->id : null,
+                'name' => $checkoutData['name'],
+                'last_name' => $checkoutData['last_name'],
+                'email' => $checkoutData['email'],
+                'phone' => $checkoutData['phone'],
+                'towncity' => $checkoutData['towncity'],
+                'country' => $checkoutData['country'],
+                'address' => $checkoutData['address'],
+                'address2' => $checkoutData['address2'],
+            ]);
+
+
+            $cartItems = collect($cartItems)->map(function ($item) {
+                return is_array($item) ? (object) $item : $item;
+            });
 
             foreach ($cartItems as $item) {
                 OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
-                    'product_variant_id' => $item['variant_id'],
-                    'game_id' => $item['game_user_id'],
-                    'quantity' => $item['quantity'],
-                    'price' => $item['price'],
-                    'delivery_method' => 'manual',
+                    'order_id'           => $order->id,
+                    'product_id'         => $item->product->id ?? $item->product_id,
+                    'product_variant_id' => $item->product_variant->id ?? $item->variant_id,
+                    'game_id'            => $item->game_user_id ?? null,
+                    'quantity'           => $item->quantity,
+                    'price'              => $item->price,
+                    'delivery_method'    => 'manual',
                 ]);
             }
+
 
             OrderHistory::create([
                 'order_id' => $order->id,
@@ -472,6 +576,8 @@ class OrderController extends Controller
 
             if ($user) {
                 $user->cartItems()->delete();
+            } else {
+                session()->forget('cart');
             }
             session()->forget('checkout_data');
 
@@ -480,7 +586,7 @@ class OrderController extends Controller
             return redirect()->route('front.home')->with('success', 'Order placed successfully!');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->route('front.cart')->with('error', 'Something went wrong: ' . $e->getMessage());
+            return redirect()->route('checkout')->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
     public function handleWebhook(Request $request)
@@ -531,37 +637,37 @@ class OrderController extends Controller
                         );
 
                         // if ($order->wasRecentlyCreated) {
-                            foreach ($cartItems as $item) {
-                                OrderItem::create([
-                                    'order_id' => $order->id,
-                                    'product_id' => $item['product_id'],
-                                    'product_variant_id' => $item['variant_id'],
-                                    'game_id' => $item['game_user_id'],
-                                    'quantity' => $item['quantity'],
-                                    'price' => $item['price'],
-                                    'delivery_method' => 'manual',
-                                ]);
-                            }
-
-                            OrderHistory::create([
+                        foreach ($cartItems as $item) {
+                            OrderItem::create([
                                 'order_id' => $order->id,
-                                'user_id' => $user ? $user->id : null,
-                                'status' => 'pending',
-                                'notes' => 'Order placed via Stripe webhook',
+                                'product_id' => $item['product_id'],
+                                'product_variant_id' => $item['variant_id'],
+                                'game_id' => $item['game_user_id'],
+                                'quantity' => $item['quantity'],
+                                'price' => $item['price'],
+                                'delivery_method' => 'manual',
                             ]);
+                        }
 
-                            Payment::create([
-                                'order_id' => $order->id,
-                                'amount' => $totalAmount,
-                                'payment_gateway' => 'stripe',
-                                'status' => 'completed',
-                                'transaction_id' => $session->payment_intent,
-                            ]);
+                        OrderHistory::create([
+                            'order_id' => $order->id,
+                            'user_id' => $user ? $user->id : null,
+                            'status' => 'pending',
+                            'notes' => 'Order placed via Stripe webhook',
+                        ]);
 
-                            if ($user) {
-                                $user->cartItems()->delete();
-                            }
-                            session()->forget('checkout_data');
+                        Payment::create([
+                            'order_id' => $order->id,
+                            'amount' => $totalAmount,
+                            'payment_gateway' => 'stripe',
+                            'status' => 'completed',
+                            'transaction_id' => $session->payment_intent,
+                        ]);
+
+                        if ($user) {
+                            $user->cartItems()->delete();
+                        }
+                        session()->forget('checkout_data');
                         // }
 
                         DB::commit();
@@ -583,5 +689,123 @@ class OrderController extends Controller
         } while (Order::where('unique_id', $id)->exists());
 
         return $id;
+    }
+
+    private function processCheckoutWallet($totalAmount, $cartItems, $request)
+    {
+        $user = auth()->user();
+        $cartTotal = $totalAmount;
+        $useWallet = $request->has('use_wallet');
+
+        $wallet = $user->wallet ?? Wallet::create(['user_id' => $user->id, 'balance' => $totalAmount]);
+        $walletBalance = $wallet ? $wallet->balance : 0;
+
+        $paidFromWallet = 0;
+        $remainingToPay = $cartTotal;
+
+        if ($walletBalance > 0) {
+            if ($walletBalance >= $cartTotal) {
+                $paidFromWallet = $cartTotal;
+                $remainingToPay = 0;
+            } else {
+                $paidFromWallet = $walletBalance;
+                $remainingToPay = $cartTotal - $walletBalance;
+            }
+
+
+
+            $wallet->transactions()->create([
+                'type' => 'debit',
+                'amount' => $paidFromWallet,
+                'payment_method' => 'wallet',
+                'description' => 'Used for order payment',
+                'status' => 'approved',
+            ]);
+            $user->wallet_balance -= $totalAmount;
+            $user->save();
+        }
+
+
+
+        // check
+
+        try {
+
+            DB::beginTransaction();
+
+            $user = auth()->user();
+
+            $orderNumber = 'ORD-' . strtoupper(Str::random(13));
+
+            $order = Order::create([
+                'unique_id' => $this->generateUniqueOrderId(),
+                'order_number' => $orderNumber,
+                'user_id' => $user ? $user->id : null,
+                'total_amount' => $totalAmount,
+                'payment_method' => 'wallet',
+                'status' => 'processing',
+            ]);
+
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'user_id' => $user ? $user->id : null,
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'towncity' => $request->towncity,
+                'country' => $request->country,
+                'address' => $request->address,
+                'address2' => $request->address2
+            ]);
+
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'product_variant_id' => $item['variant_id'],
+                    'game_id' => $item['game_user_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'delivery_method' => 'manual',
+                ]);
+            }
+
+            OrderHistory::create([
+                'order_id' => $order->id,
+                'user_id' => $user ? $user->id : null,
+                'status' => 'pending',
+                'notes' => 'Order placed after successful Wallet payment',
+            ]);
+
+            Payment::create([
+                'order_id' => $order->id,
+                'amount' => $totalAmount,
+                'payment_gateway' => 'wallet',
+                'status' => 'completed'
+            ]);
+
+            if ($user) {
+                $user->cartItems()->delete();
+            }
+            session()->forget('checkout_data');
+
+            DB::commit();
+
+            return redirect()->route('front.home')->with('success', 'Order placed successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('checkout')->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+
+        // Save order items...
+
+        // If any remaining, redirect to payment gateway (Stripe, etc.)
+        if ($remainingToPay > 0) {
+            // Redirect to payment gateway, pass $order->id
+            return redirect()->route('payment.gateway', ['order_id' => $order->id]);
+        }
+
+        return redirect()->route('order.success')->with('success', 'Order placed using wallet!');
     }
 }

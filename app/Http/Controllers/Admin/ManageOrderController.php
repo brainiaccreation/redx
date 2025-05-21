@@ -8,27 +8,28 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderHistory;
 use Yajra\DataTables\Facades\DataTables;
+
 class ManageOrderController extends Controller
 {
-    public function list() {
+    public function list()
+    {
         return view('admin.orders.list');
     }
     public function get(Request $request)
     {
         if ($request->ajax()) {
-            $orders = Order::with(['user']);
+            $orders = Order::with(['user'])->orderBy('created_at', 'desc');
 
             return DataTables::of($orders)
                 ->addIndexColumn()
                 ->addColumn('order_id', function ($order) {
-                    return '<a href="'.route('admin.order.details',$order->unique_id).'">'.$order->order_number.'</a>';
-
+                    return '<a href="' . route('admin.order.details', $order->unique_id) . '">' . $order->order_number . '</a>';
                 })
                 ->addColumn('customer', function ($order) {
-                    return $order->user ? $order->user->name : 'N/A';
+                    return $order->user ? $order->user->name : $order->order_detail->name;
                 })
                 ->addColumn('order_date', function ($order) {
-                    return \Carbon\Carbon::parse($order->created_at)->format('d M, Y h:i A');
+                    return runTimeDateFormat($order->created_at);
                 })
                 ->addColumn('status', function ($order) {
                     $statusClasses = [
@@ -39,13 +40,13 @@ class ManageOrderController extends Controller
                         'cancelled'  => 'badge bg-secondary-subtle text-secondary fw-medium',
                     ];
                     $badgeClass = $statusClasses[$order->status] ?? 'badge bg-primary-subtle text-primary';
-                    return '<h5><span class="'.$badgeClass.'">'.ucfirst($order->status).'</span></h5>';
+                    return '<h5><span class="' . $badgeClass . '">' . ucfirst($order->status) . '</span></h5>';
                 })
                 ->addColumn('payment_method', function ($order) {
                     return ucfirst($order->payment_method);
                 })
                 ->addColumn('total_amount', function ($order) {
-                    return number_format($order->total_amount,2);
+                    return number_format($order->total_amount, 2);
                 })
                 ->addColumn('action', function ($order) {
                     return '
@@ -64,10 +65,11 @@ class ManageOrderController extends Controller
         }
     }
 
-    public function detail($unique_id) {
-        $order = Order::where('unique_id',$unique_id)->first();
-        if($order){
-            $order_items = OrderItem::where('order_id',$order->id)->get();
+    public function detail($unique_id)
+    {
+        $order = Order::where('unique_id', $unique_id)->first();
+        if ($order) {
+            $order_items = OrderItem::where('order_id', $order->id)->get();
             $status = $order->status;
             $statusClasses = [
                 'pending'    => 'badge bg-warning-subtle text-warning fw-medium',
@@ -77,17 +79,17 @@ class ManageOrderController extends Controller
                 'cancelled'  => 'badge bg-secondary-subtle text-secondary fw-medium',
             ];
             $badgeClass = $statusClasses[$order->status] ?? 'badge bg-primary-subtle text-primary';
-           
         }
-        return view('admin.orders.detail',compact('order','order_items','badgeClass','status'));
+        return view('admin.orders.detail', compact('order', 'order_items', 'badgeClass', 'status'));
     }
 
-    public function status($id, Request $request) {
+    public function status($id, Request $request)
+    {
         $order = Order::find($id);
-        if($order->status === $request->status){
+        if ($order->status === $request->status) {
             return redirect()->back();
         }
-        if($order){
+        if ($order) {
             $order->status = $request->status;
             $order->update();
             $statusMessages = [
@@ -105,7 +107,6 @@ class ManageOrderController extends Controller
                 'notes' => $historyText,
             ]);
         }
-            return redirect()->back()->with('success','Request has been completed.');
-        
+        return redirect()->back()->with('success', 'Request has been completed.');
     }
 }

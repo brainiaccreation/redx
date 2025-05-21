@@ -21,11 +21,12 @@ class CartController extends Controller
             Cart::updateOrCreate(
                 [
                     'user_id' => Auth::id(),
-                    'variant_id' => $variantId
+                    'variant_id' => $variantId,
+                    'game_user_id' => $game_user_id
                 ],
                 [
                     'product_id' => $productId,
-                    'quantity' => DB::raw('quantity + ' . $quantity),
+                    'quantity' =>  $quantity,
                     'price' => $price,
                     'game_user_id' => $game_user_id,
                 ]
@@ -65,15 +66,39 @@ class CartController extends Controller
 
     public function showCart()
     {
+        $cartItems = [];
         $total = 0;
+
         if (Auth::check()) {
-            $cartItems = Cart::where('user_id', Auth::id())->get();
+            $cartItems = Cart::with(['product', 'product_variant'])
+                ->where('user_id', Auth::id())
+                ->get();
+
+            foreach ($cartItems as $item) {
+                $total += $item->quantity * $item->price;
+            }
         } else {
-            $cartItems = session('cart', []);
+            $sessionCart = session('cart', []);
+            foreach ($sessionCart as $variantId => $item) {
+                $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+
+                if ($variant) {
+                    $subtotal = $item['quantity'] * $item['price'];
+                    $total += $subtotal;
+
+                    $cartItems[] = (object) [
+                        'product' => $variant->product,
+                        'product_variant' => $variant,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                    ];
+                }
+            }
         }
 
-        return view('front.cart', compact('cartItems','total'));
+        return view('front.cart', compact('cartItems', 'total'));
     }
+
     public function update(Request $request)
     {
         $item = Cart::where('product_id', $request->product_id)
@@ -86,7 +111,7 @@ class CartController extends Controller
         }
         $total = 0;
         $cartItems = Cart::all();
-        $cartHtml = view('front.cart', compact('cartItems','total'))->render();
+        $cartHtml = view('front.cart', compact('cartItems', 'total'))->render();
 
         return response()->json(['cartHtml' => $cartHtml]);
     }
@@ -96,7 +121,7 @@ class CartController extends Controller
 
         $cartItems = Cart::all();
         $total = 0;
-        $cartHtml = view('front.cart', compact('cartItems','total'))->render();
+        $cartHtml = view('front.cart', compact('cartItems', 'total'))->render();
 
         return response()->json(['cartHtml' => $cartHtml]);
     }
@@ -122,6 +147,6 @@ class CartController extends Controller
 
     //     return redirect()->route('order.success')->with('success', 'Order placed successfully!');
     // }
-    
+
 
 }

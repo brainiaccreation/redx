@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /public/product/featured_image
+/public/wallet/receipts
 /storage/*.key
 /vendor
 .env

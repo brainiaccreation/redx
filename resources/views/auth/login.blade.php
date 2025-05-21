@@ -36,13 +36,15 @@
                             </ul>
                         </div>
                         <div class="account-box">
-                            <h3>Login to Sofia.</h3>
+                            <h3>Login</h3>
                             <h6>Don’t have an account? <a href="{{ route('register') }}"><span>Create a free
                                         account</span></a></h6>
                             <div class="account-item">
                                 <div class="google-image">
-                                    <img src="{{ URL('front/assets') }}/img/google.png" alt="img">
-                                    <h6>Sign in with google</h6>
+                                    <a href="{{ route('redirectToGoogle') }}">
+                                        <img src="{{ URL('front/assets') }}/img/google.png" alt="img">
+                                    </a>
+                                    {{-- <h6>Sign in with google</h6> --}}
                                 </div>
                                 <div class="facebook">
                                     <i class="fa-brands fa-facebook"></i>

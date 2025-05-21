@@ -7,10 +7,13 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
+use App\Http\Controllers\Admin\WalletTopupController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\AccountController;
 use App\Http\Controllers\Front\OrderController;
+use App\Http\Controllers\Front\WalletController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
@@ -49,6 +52,10 @@ Route::get('/payment/return', [OrderController::class, 'handlePaymentReturn'])->
 Route::post('/payment/callback', [OrderController::class, 'handlePaymentCallback'])->name('payment.callback');
 Route::post('/webhook/stripe', [OrderController::class, 'handleWebhook'])->name('webhook.stripe');
 Route::get('/payment/success', [OrderController::class, 'handlePaymentSuccess'])->name('payment.success');
+
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('redirectToGoogle');
+
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 Auth::routes();
 
 
@@ -69,7 +76,12 @@ Route::get('/my-account', [AccountController::class, 'index'])->name('myaccount'
 Route::post('/account-update/{id}', [AccountController::class, 'update'])->name('user.updateProfile');
 Route::get('/order/detail/{id}', [AccountController::class, 'order_detail'])->name('user.order.details');
 
-
+// wallet
+Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
+Route::post('/wallet/topup', [WalletController::class, 'topUp'])->name('wallet.topup');
+Route::get('/wallet/stripe/success', [WalletController::class, 'handleStripeSuccess'])->name('wallet.stripe.success');
+Route::get('/wallet/paydibs/success', [WalletController::class, 'handlePaydibsSuccess'])->name('wallet.paydibs.success');
+Route::get('/wallet/transactions/data', [WalletController::class, 'getWalletTransactions'])->name('wallet.transactions.data');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -125,5 +137,11 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');
         Route::get('/order/details/{id}', [ManageOrderController::class, 'detail'])->name('admin.order.details');
         Route::post('/order/status/{id}', [ManageOrderController::class, 'status'])->name('admin.order.status');
+
+        // wallet
+        Route::get('/wallet/topups/get', [WalletTopupController::class, 'get'])->name('admin.wallet.get');
+        Route::get('/wallet/topups', [WalletTopupController::class, 'list'])->name('admin.wallet.list');
+        Route::get('/wallet/topups/{id}', [WalletTopupController::class, 'show'])->name('admin.wallet.show');
+        Route::post('/wallet/topups/{id}/approve', [WalletTopupController::class, 'approve'])->name('admin.wallet.approve');
     });
 });

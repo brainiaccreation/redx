@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
+use App\Models\Wallet;
 
 class AccountController extends Controller
 {
     public function index()
     {
         $orders = Order::where('user_id', auth()->user()->id)->get();
-        return view('front.account', compact('orders'));
+        $wallets = Wallet::where('user_id', auth()->user()->id)->with('transaction')->paginate(10);
+        return view('front.account', compact('orders', 'wallets'));
     }
 
     public function update(Request $request, $id)

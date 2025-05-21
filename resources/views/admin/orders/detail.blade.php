@@ -157,7 +157,7 @@
                             <div class="d-flex">
                                 <h5 class="card-title flex-grow-1 mb-0">Customer Details</h5>
                                 <div class="flex-shrink-0">
-                                    <a href="javascript:void(0);" class="link-secondary">View Profile</a>
+                                    {{-- <a href="javascript:void(0);" class="link-secondary">View Profile</a> --}}
                                 </div>
                             </div>
                         </div>
@@ -166,23 +166,33 @@
                                 <li>
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
-                                            <img src="{{ $order->user->avatar ? URL($order->user->avatar) : URL('admin/assets/images/users/avatar-1.jpg') }}"
-                                                alt="" class="avatar-sm rounded material-shadow">
+                                            @if ($order->user)
+                                                <img src="{{ $order->user->avatar ? URL($order->user->avatar) : URL('admin/assets/images/users/avatar-1.jpg') }}"
+                                                    class="avatar-sm rounded material-shadow" />
+                                            @else
+                                                <img src="{{ URL('admin/assets/images/users/avatar-1.jpg') }}"
+                                                    class="avatar-sm rounded material-shadow" />
+                                            @endif
+
                                         </div>
                                         <div class="flex-grow-1 ms-3">
                                             <h6 class="fs-14 mb-1">
-                                                {{ $order->user->name . ' ' . $order->user->last_name }}
+                                                {{ $order->user ? $order->user->name . ' ' . $order->user->last_name : $order->order_detail->name . ' ' . $order->order_detail->last_name }}
                                             </h6>
                                             <p class="text-muted mb-0">Customer</p>
                                         </div>
                                     </div>
                                 </li>
-                                <li><i
-                                        class="ri-mail-line me-2 align-middle text-muted fs-16"></i>{{ $order->user->email }}
+                                <li><i class="ri-mail-line me-2 align-middle text-muted fs-16"></i>
+                                    {{ $order->user ? $order->user->email : $order->order_detail->email }}
                                 </li>
-                                @if ($order->user->phone)
-                                    <li><i
-                                            class="ri-phone-line me-2 align-middle text-muted fs-16"></i>{{ $order->user->phone }}
+                                @php
+                                    $phone = $order->user ? $order->user->phone : $order->order_detail->phone;
+                                @endphp
+                                @if ($phone)
+                                    <li>
+                                        <i class="ri-phone-line me-2 align-middle text-muted fs-16"></i>
+                                        {{ $phone }}
                                     </li>
                                 @endif
                             </ul>

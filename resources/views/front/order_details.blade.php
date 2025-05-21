@@ -64,14 +64,16 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td>Sub Total :</td>
-                                                                    <td class="text-center">{{ config('app.currency') }}
-                                                                        {{ number_format($order->total_amount, 2) }}</td>
+                                                                    <td class="text-center">
+                                                                        {{ number_format($order->total_amount, 2) }}
+                                                                        {{ config('app.currency') }}</td>
                                                                 </tr>
 
                                                                 <tr class="border-top border-top-dashed">
                                                                     <th scope="row">Total :</th>
-                                                                    <th class="text-center">{{ config('app.currency') }}
-                                                                        {{ number_format($order->total_amount, 2) }}</th>
+                                                                    <th class="text-center">
+                                                                        {{ number_format($order->total_amount, 2) }}
+                                                                        {{ config('app.currency') }}</th>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

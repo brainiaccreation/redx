@@ -108,6 +108,12 @@
                          <i class=" ri-user-3-line"></i> <span data-key="t-widgets">Users</span>
                      </a>
                  </li>
+                 <li class="nav-item">
+                     <a class="nav-link menu-link {{ request()->routeIs('admin.wallet*') ? 'active' : '' }}"
+                         href="{{ route('admin.wallet.list') }}">
+                         <i class="ri-wallet-line"></i> <span data-key="t-widgets">Wallet Transactions</span>
+                     </a>
+                 </li>
 
              </ul>
          </div>
