@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\GiftCardCodeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
@@ -132,6 +133,18 @@ Route::prefix('admin')->group(function () {
             Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.user.status');
             Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
             Route::post('/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('admin.user.toggle_suspend');
+        });
+        // gift card inventory management
+        Route::get('/gift-card-codes', [GiftCardCodeController::class, 'list'])->name('admin.code.list');
+        Route::get('/gift-card-codes/get', [GiftCardCodeController::class, 'get'])->name('admin.code.get');
+        Route::prefix('gift-card-code')->group(function () {
+            Route::get('/add', [GiftCardCodeController::class, 'add'])->name('admin.code.add');
+            Route::post('/store', [GiftCardCodeController::class, 'store'])->name('admin.code.store');
+            Route::get('/edit/{id}', [GiftCardCodeController::class, 'edit'])->name('admin.code.edit');
+            Route::put('/update/{id}', [GiftCardCodeController::class, 'update'])->name('admin.code.update');
+            Route::post('/status/{id}', [GiftCardCodeController::class, 'status'])->name('admin.code.status');
+            Route::delete('/delete/{id}', [GiftCardCodeController::class, 'destroy'])->name('admin.code.destroy');
+            Route::get('/get-product-variants/{id}', [GiftCardCodeController::class, 'getProductVariants'])->name('admin.code.variants');
         });
         Route::get('/orders', [ManageOrderController::class, 'list'])->name('admin.orders.list');
         Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');
