@@ -29,7 +29,7 @@
                                     @foreach ($cartItems as $cartItem)
                                         @php
                                             $subtotal = $cartItem->price * $cartItem->quantity;
-                                            $total += $subtotal;
+                                            // $total += $subtotal;
                                         @endphp
                                         <tr class="align-items-center py-3">
                                             <td>
@@ -44,7 +44,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <span class="price-usd">
-                                                    {{ calculatedPrice($cartItem->price) }} {{ config('app.currency') }}
+                                                    {{ number_format($cartItem->price, 2) }} {{ config('app.currency') }}
                                                 </span>
                                             </td>
                                             <td class="price-quantity text-center">
@@ -58,7 +58,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <span class="price-usd">
-                                                    {{ calculatedPrice($cartItem->price * $cartItem->quantity, 2) }}
+                                                    {{ number_format($cartItem->price * $cartItem->quantity, 2) }}
                                                     {{ config('app.currency') }}
                                                 </span>
                                             </td>
@@ -68,7 +68,7 @@
                             </table>
                         </div>
                         <div class="text-right">
-                            <h2>Total: {{ config('app.currency') }} {{ calculatedPrice($total) }}</h2>
+                            <h2>Total: {{ config('app.currency') }} {{ number_format($total, 2) }}</h2>
                         </div>
                     @endif
 
@@ -79,11 +79,15 @@
                             {{-- <form action="#" class="d-flex flex-sm-nowrap flex-wrap align-items-center gap-3">
                             <input type="text" placeholder="Enter coupon code">
                             <button type="submit" class="custom-rdxbtnr">Apply</button>
-                        </form>
-                        <button type="button" class="custom-rdxbtnr">Update Cart</button> --}}
+                        </form> --}}
+                            {{-- <button type="button" class="custom-rdxbtnr">Update Cart</button> --}}
                             <a href="{{ route('checkout') }}" class="custom-rdxbtnr">Checkout</a>
                         </div>
                     @endif
+                </div>
+            @else
+                <div class="text-center">
+                    <h2>No items in cart</h2>
                 </div>
             @endif
 
@@ -92,6 +96,8 @@
 @endsection
 @section('scripts')
     <script>
+        const appCurrency = "{{ config('app.currency') }}";
+
         $(document).on('click', '.quantityIncrement, .quantityDecrement', function() {
             const row = $(this).closest('tr');
             const input = row.find('.quantityValue');
@@ -118,7 +124,8 @@
                 total += price * quantity;
             });
 
-            $('h2:contains("Total:")').text('Total: $' + total.toFixed(2));
+            $('h2:contains("Total:")').text('Total: ' + appCurrency + total.toFixed(2));
+
         }
     </script>
 @endsection

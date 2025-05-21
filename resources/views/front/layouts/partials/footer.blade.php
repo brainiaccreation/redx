@@ -24,7 +24,7 @@
                                             <a href="#">News</a>
                                         </li>
                                         <li>
-                                            <a href="#">Contact</a>
+                                            <a href="{{ route('front.contact') }}">Contact</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -39,7 +39,7 @@
                                         </div>
                                         <ul class="list-items">
                                             <li>
-                                                <a href="#">About Us</a>
+                                                <a href="{{ route('front.about') }}">About Us</a>
                                             </li>
                                             <li>
                                                 <a href="#">Our Team</a>

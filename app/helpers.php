@@ -52,17 +52,32 @@ if (!function_exists('getCartCount')) {
 if (!function_exists('topBarCarts')) {
     function topBarCarts()
     {
-        $total = 0;
         if (Auth::check()) {
-            $cartItems = App\Models\Cart::where('user_id', Auth::id())->get();
+            return \App\Models\Cart::where('user_id', Auth::id())->with('product', 'product_variant')->get();
         } else {
-            $cartItems = session('cart', []);
-        }
+            $sessionCart = session('cart', []);
+            $cartCollection = collect();
 
-        return $cartItems ?? null;
+            foreach ($sessionCart as $item) {
+                $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+                if (!$variant) continue;
+
+                $cartObject = (object) [
+                    'product_id' => $item['product_id'],
+                    'variant_id' => $item['variant_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'product' => $variant->product,
+                    'product_variant' => $variant,
+                ];
+
+                $cartCollection->push($cartObject);
+            }
+
+            return $cartCollection;
+        }
     }
 }
-
 
 
 if (!function_exists('runTimeDateFormat')) {

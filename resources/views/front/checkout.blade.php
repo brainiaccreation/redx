@@ -6,6 +6,12 @@
     <!-- Checkout Section Start -->
     <section class="checkout-section fix section-padding">
         <div class="container">
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
             <div class="checkout-wrapper">
                 <form action="{{ route('checkout.process') }}" method="post">
                     @csrf
@@ -147,7 +153,7 @@
                                         <p>{{ config('app.currency') }} {{ calculatedPrice($total) }}</p>
                                     </div>
                                     <div class="checkout-item-2">
-                                        <div class="form-check-2 d-flex align-items-center from-customradio-2">
+                                        {{-- <div class="form-check-2 d-flex align-items-center from-customradio-2">
                                             <input class="form-check-input" type="radio" name="payment_mode"
                                                 id="payment_mode1222">
                                             <label class="form-check-label" for="payment_mode1222">
@@ -158,8 +164,8 @@
                                             Make your payment directly into our bank account please use your Order ID as the
                                             payment reference. Your order will not be shipped until the funds have cleared
                                             in our account.
-                                        </p>
-                                        @if (auth()->user()->wallet_balance && auth()->user()->wallet_balance > 0)
+                                        </p> --}}
+                                        @if (auth()->check() && auth()->user()->wallet_balance && auth()->user()->wallet_balance > 0)
                                             <div class="form-check-3 d-flex align-items-center from-customradio-2 mt-3">
                                                 <input class="form-check-input" type="radio" value="wallet"
                                                     name="payment_mode" id="payment_mode12223">

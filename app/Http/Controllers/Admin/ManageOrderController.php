@@ -18,7 +18,7 @@ class ManageOrderController extends Controller
     public function get(Request $request)
     {
         if ($request->ajax()) {
-            $orders = Order::with(['user']);
+            $orders = Order::with(['user'])->orderBy('created_at', 'desc');
 
             return DataTables::of($orders)
                 ->addIndexColumn()
@@ -26,7 +26,7 @@ class ManageOrderController extends Controller
                     return '<a href="' . route('admin.order.details', $order->unique_id) . '">' . $order->order_number . '</a>';
                 })
                 ->addColumn('customer', function ($order) {
-                    return $order->user ? $order->user->name : 'N/A';
+                    return $order->user ? $order->user->name : $order->order_detail->name;
                 })
                 ->addColumn('order_date', function ($order) {
                     return runTimeDateFormat($order->created_at);

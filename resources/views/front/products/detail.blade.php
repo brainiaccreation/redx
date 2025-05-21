@@ -109,7 +109,7 @@
                                 <div class="cart-quantity">
                                     <form id='myform' method='POST' class='quantity' action='#'>
                                         <input type='button' value='-' class='qtyminus minus'>
-                                        <input type='number' name='quantity' value='0' class='qty'>
+                                        <input type='number' name='quantity' value='1' class='qty'>
                                         <input type='button' value='+' class='qtyplus plus'>
                                     </form>
                                 </div>
@@ -314,35 +314,36 @@
                 <div class="row">
                     @foreach ($relatedProducts as $relatedProduct)
                         <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
-                            <div class="product-collection-item">
-                                <div class="product-image">
-                                    <img src="{{ $relatedProduct->featured_image ? asset($relatedProduct->featured_image) : URL('front/assets/img/product/01.jpg') }}"
-                                        alt="{{ $relatedProduct->name }}">
-                                    {{-- <div class="badge">35%</div> --}}
-                                </div>
-                                <div class="product-content text-center">
-                                    <h4>
-                                        <a
-                                            href="{{ route('product.detail', $relatedProduct->slug) }}">{{ $relatedProduct->name }}</a>
-                                    </h4>
-                                    <p class="product-reviews"><span class="product-stars">★★★★★</span> 0 Reivews</p>
-                                    @if (auth()->check() && auth()->user()->account_type === 'reseller')
-                                        <span class="product-price">
-                                            {{ product_price_range($relatedProduct) }}
-                                        </span>
-                                        <span class="product-cross-price">
-                                            {{ normal_product_price_range($relatedProduct) }}
-                                        </span>
-                                    @else
-                                        <span class="product-price">
-                                            {{ normal_product_price_range($relatedProduct) }}
-                                        </span>
-                                    @endif
-                                </div>
-                                {{-- <div class="product-btn">
+                            <a href="{{ route('product.detail', $relatedProduct->slug) }}">
+                                <div class="product-collection-item">
+                                    <div class="product-image">
+                                        <img src="{{ $relatedProduct->featured_image ? asset($relatedProduct->featured_image) : URL('front/assets/img/product/01.jpg') }}"
+                                            alt="{{ $relatedProduct->name }}">
+                                        {{-- <div class="badge">35%</div> --}}
+                                    </div>
+                                    <div class="product-content text-center">
+                                        <h4>
+                                            {{ $relatedProduct->name }}
+                                        </h4>
+                                        <p class="product-reviews"><span class="product-stars">★★★★★</span> 0 Reivews</p>
+                                        @if (auth()->check() && auth()->user()->account_type === 'reseller')
+                                            <span class="product-price">
+                                                {{ product_price_range($relatedProduct) }}
+                                            </span>
+                                            <span class="product-cross-price">
+                                                {{ normal_product_price_range($relatedProduct) }}
+                                            </span>
+                                        @else
+                                            <span class="product-price">
+                                                {{ normal_product_price_range($relatedProduct) }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    {{-- <div class="product-btn">
                                     <a href="{{ route('front.cart') }}" class="custom-rdxbtnp">Add To Cart</a>
                                 </div> --}}
-                            </div>
+                                </div>
+                            </a>
                         </div>
                     @endforeach
                 </div>
@@ -410,7 +411,7 @@
             // Handle Add to Cart button
             $('#addToCartBtn').on('click', function() {
                 var selected = $('.pricing-card.selected');
-
+                var quantity = $('.qty').val();
                 if (selected.length === 0) {
                     // alert('Please select a variant.');
                     toastr.error('Please select a variant.');
@@ -431,7 +432,6 @@
                     product_id: selected.data('product-id')
                 };
 
-                console.log("Selected Variant:", variant);
 
                 $.ajax({
                     url: "{{ route('cart.add') }}",
@@ -441,7 +441,7 @@
                         variant_id: variant.id,
                         product_id: variant.product_id,
                         price: variant.price,
-                        quantity: 1,
+                        quantity: quantity,
                         game_user_id: userId
                     },
                     success: function(response) {

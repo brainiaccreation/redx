@@ -9,14 +9,16 @@ use App\Models\ProductVariant;
 
 class ProductController extends Controller
 {
-    public function show($slug) {
+    public function show($slug)
+    {
+
         $product = Product::where('slug', $slug)->firstOrFail();
         $relatedProducts = Product::where('category_id', $product->category_id)
-                              ->where('id', '!=', $product->id)
-                              ->inRandomOrder()
-                              ->take(4) 
-                              ->get();
-        return view('front.products.detail',compact('product','relatedProducts'));
+            ->where('id', '!=', $product->id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+        return view('front.products.detail', compact('product', 'relatedProducts'));
     }
 
     public function autocomplete(Request $request)
@@ -33,8 +35,8 @@ class ProductController extends Controller
             $results[] = [
                 'name'  => $product->name,
                 'slug'  => $product->slug,
-                'image' => $product->featured_image 
-                    ? asset($product->featured_image) 
+                'image' => $product->featured_image
+                    ? asset($product->featured_image)
                     : URL('front/assets/img/product/01.jpg'),
                 'url'   => route('product.detail', $product->slug),
             ];
@@ -65,5 +67,4 @@ class ProductController extends Controller
 
         return response()->json(['html' => $html]);
     }
-
 }

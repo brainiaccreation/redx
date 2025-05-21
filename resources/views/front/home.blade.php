@@ -122,7 +122,7 @@
                     </div>
                     <div class="hero-icon-item d-flex gap-4 ms-5">
                         <div class="herobtn">
-                            <a href="javascript:void(0);" class="custom-rdxbtnb">View All Products</a>
+                            <a href="{{ route('front.shop') }}" class="custom-rdxbtnb">View All Products</a>
                         </div>
                         <div class="icon-item style-2">
                             <div class="content">

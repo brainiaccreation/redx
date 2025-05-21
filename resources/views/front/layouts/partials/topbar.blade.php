@@ -196,17 +196,18 @@
                                             Home
                                         </a>
                                     </li>
-                                    <li class="has-dropdown {{ request()->routeIs('front.about') ? 'active' : '' }}">
-                                        <a href="{{ route('front.about') }}">
-                                            About Us
-                                        </a>
-                                    </li>
+
                                     <li class="has-dropdown  {{ request()->routeIs('front.shop') ? 'active' : '' }}">
                                         <a href="{{ route('front.shop') }}">
                                             Shop
                                         </a>
                                     </li>
-                                    <li class="has-dropdown">
+                                    <li class="has-dropdown {{ request()->routeIs('front.about') ? 'active' : '' }}">
+                                        <a href="{{ route('front.about') }}">
+                                            About Us
+                                        </a>
+                                    </li>
+                                    {{-- <li class="has-dropdown">
                                         <a href="#">
                                             Services
                                         </a>
@@ -220,7 +221,7 @@
                                         <a href="#">
                                             Blog
                                         </a>
-                                    </li>
+                                    </li> --}}
                                     <li
                                         class="has-dropdown {{ request()->routeIs('front.contact') ? 'active' : '' }}">
                                         <a href="{{ route('front.contact') }}">Contact Us</a>
