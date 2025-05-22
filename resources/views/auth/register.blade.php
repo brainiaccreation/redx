@@ -8,19 +8,19 @@
         <div class="container">
             <div class="account-wrapper">
                 <div class="shape-1 float-bob-x">
-                    <img src="{{ URL('front/assets') }}/img/shape-1.png" alt="img">
+                    <img src="{{ asset('front/assets') }}/img/shape-1.png" alt="img">
                 </div>
                 <div class="shape-2 float-bob-y">
-                    <img src="{{ URL('front/assets') }}/img/shape-2.png" alt="img">
+                    <img src="{{ asset('front/assets') }}/img/shape-2.png" alt="img">
                 </div>
                 <div class="shape-3 float-bob-y">
-                    <img src="{{ URL('front/assets') }}/img/dot.png" alt="img">
+                    <img src="{{ asset('front/assets') }}/img/dot.png" alt="img">
                 </div>
                 <div class="shape-4 float-bob-x">
-                    <img src="{{ URL('front/assets') }}/img/shape-3.png" alt="img">
+                    <img src="{{ asset('front/assets') }}/img/shape-3.png" alt="img">
                 </div>
                 <div class="shape-5 float-bob-y">
-                    <img src="{{ URL('front/assets') }}/img/man-shape.png" alt="img">
+                    <img src="{{ asset('front/assets') }}/img/man-shape.png" alt="img">
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-lg-6">
@@ -40,7 +40,7 @@
                             <h6>Already have an account ? <a href="{{ route('login') }}"><span>Login</span></a></h6>
                             <div class="account-item">
                                 <div class="google-image">
-                                    <img src="{{ URL('front/assets') }}/img/google.png" alt="img">
+                                    <img src="{{ asset('front/assets') }}/img/google.png" alt="img">
                                     {{-- <h6>Sign in with google</h6> --}}
                                 </div>
                                 <div class="facebook">

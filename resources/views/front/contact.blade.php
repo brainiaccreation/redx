@@ -6,7 +6,7 @@
     <!-- Shop-left-sideber-Section Start -->
     <section class="pages-banner-section">
         <div class="hero-2">
-            <div class="hero-bg" style="background-image: url({{ URL('front/assets') }}/img/banner-cbg.jpg);">
+            <div class="hero-bg" style="background-image: url({{ asset('front/assets') }}/img/banner-cbg.jpg);">
                 <div class="hitboox-border-shape bottom-left">
                     <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
                         <path

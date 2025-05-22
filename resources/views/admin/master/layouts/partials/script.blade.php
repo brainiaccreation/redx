@@ -1,31 +1,31 @@
  <!-- JAVASCRIPT -->
- <script src="{{ URL('admin/assets') }}/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
- <script src="{{ URL('admin/assets') }}/libs/simplebar/simplebar.min.js"></script>
- <script src="{{ URL('admin/assets') }}/libs/node-waves/waves.min.js"></script>
- <script src="{{ URL('admin/assets') }}/libs/feather-icons/feather.min.js"></script>
- <script src="{{ URL('admin/assets') }}/js/pages/plugins/lord-icon-2.1.0.js"></script>
- <script src="{{ URL('admin/assets') }}/js/plugins.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/simplebar/simplebar.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/node-waves/waves.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/feather-icons/feather.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/js/pages/plugins/lord-icon-2.1.0.js"></script>
+ <script src="{{ asset('admin/assets') }}/js/plugins.js"></script>
 
  <!-- apexcharts -->
- <script src="{{ URL('admin/assets') }}/libs/apexcharts/apexcharts.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/apexcharts/apexcharts.min.js"></script>
 
  <!-- Vector map-->
- <script src="{{ URL('admin/assets') }}/libs/jsvectormap/jsvectormap.min.js"></script>
- <script src="{{ URL('admin/assets') }}/libs/jsvectormap/maps/world-merc.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/jsvectormap/jsvectormap.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/jsvectormap/maps/world-merc.js"></script>
 
  <!--Swiper slider js-->
- <script src="{{ URL('admin/assets') }}/libs/swiper/swiper-bundle.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/libs/swiper/swiper-bundle.min.js"></script>
 
  <!-- Dashboard init -->
- <script src="{{ URL('admin/assets') }}/js/pages/dashboard-ecommerce.init.js"></script>
+ <script src="{{ asset('admin/assets') }}/js/pages/dashboard-ecommerce.init.js"></script>
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
      integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
  <!-- App js -->
- <script src="{{ URL('admin/assets') }}/js/app.js"></script>
- <script src="{{ URL('admin/assets') }}/js/jquery-3.7.1.min.js"></script>
+ <script src="{{ asset('admin/assets') }}/js/app.js"></script>
+ <script src="{{ asset('admin/assets') }}/js/jquery-3.7.1.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
  <script>

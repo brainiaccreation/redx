@@ -28,7 +28,7 @@
                     </div>
                     <div class="col-xl-4 col-lg-6 col-md-6">
                         <div class="about-image about-image-clip">
-                            <img src="{{ URL('front/assets') }}/img/about-1.jpg" alt="img">
+                            <img src="{{ asset('front/assets') }}/img/about-1.jpg" alt="img">
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-6 col-md-6">
@@ -52,7 +52,7 @@
     <div class="video-bg-section video-about-section fix">
         <div class="container-fluid">
             <div class="video-wrapper bg-cover"
-                style="background-image: url({{ URL('front/assets') }}/img/about-video.jpg);">
+                style="background-image: url({{ asset('front/assets') }}/img/about-video.jpg);">
                 <a href="https://www.youtube.com/watch?v=O3zmfntbSr8" class="video-btn video-popup">
                     <i class="fa-duotone fa-play"></i>
                 </a>
@@ -67,10 +67,10 @@
                 <div class="row g-4">
                     <div class="col-xl-6">
                         <div class="about-image">
-                            <img src="{{ URL('front/assets') }}/img/about-2.jpg" alt="img" class="wow fadeInUp"
+                            <img src="{{ asset('front/assets') }}/img/about-2.jpg" alt="img" class="wow fadeInUp"
                                 data-wow-delay=".3s">
                             <div class="about-image-2">
-                                <img src="{{ URL('front/assets') }}/img/about-3.jpg" alt="img" class="wow fadeInUp"
+                                <img src="{{ asset('front/assets') }}/img/about-3.jpg" alt="img" class="wow fadeInUp"
                                     data-wow-delay=".5s">
                             </div>
                         </div>
@@ -120,7 +120,7 @@
                 </div>
                 <div class="col-lg-3 review-htext d-flex gap-3 wow fadeInUp" data-wow-delay=".3s">
                     <div class="review-icon">
-                        <img src="{{ URL('front/assets') }}/img/google-icon.png" width="100%" />
+                        <img src="{{ asset('front/assets') }}/img/google-icon.png" width="100%" />
                     </div>
                     <div class="review-text">
                         <p class="fs-5"><b>4.9/5</b> <span class="review-hstar">★★★★★</span></p>
@@ -134,7 +134,7 @@
                         <div class="testimonial-box-item">
                             <div class="testimonial-content">
                                 <div class="testimonial-quote-icon">
-                                    <img src="{{ URL('front/assets') }}/img/reviews-quote.png">
+                                    <img src="{{ asset('front/assets') }}/img/reviews-quote.png">
                                 </div>
                                 <h3>They took our ideas and turned them into a stunning reality</h3>
                                 <p>“We were definitely happy with the final result and the team has been very easy to work
@@ -142,7 +142,7 @@
                                 <div class="client-info-item">
                                     <div class="client-info">
                                         <div class="client-image">
-                                            <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg"
+                                            <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg"
                                                 alt="img">
                                         </div>
                                         <div class="text">
@@ -158,7 +158,7 @@
                         <div class="testimonial-box-item">
                             <div class="testimonial-content">
                                 <div class="testimonial-quote-icon">
-                                    <img src="{{ URL('front/assets') }}/img/reviews-quote.png">
+                                    <img src="{{ asset('front/assets') }}/img/reviews-quote.png">
                                 </div>
                                 <h3>Very flexible way of working with high focus on quality.</h3>
                                 <p>“I was very satisfied with the collaboration. The communication and pace of getting
@@ -167,7 +167,7 @@
                                 <div class="client-info-item">
                                     <div class="client-info">
                                         <div class="client-image">
-                                            <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg"
+                                            <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg"
                                                 alt="img">
                                         </div>
                                         <div class="text">
@@ -183,7 +183,7 @@
                         <div class="testimonial-box-item">
                             <div class="testimonial-content">
                                 <div class="testimonial-quote-icon">
-                                    <img src="{{ URL('front/assets') }}/img/reviews-quote.png">
+                                    <img src="{{ asset('front/assets') }}/img/reviews-quote.png">
                                 </div>
                                 <h3>Good quality of work, and always looking for ways to help.</h3>
                                 <p>“Thanks to their connections, one of the games they worked on was featured in their media
@@ -192,7 +192,7 @@
                                 <div class="client-info-item">
                                     <div class="client-info">
                                         <div class="client-image">
-                                            <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg"
+                                            <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg"
                                                 alt="img">
                                         </div>
                                         <div class="text">

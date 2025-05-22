@@ -18,6 +18,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/run-migrate', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]); // --force avoids confirmation in production
+        return 'Migration run successfully: <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Migration failed: ' . $e->getMessage();
+    }
+})->name('artisan.migrate');
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
 Route::get('/about', [HomeController::class, 'about'])->name('front.about');
 Route::get('/shop', [HomeController::class, 'shop'])->name('front.shop');

@@ -235,7 +235,7 @@
                                                             <div class="cart-item-thumb d-flex align-items-center gap-4">
                                                                 {{-- <i class="fas fa-times"></i> --}}
                                                                 {{-- <img class="w-100"
-                                                                    src="{{ URL('front/assets') }}/img/cart/03.jpg"
+                                                                    src="{{ asset('front/assets') }}/img/cart/03.jpg"
                                                                     alt="product"> --}}
                                                                 <a href="{{ route('user.order.details', $order->unique_id) }}"
                                                                     style="color: #011e5e;"><span

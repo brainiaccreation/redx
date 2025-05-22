@@ -133,7 +133,7 @@
                 <div class="footer-middle-wrapper style-2 wow fadeInUp" data-wow-delay=".2s">
                     <div class="row justify-content-between align-items-center">
                         <div class="col-md-3">
-                            <img src="{{ URL('front/assets') }}/img/ft-img.png">
+                            <img src="{{ asset('front/assets') }}/img/ft-img.png">
                         </div>
                         <div class="col-md-4 head-foot">
                             <h4>Sign up today to get the latest <br>inspiration & insights</h4>

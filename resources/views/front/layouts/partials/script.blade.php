@@ -1,24 +1,24 @@
 <!--<< All JS Plugins >>-->
-<script src="{{ URL('front/assets') }}/js/jquery-3.7.1.min.js"></script>
+<script src="{{ asset('front/assets/js/jquery-3.7.1.min.js') }}"></script>
 <!--<< Viewport Js >>-->
-<script src="{{ URL('front/assets') }}/js/viewport.jquery.js"></script>
+<script src="{{ asset('front/assets/js/viewport.jquery.js') }}"></script>
 <!--<< Bootstrap Js >>-->
-<script src="{{ URL('front/assets') }}/js/bootstrap.bundle.min.js"></script>
-<script src="{{ URL('front/assets') }}/js/jquery.nice-select.min.js"></script>
+<script src="{{ asset('front/assets/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('front/assets/js/jquery.nice-select.min.js') }}"></script>
 <!--<< Waypoints Js >>-->
-<script src="{{ URL('front/assets') }}/js/jquery.waypoints.js"></script>
+<script src="{{ asset('front/assets/js/jquery.waypoints.js') }}"></script>
 <!--<< Counterup Js >>-->
-<script src="{{ URL('front/assets') }}/js/jquery.counterup.min.js"></script>
+<script src="{{ asset('front/assets/js/jquery.counterup.min.js') }}"></script>
 <!--<< Swiper Slider Js >>-->
-<script src="{{ URL('front/assets') }}/js/swiper-bundle.min.js"></script>
+<script src="{{ asset('front/assets/js/swiper-bundle.min.js') }}"></script>
 <!--<< MeanMenu Js >>-->
-<script src="{{ URL('front/assets') }}/js/jquery.meanmenu.min.js"></script>
+<script src="{{ asset('front/assets/js/jquery.meanmenu.min.js') }}"></script>
 <!--<< Magnific Popup Js >>-->
-<script src="{{ URL('front/assets') }}/js/jquery.magnific-popup.min.js"></script>
+<script src="{{ asset('front/assets/js/jquery.magnific-popup.min.js') }}"></script>
 <!--<< Wow Animation Js >>-->
-<script src="{{ URL('front/assets') }}/js/wow.min.js"></script>
+<script src="{{ asset('front/assets/js/wow.min.js') }}"></script>
 <!--<< Main.js >>-->
-<script src="{{ URL('front/assets') }}/js/main.js"></script>
+<script src="{{ asset('front/assets/js/main.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"
     integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>

@@ -17,7 +17,7 @@
             <div class="swiper-wrapper">
                 <div class="swiper-slide custom-hero-swiper">
                     <div class="hero-2">
-                        <div class="hero-bg " style="background-image: url({{ URL('front/assets') }}/img/hero/bg.jpg);">
+                        <div class="hero-bg " style="background-image: url({{ asset('front/assets') }}/img/hero/bg.jpg);">
                             <div class="hero-overlay"></div>
                             <div class="hitboox-border-shape bottom-right">
                                 <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="swiper-slide custom-hero-swiper">
                     <div class="hero-2">
-                        <div class="hero-bg " style="background-image: url({{ URL('front/assets') }}/img/hero/bg-2.jpg);">
+                        <div class="hero-bg " style="background-image: url({{ asset('front/assets') }}/img/hero/bg-2.jpg);">
                             <div class="hero-overlay"></div>
                             <div class="hitboox-border-shape bottom-right">
                                 <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
@@ -146,15 +146,15 @@
     <!-- Cosmetics Collection Section Start -->
     <section class="banner-section-2">
         <div class="hero-2">
-            <div class="hero-bg" style="background-image: url({{ URL('front/assets') }}/img/banner-cbg.jpg);">
+            <div class="hero-bg" style="background-image: url({{ asset('front/assets') }}/img/banner-cbg.jpg);">
                 <div class="left-cbanner-img">
-                    <img src="{{ URL('front/assets') }}/img/h1_img-4.png">
+                    <img src="{{ asset('front/assets') }}/img/h1_img-4.png">
                 </div>
                 <div class="left-cbanner-fire">
-                    <img src="{{ URL('front/assets') }}/img/h1_img-3.png">
+                    <img src="{{ asset('front/assets') }}/img/h1_img-3.png">
                 </div>
                 <div class="left-cbanner-spot animate">
-                    <img src="{{ URL('front/assets') }}/img/fire-spot.png">
+                    <img src="{{ asset('front/assets') }}/img/fire-spot.png">
                 </div>
                 <div class="hitboox-border-shape top-right">
                     <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
@@ -217,7 +217,7 @@
                 </div>
                 <div class="col-lg-3 review-htext d-flex gap-3 wow fadeInUp" data-wow-delay=".3s">
                     <div class="review-icon">
-                        <img src="{{ URL('front/assets') }}/img/google-icon.png" width="100%" />
+                        <img src="{{ asset('front/assets') }}/img/google-icon.png" width="100%" />
                     </div>
                     <div class="review-text">
                         <p class="fs-5"><b>4.9/5</b> <span class="review-hstar">★★★★★</span></p>
@@ -231,7 +231,7 @@
                         <div class="testimonial-box-item">
                             <div class="testimonial-content">
                                 <div class="testimonial-quote-icon">
-                                    <img src="{{ URL('front/assets') }}/img/reviews-quote.png">
+                                    <img src="{{ asset('front/assets') }}/img/reviews-quote.png">
                                 </div>
                                 <h3>They took our ideas and turned them into a stunning reality</h3>
                                 <p>“We were definitely happy with the final result and the team has been very easy to
@@ -239,7 +239,7 @@
                                 <div class="client-info-item">
                                     <div class="client-info">
                                         <div class="client-image">
-                                            <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg"
+                                            <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg"
                                                 alt="img">
                                         </div>
                                         <div class="text">
@@ -255,7 +255,7 @@
                         <div class="testimonial-box-item">
                             <div class="testimonial-content">
                                 <div class="testimonial-quote-icon">
-                                    <img src="{{ URL('front/assets') }}/img/reviews-quote.png">
+                                    <img src="{{ asset('front/assets') }}/img/reviews-quote.png">
                                 </div>
                                 <h3>Very flexible way of working with high focus on quality.</h3>
                                 <p>“I was very satisfied with the collaboration. The communication and pace of getting
@@ -264,7 +264,7 @@
                                 <div class="client-info-item">
                                     <div class="client-info">
                                         <div class="client-image">
-                                            <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg"
+                                            <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg"
                                                 alt="img">
                                         </div>
                                         <div class="text">
@@ -280,7 +280,7 @@
                         <div class="testimonial-box-item">
                             <div class="testimonial-content">
                                 <div class="testimonial-quote-icon">
-                                    <img src="{{ URL('front/assets') }}/img/reviews-quote.png">
+                                    <img src="{{ asset('front/assets') }}/img/reviews-quote.png">
                                 </div>
                                 <h3>Good quality of work, and always looking for ways to help.</h3>
                                 <p>“Thanks to their connections, one of the games they worked on was featured in their
@@ -289,7 +289,7 @@
                                 <div class="client-info-item">
                                     <div class="client-info">
                                         <div class="client-image">
-                                            <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg"
+                                            <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg"
                                                 alt="img">
                                         </div>
                                         <div class="text">
@@ -318,7 +318,7 @@
                             <div class="hero-shape-area">
                                 <div class="hero-bg-shape">
                                     <div class="hero-bg-border-anime"
-                                        data-mask-src="{{ URL('front/assets') }}/img/hero/hero-bg-shape.png">
+                                        data-mask-src="{{ asset('front/assets') }}/img/hero/hero-bg-shape.png">
                                     </div>
                                     <svg viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -365,14 +365,14 @@
                                         </defs>
                                     </svg>
                                     <div class="verses-thumb d-xl-none d-block">
-                                        <img src="{{ URL('front/assets') }}/img/tournament/game-vs1.svg"
+                                        <img src="{{ asset('front/assets') }}/img/tournament/game-vs1.svg"
                                             alt="tournament image">
                                     </div>
                                     <div class="hero-img1 z-index-common" data-ani="slideinleft" data-ani-delay="0.4s">
-                                        <img src="{{ URL('front/assets') }}/img/hero/hero-1-1.png" alt="Image">
+                                        <img src="{{ asset('front/assets') }}/img/hero/hero-1-1.png" alt="Image">
                                     </div>
                                     <div class="hero-img2 z-index-common" data-ani="slideinright" data-ani-delay="0.4s">
-                                        <img src="{{ URL('front/assets') }}/img/hero/hero-1-2.png" alt="Image">
+                                        <img src="{{ asset('front/assets') }}/img/hero/hero-1-2.png" alt="Image">
                                     </div>
                                 </div>
                                 <div class="title-area mb-0">
@@ -397,7 +397,7 @@
                             <div class="hero-shape-area">
                                 <div class="hero-bg-shape">
                                     <div class="hero-bg-border-anime"
-                                        data-mask-src="{{ URL('front/assets') }}/img/hero/hero-bg-shape.png">
+                                        data-mask-src="{{ asset('front/assets') }}/img/hero/hero-bg-shape.png">
                                     </div>
                                     <svg viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -444,14 +444,14 @@
                                         </defs>
                                     </svg>
                                     <div class="verses-thumb d-xl-none d-block">
-                                        <img src="{{ URL('front/assets') }}/img/tournament/game-vs1.svg"
+                                        <img src="{{ asset('front/assets') }}/img/tournament/game-vs1.svg"
                                             alt="tournament image">
                                     </div>
                                     <div class="hero-img1 z-index-common" data-ani="slideinleft" data-ani-delay="0.4s">
-                                        <img src="{{ URL('front/assets') }}/img/hero/hero-1-3.png" alt="Image">
+                                        <img src="{{ asset('front/assets') }}/img/hero/hero-1-3.png" alt="Image">
                                     </div>
                                     <div class="hero-img2 z-index-common" data-ani="slideinright" data-ani-delay="0.4s">
-                                        <img src="{{ URL('front/assets') }}/img/hero/hero-1-4.png" alt="Image">
+                                        <img src="{{ asset('front/assets') }}/img/hero/hero-1-4.png" alt="Image">
                                     </div>
                                 </div>
                                 <div class="title-area mb-0">
@@ -476,7 +476,7 @@
                             <div class="hero-shape-area">
                                 <div class="hero-bg-shape">
                                     <div class="hero-bg-border-anime"
-                                        data-mask-src="{{ URL('front/assets') }}/img/hero/hero-bg-shape.png">
+                                        data-mask-src="{{ asset('front/assets') }}/img/hero/hero-bg-shape.png">
                                     </div>
                                     <svg viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -523,14 +523,14 @@
                                         </defs>
                                     </svg>
                                     <div class="verses-thumb d-xl-none d-block">
-                                        <img src="{{ URL('front/assets') }}/img/tournament/game-vs1.svg"
+                                        <img src="{{ asset('front/assets') }}/img/tournament/game-vs1.svg"
                                             alt="tournament image">
                                     </div>
                                     <div class="hero-img1 z-index-common" data-ani="slideinleft" data-ani-delay="0.4s">
-                                        <img src="{{ URL('front/assets') }}/img/hero/hero-1-5.png" alt="Image">
+                                        <img src="{{ asset('front/assets') }}/img/hero/hero-1-5.png" alt="Image">
                                     </div>
                                     <div class="hero-img2 z-index-common" data-ani="slideinright" data-ani-delay="0.4s">
-                                        <img src="{{ URL('front/assets') }}/img/hero/hero-1-6.png" alt="Image">
+                                        <img src="{{ asset('front/assets') }}/img/hero/hero-1-6.png" alt="Image">
                                     </div>
                                 </div>
                                 <div class="title-area mb-0">

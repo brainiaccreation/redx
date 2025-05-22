@@ -19,49 +19,49 @@
                                 </div>
                                 {{-- <div id="thumb2" class="tab-pane fade">
                                     <div class="shop-thumb">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </div>
                                 </div>
                                 <div id="thumb3" class="tab-pane fade">
                                     <div class="shop-thumb">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </div>
                                 </div>
                                 <div id="thumb4" class="tab-pane fade">
                                     <div class="shop-thumb">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </div>
                                 </div>
                                 <div id="thumb5" class="tab-pane fade">
                                     <div class="shop-thumb">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </div>
                                 </div> --}}
                             </div>
                             {{-- <ul class="nav">
                                 <li class="nav-item">
                                     <a href="#thumb1" data-bs-toggle="tab" class="nav-link ps-0 active">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#thumb2" data-bs-toggle="tab" class="nav-link">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#thumb3" data-bs-toggle="tab" class="nav-link">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#thumb4" data-bs-toggle="tab" class="nav-link">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a href="#thumb5" data-bs-toggle="tab" class="nav-link">
-                                        <img src="{{ URL('front/assets') }}/img/product/01.jpg" alt="img">
+                                        <img src="{{ asset('front/assets') }}/img/product/01.jpg" alt="img">
                                     </a>
                                 </li>
                             </ul> --}}
@@ -209,7 +209,7 @@
                         <div class="review-items">
                             <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
                                 <div class="admin-img pb-4 pb-md-0 me-4">
-                                    <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                                    <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
                                 </div>
                                 <div class="content p-4">
                                     <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
@@ -231,7 +231,7 @@
                             </div>
                             <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
                                 <div class="admin-img pb-4 pb-md-0 me-4">
-                                    <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                                    <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
                                 </div>
                                 <div class="content p-4">
                                     <div class="head-content pb-1 d-flex flex-wrap justify-content-between">

@@ -20,7 +20,7 @@
                 <div class="offcanvas__top mb-5 d-flex justify-content-between align-items-center">
                     <div class="offcanvas__logo">
                         <a href="{{ route('front.home') }}">
-                            <img src="{{ URL('front/assets') }}/img/logo/logo.png" alt="logo-img">
+                            <img src="{{ asset('front/assets') }}/img/logo/logo.png" alt="logo-img">
                         </a>
                     </div>
                     <div class="offcanvas__close">
@@ -130,13 +130,13 @@
         </form>
         <p class="text">Or login with</p>
         <div class="social-item">
-            <a href="#" class="facebook-text custom-rdxbtnb"><img src="{{ URL('front/assets') }}/img/facebook.png"
-                    alt="img">FACEBOOK</a>
+            <a href="#" class="facebook-text custom-rdxbtnb"><img
+                    src="{{ asset('front/assets') }}/img/facebook.png" alt="img">FACEBOOK</a>
             <a href="#" class="facebook-text google-text custom-rdxbtnb"><img
-                    src="{{ URL('front/assets') }}/img/google.png" alt="img">Google</a>
+                    src="{{ asset('front/assets') }}/img/google.png" alt="img">Google</a>
         </div>
         <div class="user-icon-box">
-            <img src="{{ URL('front/assets') }}/img/user.png" alt="img">
+            <img src="{{ asset('front/assets') }}/img/user.png" alt="img">
             <p>No account yet?</p>
             <a href="account.html">Create an Account</a>
         </div>
@@ -178,10 +178,10 @@
                 <div class="header-left">
                     <div class="logo">
                         <a href="{{ route('front.home') }}" class="header-logo">
-                            <img src="{{ URL('front/assets') }}/img/logo/logo.png" alt="logo-img">
+                            <img src="{{ asset('front/assets') }}/img/logo/logo.png" alt="logo-img">
                         </a>
                         <a href="{{ route('front.home') }}" class="header-logo-2 d-none">
-                            <img src="{{ URL('front/assets') }}/img/logo/logo.png" alt="logo-img">
+                            <img src="{{ asset('front/assets') }}/img/logo/logo.png" alt="logo-img">
                         </a>
                     </div>
                 </div>

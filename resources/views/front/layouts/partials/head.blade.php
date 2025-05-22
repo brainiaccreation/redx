@@ -9,26 +9,26 @@
      <!-- ======== Page title ============ -->
      <title>@yield('title') | RedX</title>
      <!--<< Favcion >>-->
-     <link rel="shortcut icon" href="{{ URL('front/assets') }}/img/logo-favicon.jpg">
+     <link rel="shortcut icon" href="{{ asset('front/assets/img/logo-favicon.jpg') }}">
      <!--<< Bootstrap min.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/bootstrap.min.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/bootstrap.min.css') }}">
      <!--<< All Min Css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/all.min.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/all.min.css') }}">
      <!--<< Animate.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/animate.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/animate.css') }}">
      <!--<< Magnific Popup.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/magnific-popup.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/magnific-popup.css') }}">
      <!--<< MeanMenu.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/meanmenu.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/meanmenu.css') }}">
      <!--<< Swiper Bundle.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/swiper-bundle.min.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/swiper-bundle.min.css') }}">
      <!--<< Nice Select.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/nice-select.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/nice-select.css') }}">
      <!--<< Color.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/color.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/color.css') }}">
      <!--<< Main.css >>-->
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/main.css">
-     <link rel="stylesheet" href="{{ URL('front/assets') }}/css/custom.css">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/main.css') }}">
+     <link rel="stylesheet" href="{{ asset('front/assets/css/custom.css') }}">
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"
          integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g=="
          crossorigin="anonymous" referrerpolicy="no-referrer" />

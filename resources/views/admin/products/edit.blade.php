@@ -120,8 +120,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.js"></script>
     <script type="text/javascript" src="https://jeremyfagis.github.io/dropify/dist/js/dropify.min.js"></script>
-    <script src="{{ URL('admin/assets') }}/libs/sortablejs/Sortable.min.js"></script>
-    <script src="{{ URL('admin/assets') }}/js/pages/nestable.init.js"></script>
+    <script src="{{ asset('admin/assets') }}/libs/sortablejs/Sortable.min.js"></script>
+    <script src="{{ asset('admin/assets') }}/js/pages/nestable.init.js"></script>
     <script>
         $(document).ready(function() {
             let drEvent = $('#featured_image').dropify({

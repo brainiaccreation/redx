@@ -164,5 +164,5 @@
     </div><!-- End Page-content -->
 @endsection
 @section('scripts')
-    <script src="{{ URL('admin/assets') }}/js/pages/profile-setting.init.js"></script>
+    <script src="{{ asset('admin/assets') }}/js/pages/profile-setting.init.js"></script>
 @endsection
