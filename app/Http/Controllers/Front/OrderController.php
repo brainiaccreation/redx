@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Mail\GiftCardCodeMail;
+use App\Mail\GiftCardDelayMail;
 use App\Models\Cart;
+use App\Models\GiftCardCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
@@ -15,6 +18,8 @@ use App\Models\Wallet;
 use Illuminate\Support\Str;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -440,7 +445,7 @@ class OrderController extends Controller
 
                     if ($order->wasRecentlyCreated) {
                         foreach ($cartItems as $item) {
-                            OrderItem::create([
+                            $order_item = OrderItem::create([
                                 'order_id' => $order->id,
                                 'product_id' => $item['product_id'],
                                 'product_variant_id' => $item['variant_id'],
@@ -449,6 +454,9 @@ class OrderController extends Controller
                                 'price' => $item['price'],
                                 'delivery_method' => 'manual',
                             ]);
+                            if ($order_item->product->type === 'gift_card' && !$order->code_id) {
+                                $this->giftCardCode($order_item->id);
+                            }
                         }
 
                         OrderHistory::create([
@@ -547,7 +555,7 @@ class OrderController extends Controller
             });
 
             foreach ($cartItems as $item) {
-                OrderItem::create([
+                $order_item = OrderItem::create([
                     'order_id'           => $order->id,
                     'product_id'         => $item->product->id ?? $item->product_id,
                     'product_variant_id' => $item->product_variant->id ?? $item->variant_id,
@@ -556,6 +564,9 @@ class OrderController extends Controller
                     'price'              => $item->price,
                     'delivery_method'    => 'manual',
                 ]);
+                if ($order_item->product->type === 'gift_card' && !$order->code_id) {
+                    $this->giftCardCode($order_item->id);
+                }
             }
 
 
@@ -760,7 +771,7 @@ class OrderController extends Controller
             ]);
 
             foreach ($cartItems as $item) {
-                OrderItem::create([
+                $order_item = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
                     'product_variant_id' => $item['variant_id'],
@@ -769,6 +780,9 @@ class OrderController extends Controller
                     'price' => $item['price'],
                     'delivery_method' => 'manual',
                 ]);
+                if ($order_item->product->type === 'gift_card' && !$order->code_id) {
+                    $this->giftCardCode($order_item->id);
+                }
             }
 
             OrderHistory::create([
@@ -807,5 +821,31 @@ class OrderController extends Controller
         }
 
         return redirect()->route('order.success')->with('success', 'Order placed using wallet!');
+    }
+
+    private function giftCardCode($orderId)
+    {
+        $order_item = OrderItem::findOrFail($orderId);
+
+        $code = GiftCardCode::where('product_id', $order_item->product_id)->where('variant_id', $order_item->product_variant_id)
+            ->where('status', 'unused')
+            ->first();
+
+        if ($code) {
+            $order_item->code_id = $code->id;
+            $order_item->delivery_status = 'code_assigned';
+            $order_item->save();
+
+            $code->status = 'used';
+            $code->save();
+        } else {
+            $order_item->delivery_status = 'pending_code';
+            $order_item->save();
+
+            Mail::to($order_item->user->email)->send(new GiftCardDelayMail($order_item));
+
+            // Optional log/alert
+            Log::warning("No gift card code available for Order #{$order_item->id}");
+        }
     }
 }

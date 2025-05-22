@@ -18,4 +18,9 @@ class GiftCardCode extends Model
     {
         return $this->belongsTo(ProductVariant::class, 'variant_id', 'id');
     }
+
+    public function order()
+    {
+        return $this->hasOne(Order::class, 'code_id');
+    }
 }

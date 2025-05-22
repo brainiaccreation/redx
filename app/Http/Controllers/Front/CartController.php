@@ -95,7 +95,6 @@ class CartController extends Controller
                 }
             }
         }
-
         return view('front.cart', compact('cartItems', 'total'));
     }
 
