@@ -1,6 +1,6 @@
 @extends('front.layouts.app')
 @section('title')
-    Shop
+    {{ $current_category->name }} | Category
 @endsection
 @section('content')
     <section class="shop-left-sideber-section section-padding fix">
@@ -14,21 +14,14 @@
                                     <h5>price filter</h5>
                                 </div>
                                 <div class="range__barcustom">
-                                    @php
-                                        $minPercent = ($minPrice / 10000) * 100;
-                                        $maxPercent = 100 - ($maxPrice / 10000) * 100;
-                                    @endphp
-
                                     <div class="slider">
-                                        <div class="progress"
-                                            style="left: {{ $minPercent }}%; right: {{ $maxPercent }}%;"></div>
+                                        <div class="progress" style="left: 25%; right: 25%;"></div>
                                     </div>
-
                                     <div class="range-input">
                                         <input type="range" class="range-min" min="0" max="10000"
-                                            value="{{ $minPrice }}">
+                                            value="2500">
                                         <input type="range" class="range-max" min="1" max="10000"
-                                            value="{{ $maxPrice }}">
+                                            value="7500">
                                     </div>
                                     <div class="range-items">
                                         <div class="price-input d-flex">
@@ -45,35 +38,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div class="single-sidebar-widget-2">
-                                <div class="wid-title">
-                                    <h5>Product Status</h5>
-                                </div>
-                                <div class="product-list">
-                                    <label class="checkbox-single">
-                                        <span class="d-flex gap-xl-3 gap-2 align-items-center">
-                                            <span class="checkbox-area d-center">
-                                                <input type="checkbox">
-                                                <span class="checkmark bg-2 d-center"></span>
-                                            </span>
-                                            <span class="text-color">
-                                                On sale
-                                            </span>
-                                        </span>
-                                    </label>
-                                    <label class="checkbox-single">
-                                        <span class="d-flex gap-xl-3 gap-2 align-items-center">
-                                            <span class="checkbox-area d-center">
-                                                <input type="checkbox" checked="checked">
-                                                <span class="checkmark d-center"></span>
-                                            </span>
-                                            <span class="text-color">
-                                                In stock
-                                            </span>
-                                        </span>
-                                    </label>
-                                </div>
-                            </div> --}}
                             <div class="single-sidebar-widget-2">
                                 <div class="courses-list">
                                     <label class="checkbox-single">
@@ -175,8 +139,13 @@
                                 <div class="widget-categories">
                                     <ul>
                                         @foreach ($categories as $category)
-                                            <li><a
-                                                    href="{{ route('front.category', ['unique_id' => $category->unique_id, 'slug' => $category->slug]) }}">{{ $category->name }}</a><span>{{ $category->products_count }}</span>
+                                            <li
+                                                class="{{ $category->unique_id == $current_category->unique_id ? 'active' : '' }}">
+                                                <a href="javascript:void(0);"
+                                                    class="{{ $category->unique_id == $current_category->unique_id ? 'active' : '' }}">{{ $category->name }}</a>
+                                                <span
+                                                    class="{{ $category->unique_id == $current_category->unique_id ? 'active' : '' }}">
+                                                    {{ $category->products_count }}</span>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -273,24 +242,12 @@
                                     </label>
                                 </div>
                             </div> --}}
-                            <div class="d-flex justify-content-center">
-                                <div class="">
-                                    <a href="javascript::void(0);" class="custom-filterbtnr" id="resetFilter">
-                                        <span>Reset</span>
-                                    </a>
-                                </div>
-                                <div class="px-2">
-                                    <a href="javascript::void(0);" class="custom-resetbtnr" id="applyFilter">
-                                        <span>Apply Filter</span>
-                                    </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                     <div class="col-lg-9">
                         <div class="tab-content">
                             <div class="row g-4" id="default-products">
-
+                                <h2>{{ $current_category->name }}</h2>
 
                                 @foreach ($products as $product)
                                     <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">

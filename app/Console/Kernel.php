@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('giftcard:send-emails')->everyMinute();
+        $schedule->command('giftcarddelay:send-emails')->everyMinute();
     }
 
     /**

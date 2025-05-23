@@ -39,9 +39,42 @@
                                                                 <img class="w-100"
                                                                     src="{{ $item->product->featured_image ? asset($item->product->featured_image) : URL('front/assets/img/cart/03.jpg') }}"
                                                                     alt="{{ $item->product->name }}">
-                                                                <a
-                                                                    href="{{ route('product.detail', $item->product->slug) }}"><span
-                                                                        class="text-nowrap">{{ $item->product->name }}</span></a>
+                                                                <div class="d-flex flex-column bd-highlight mb-3">
+                                                                    <div class="bd-highlight">
+                                                                        <a
+                                                                            href="{{ route('product.detail', $item->product->slug) }}"><span
+                                                                                class="text-nowrap">{{ $item->product->name . ' - ' . $item->variant->name }}</span></a>
+                                                                    </div>
+                                                                    <div class="bd-highlight">
+                                                                        @if ($item->giftCardCode && $item->giftCardCode->code)
+                                                                            {{-- <div class="gift-card-container">
+                                                                                <div class="gift-card-label">YOUR GIFT CARD
+                                                                                    CODE
+                                                                                </div>
+                                                                                <div class="gift-card-code-wrapper">
+                                                                                    <div class="gift-card-code">
+                                                                                        {{ $item->giftCardCode->code }}
+                                                                                    </div>
+                                                                                    <button class="copy-button"
+                                                                                        onclick="navigator.clipboard.writeText('{{ $item->giftCardCode->code }}')">Copy</button>
+                                                                                </div>
+                                                                            </div> --}}
+                                                                            <div
+                                                                                class="gift-card-containmultiple codes gift-card-container">
+                                                                                <div class="gift-card-label">YOUR GIFT CARD
+                                                                                    CODE</div>
+                                                                                <div class="gift-card-code-wrapper">
+                                                                                    <div class="gift-card-code">
+                                                                                        {{ $item->giftCardCode->code }}
+                                                                                    </div>
+                                                                                    <button class="copy-button"
+                                                                                        onclick="copyToClipboard(this, '{{ $item->giftCardCode->code }}')">Copy</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+
                                                             </div>
                                                         </td>
                                                         <td class="text-center">
@@ -51,7 +84,7 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <span class="price-usd">
-                                                                {{ number_format($item->total_amount, 2) }}
+                                                                {{ number_format($item->price * $item->quantity, 2) }}
                                                                 {{ config('app.currency') }}
                                                             </span>
                                                         </td>
@@ -90,4 +123,22 @@
             </div>
         </div>
     </section>
+@endsection
+@section('scripts')
+    <script>
+        function copyToClipboard(button, code) {
+            navigator.clipboard.writeText(code).then(function() {
+                const originalText = button.innerText;
+                button.innerText = "Copied!";
+                button.disabled = true;
+
+                setTimeout(function() {
+                    button.innerText = originalText;
+                    button.disabled = false;
+                }, 2000); // 2 seconds
+            }).catch(function(err) {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
 @endsection

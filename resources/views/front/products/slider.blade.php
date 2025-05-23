@@ -4,7 +4,9 @@
             <div class="product-image">
                 <img src="{{ $featured_product->featured_image ? asset($featured_product->featured_image) : URL('front/assets/img/product/01.jpg') }}"
                     alt="{{ $featured_product->name }}">
-                {{-- <div class="badge">35%</div> --}}
+                @if (auth()->check() && auth()->user()->account_type === 'reseller')
+                    <div class="badge">1%</div>
+                @endif
             </div>
             <div class="product-content text-center">
                 <h4>

@@ -73,11 +73,11 @@
                                         </div>
                                         <div class="col-lg-12">
                                             <div class="form-clt">
-                                                <input type="password" name="password" id="email21" placeholder="Password"
+                                                <input type="password" name="password" id="password2" placeholder="Password"
                                                     class="@error('password') is-invalid @enderror" required
                                                     autocomplete="current-password">
-                                                <div class="icon">
-                                                    <i class="fa-regular fa-eye"></i>
+                                                <div class="icon toggle-password" data-target="#password2">
+                                                    <i class="far fa-eye-slash"></i>
                                                 </div>
                                             </div>
                                             @error('password')

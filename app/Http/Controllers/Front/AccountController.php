@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use App\Models\Wallet;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class AccountController extends Controller
 {
@@ -21,10 +23,18 @@ class AccountController extends Controller
     public function update(Request $request, $id)
     {
 
+
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'name'         => 'required|string|max:100',
+            'last_name'    => 'required|string|max:100',
+            'email'        => 'required|email|max:150|unique:users,email,' . $id,
+            'phone'        => 'nullable|string|max:25',
+            'country'      => 'nullable|string|max:100',
+            'towncity'     => 'nullable|string|max:100',
+            'address'      => 'nullable|string|max:350',
+            'address2'     => 'nullable|string|max:350',
+            'avatar'       => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
         $user = User::find($id);
         $user->name = $request->name;
@@ -32,6 +42,9 @@ class AccountController extends Controller
         $user->email = $request->email;
         $user->phone = $request->phone;
         $user->country = $request->country;
+        $user->towncity = $request->towncity;
+        $user->address = $request->address;
+        $user->address2 = $request->address2;
         $user->update();
 
         return redirect()->back()->with('success', 'Request has been completed.');
@@ -53,5 +66,38 @@ class AccountController extends Controller
             $badgeClass = $statusClasses[$order->status] ?? 'badge bg-primary-subtle text-primary';
         }
         return view('front.order_details', compact('order', 'order_items', 'badgeClass', 'status'));
+    }
+    public function getOrderList(Request $request)
+    {
+
+        $userId = Auth::id();
+
+        $query = Order::where('user_id', auth()->user()->id)->orderBy('id', 'DESC')->select('*');
+        return DataTables::eloquent($query)
+            ->addColumn('order_number', function ($order) {
+                return '<div class="cart-item-thumb d-flex align-items-center gap-4">
+                            <a href="' . route('user.order.details', $order->unique_id) . '"
+                                style="color: #011e5e;"><span
+                                    class="text-nowrap">#' . $order->order_number . '</span></a>
+                        </div>';
+            })
+            ->addColumn('payment_method', function ($order) {
+                return '<span class="price-usd">
+                            ' . ucfirst($order->payment_method) . '
+                        </span>';
+            })
+
+            ->addColumn('total_amount', function ($order) {
+                return '<span class="price-usd">
+                            ' . number_format($order->total_amount, 2) . ' ' . config('app.currency') . '
+                        </span>';
+            })
+            ->addColumn('status', function ($order) {
+                return ' <span class="price-usd">
+                            ' . ucfirst($order->status) . '
+                        </span>';
+            })
+            ->rawColumns(['order_number', 'payment_method', 'total_amount', 'status'])
+            ->make(true);
     }
 }

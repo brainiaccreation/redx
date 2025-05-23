@@ -100,30 +100,57 @@ class CartController extends Controller
 
     public function update(Request $request)
     {
-        $item = Cart::where('product_id', $request->product_id)
-            ->where('variant_id', $request->variant_id)
-            ->first();
+        foreach ($request->items as $item) {
+            if ($item['is_model'] === 'true') {
+                $cartItem = \App\Models\Cart::where('product_id', $item['product_id'])
+                    ->where('variant_id', $item['variant_id'])
+                    ->first();
 
-        if ($item) {
-            $item->quantity = $request->quantity;
-            $item->save();
+                if ($cartItem) {
+                    $cartItem->quantity = $item['quantity'];
+                    $cartItem->save();
+                }
+            } else {
+                $cart = session()->get('cart', []);
+                foreach ($cart as &$cartRow) {
+                    if ($cartRow['product_id'] == $item['product_id'] && $cartRow['variant_id'] == $item['variant_id']) {
+                        $cartRow['quantity'] = $item['quantity'];
+                    }
+                }
+                session()->put('cart', $cart);
+            }
         }
-        $total = 0;
-        $cartItems = Cart::all();
-        $cartHtml = view('front.cart', compact('cartItems', 'total'))->render();
 
-        return response()->json(['cartHtml' => $cartHtml]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cart updated successfully.'
+        ]);
     }
+
     public function remove(Request $request)
     {
-        Cart::where('id', $request->cart_id)->delete();
+        $productId = $request->product_id;
+        $variantId = $request->variant_id;
+        $isModel = $request->is_model === "true";
+        if ($isModel) {
+            \App\Models\Cart::where('product_id', $productId)
+                ->where('variant_id', $variantId)
+                ->where('user_id', auth()->id())
+                ->delete();
+        } else {
+            $cart = session()->get('cart', []);
+            foreach ($cart as $key => $item) {
+                if ($item['product_id'] == $productId && $item['variant_id'] == $variantId) {
+                    unset($cart[$key]);
+                    break;
+                }
+            }
+            session()->put('cart', $cart);
+        }
 
-        $cartItems = Cart::all();
-        $total = 0;
-        $cartHtml = view('front.cart', compact('cartItems', 'total'))->render();
-
-        return response()->json(['cartHtml' => $cartHtml]);
+        return response()->json(['message' => 'Item removed from cart successfully.']);
     }
+
     // public function checkout(Request $request)
     // {
     //     $cartItems = Cart::where('user_id',auth()->id())->get();

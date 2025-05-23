@@ -501,13 +501,13 @@
                 </div> --}}
 
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
-                    <button type="button"
-                        class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle"
+                    <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
                         id="page-header-notifications-dropdown" data-bs-toggle="dropdown"
                         data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-bell fs-22'></i>
                         <span
-                            class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">3<span
+                            class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger notificationCount"
+                            style="width:26px !important; font-size:9px !important;">3<span
                                 class="visually-hidden">unread messages</span></span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
@@ -811,17 +811,25 @@
                 </div>
 
                 <div class="dropdown ms-sm-3 header-item topbar-user">
-                    <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user"
+
+                    <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <span class="d-flex align-items-center" data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-original-title="{{ auth()->user()->name }}">
+                            <img class="rounded-corner header-profile-user"
                                 src="{{ auth()->user()->avatar ? URL(auth()->user()->avatar) : URL('admin/assets/images/users/avatar-1.jpg') }}"
                                 alt="Header Avatar">
-                            <span class="text-start ms-xl-2">
-                                <span
-                                    class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ auth()->user()->name }}</span>
-                                <span
-                                    class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">{{ auth()->user()->role->name }}</span>
+                            <span class="text-start space-left">
+                                {{-- <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">@if (Auth::check()) {{ Str::limit(Auth::user()->name, 15, '...') }}                                     @endif</span> --}}
+                                <span class="d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
+
+                                    <svg width="14" height="8" viewBox="0 0 14 8" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13 1L7 7L1 1" stroke="#26303B" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+
+                                </span>
                             </span>
                         </span>
                     </button>

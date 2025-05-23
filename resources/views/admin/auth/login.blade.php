@@ -10,7 +10,7 @@
                     <div class="text-center mt-sm-5 mb-4 text-white-50">
                         <div>
                             <a href="javascript::void(0);" class="d-inline-block auth-logo">
-                                <img src="{{ URL('admin/assets') }}/images/logo-light.png" alt="" height="20">
+                                <img src="{{ URL('admin/assets') }}/images/logo-light.png" alt="" height="35">
                             </a>
                         </div>
                         <p class="mt-3 fs-15 fw-medium">Here is your dashboard login</p>
@@ -42,9 +42,9 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <div class="float-end">
+                                        {{-- <div class="float-end">
                                             <a href="auth-pass-reset-basic.html" class="text-muted">Forgot password?</a>
-                                        </div>
+                                        </div> --}}
                                         <label class="form-label" for="password-input">Password</label>
                                         <div class="position-relative auth-pass-inputgroup mb-3">
                                             <input type="password" name="password"

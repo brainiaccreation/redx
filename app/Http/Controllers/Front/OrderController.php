@@ -814,9 +814,7 @@ class OrderController extends Controller
 
         // Save order items...
 
-        // If any remaining, redirect to payment gateway (Stripe, etc.)
         if ($remainingToPay > 0) {
-            // Redirect to payment gateway, pass $order->id
             return redirect()->route('payment.gateway', ['order_id' => $order->id]);
         }
 
@@ -836,15 +834,13 @@ class OrderController extends Controller
             $order_item->delivery_status = 'code_assigned';
             $order_item->save();
 
+            $code->used_date = now();
             $code->status = 'used';
             $code->save();
         } else {
             $order_item->delivery_status = 'pending_code';
             $order_item->save();
 
-            Mail::to($order_item->user->email)->send(new GiftCardDelayMail($order_item));
-
-            // Optional log/alert
             Log::warning("No gift card code available for Order #{$order_item->id}");
         }
     }

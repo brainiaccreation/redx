@@ -16,18 +16,18 @@ class GiftCardDelayMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public $order;
+    public $data;
 
-    public function __construct($order)
+    public function __construct($data)
     {
-        $this->order = $order;
+        $this->data = $data;
     }
     /**
      * Get the message envelope.
      */
     public function build()
     {
-        return $this->subject('Gift Card Delivery Pending')
-            ->view('emails.gift_card_delay');
+        return $this->subject('Order Confirmation – We’ll Deliver Your Code Soon')
+            ->view('emails.gift_card_delay')->with('data', $this->data);
     }
 }

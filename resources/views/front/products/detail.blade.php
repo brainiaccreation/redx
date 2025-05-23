@@ -84,19 +84,20 @@
                             <div class="price-list">
                                 <h3>Select Package</h3>
                                 <div class="row">
-                                    @foreach ($product->variants as $variant)
+                                    @foreach ($product->variants as $index => $variant)
                                         <div class="col-6 col-md-6 card-container">
                                             <div class="pricing-card" data-id="{{ $variant->id }}"
                                                 data-name="{{ $variant->name }}" data-sku="{{ $variant->sku }}"
                                                 data-price="{{ calculatedPrice($variant->price) }}"
                                                 data-product-id="{{ $variant->product_id }}">
-                                                <div class="lattice-count">{{ $variant->name }}</div>
+
+                                                <div class="lattice-count">{{ $variant->name }} {{ $loop->first }}</div>
                                                 <div class="price">{{ config('app.currency') }}
-                                                    {{ calculatedPrice($variant->price) }}
-                                                </div>
+                                                    {{ calculatedPrice($variant->price) }}</div>
                                             </div>
                                         </div>
                                     @endforeach
+
                                 </div>
                                 <h3 id="product_price">0.00</h3>
                             </div>
@@ -139,7 +140,8 @@
                             </div>
                             {{-- <h6 class="details-info"><span>SKU:</span> <a href="product-details.html">124224</a></h6> --}}
                             <h6 class="details-info"><span>Categories:</span> <a
-                                    href="javascript:void(0);">{{ $product->category->name }}</a></h6>
+                                    href="{{ route('front.category', ['slug' => $product->category->slug, 'unique_id' => $product->category->unique_id]) }}">{{ $product->category->name }}</a>
+                            </h6>
                             {{-- <h6 class="details-info style-2"><span>Tags:</span> <a href="product-details.html">
                                     <b>accessories</b> <b>business</b></a></h6> --}}
                         </div>
@@ -319,7 +321,9 @@
                                     <div class="product-image">
                                         <img src="{{ $relatedProduct->featured_image ? asset($relatedProduct->featured_image) : URL('front/assets/img/product/01.jpg') }}"
                                             alt="{{ $relatedProduct->name }}">
-                                        {{-- <div class="badge">35%</div> --}}
+                                        @if (auth()->check() && auth()->user()->account_type === 'reseller')
+                                            <div class="badge">1%</div>
+                                        @endif
                                     </div>
                                     <div class="product-content text-center">
                                         <h4>
@@ -401,7 +405,9 @@
     </script>
     <script>
         $(document).ready(function() {
-
+            setTimeout(() => {
+                $('.pricing-card').first().trigger('click');
+            }, 150);
             // Handle variant selection
             $('.pricing-card').on('click', function() {
                 $('.pricing-card').removeClass('selected');

@@ -19,6 +19,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,9 +36,80 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('get-products/moogold', function () {
+    // API endpoint
+    $url = "https://moogold.com/wp-json/v1/api/product/list_product";
+
+    // Replace with the actual category ID (example: Steam = 993)
+    $categoryId = 993;
+
+    // Prepare payload
+    $data = [
+        "category_id" => $categoryId
+    ];
+
+    // Encode to JSON
+    $payload = json_encode($data);
+
+    // Basic Auth header
+    $authHeader = "Basic c3VmaXlhbjpzdWZpeWFuMTIz"; // 'sufiyan:sufiyan123' base64-encoded
+
+    // Initialize cURL
+    $ch = curl_init($url);
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Authorization: $authHeader",
+        "Content-Type: application/json"
+    ]);
+
+    // Execute request
+    $response = curl_exec($ch);
+
+    // Check for errors
+    if (curl_errno($ch)) {
+        echo "cURL error: " . curl_error($ch);
+    } else {
+        echo "Response from MooGold:\n";
+        echo $response;
+    }
+
+    // Close cURL
+    curl_close($ch);
+});
+Route::get('/artisan/{command}', function ($command) {
+    $allowedCommands = [
+        'storage-link' => 'storage:link',
+        'cache-clear' => 'cache:clear',
+        'config-clear' => 'config:clear',
+        'config-cache' => 'config:cache',
+        'route-clear' => 'route:clear',
+        'route-cache' => 'route:cache',
+        'view-clear' => 'view:clear',
+        'permission-cache-reset' => 'permission:cache-reset',
+        'optimize' => 'optimize',
+        'migrate' => 'migrate',
+        'migrate-refresh' => 'migrate:refresh',
+        'migrate-rollback' => 'migrate:rollback',
+        'db-seed' => 'db:seed',
+        'queue-work' => 'queue:work',
+        'queue-restart' => 'queue:restart',
+    ];
+
+    if (!array_key_exists($command, $allowedCommands)) {
+        abort(403, 'Command not allowed.');
+    }
+
+    Artisan::call($allowedCommands[$command]);
+    return response()->json(['status' => 'success', 'message' => 'Command executed: ' . $allowedCommands[$command]]);
+});
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
 Route::get('/about', [HomeController::class, 'about'])->name('front.about');
 Route::get('/shop', [HomeController::class, 'shop'])->name('front.shop');
+Route::get('/category/{unique_id}/{slug}', [HomeController::class, 'category'])->name('front.category');
 Route::get('/contact', [HomeController::class, 'contact'])->name('front.contact');
 Route::get('/product/{slug}', [App\Http\Controllers\Front\ProductController::class, 'show'])->name('product.detail');
 Route::get('/product-search-suggestions', [App\Http\Controllers\Front\ProductController::class, 'autocomplete'])->name('product.autocomplete');
@@ -76,6 +148,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 Route::get('/my-account', [AccountController::class, 'index'])->name('myaccount');
 Route::post('/account-update/{id}', [AccountController::class, 'update'])->name('user.updateProfile');
 Route::get('/order/detail/{id}', [AccountController::class, 'order_detail'])->name('user.order.details');
+Route::get('/order/list/data', [AccountController::class, 'getOrderList'])->name('order.get.data');
 
 // wallet
 Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
@@ -129,6 +202,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/users/get', [UserController::class, 'get'])->name('admin.users.get');
         Route::prefix('user')->group(function () {
             Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.user.edit');
+            Route::get('/view/{id}', [UserController::class, 'view'])->name('admin.user.view');
             Route::put('/update/{id}', [UserController::class, 'update'])->name('admin.user.update');
             Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.user.status');
             Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');

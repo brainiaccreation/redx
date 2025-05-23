@@ -316,3 +316,171 @@ li.active>a {
   background-color: #ff0000 !important;
   border-color: #ff0000 !important;
 }
+
+.my-account-wrapper .wrap-sidebar-account .sidebar-account .nav {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: normal !important;
+  flex-direction: column !important;
+}
+
+.gift-card-container {
+  max-width: 600px;
+  width: 100%;
+  background-color: #e6ffe6;
+  border: 2px dashed #4caf50;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 7px;
+  box-sizing: border-box;
+}
+
+.gift-card-label {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 3px;
+}
+
+.gift-card-code-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gift-card-code {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0px 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #333;
+}
+
+.copy-button {
+  background-color: #4caf50;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 0px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.copy-button:hover {
+  background-color: #45a049;
+}
+
+@media only screen and (max-width: 600px) {
+  .gift-card-container {
+    margin: 10px;
+    padding: 10px;
+  }
+
+  .gift-card-code {
+    font-size: 11px;
+    padding: 8px;
+  }
+
+  .copy-button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+
+  .gift-card-label {
+    font-size: 11px;
+  }
+}
+
+span.active {
+  background: #ff0000;
+  color: #fff !important;
+}
+
+
+.main-sideber .single-sidebar-widget-2 .widget-categories ul li a.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #ff0000;
+  transition: all 0.4s ease-in-out;
+}
+
+.toggle-password {
+  cursor: pointer;
+}
+
+.custom-filterbtnr {
+  display: inline-flex;
+  position: relative;
+  color: #ff0000 !important;
+  background-color: #e7e7e7;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  line-height: 1.1111111111;
+  clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+  --path: 0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%;
+  --path-radius: 5;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 15px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--white);
+  padding: 18px 34px;
+  text-decoration: none;
+  text-shadow: none;
+  -webkit-appearance: none;
+  border: none;
+  fill: #fff;
+  text-align: center;
+}
+
+.custom-resetbtnr {
+  display: inline-flex;
+  position: relative;
+  color: var(--white) !important;
+  background-color: var(--theme);
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  line-height: 1.1111111111;
+  clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+  --path: 0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%;
+  --path-radius: 5;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 15px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--white);
+  padding: 18px 34px;
+  text-decoration: none;
+  text-shadow: none;
+  -webkit-appearance: none;
+  border: none;
+  fill: #fff;
+  text-align: center;
+}

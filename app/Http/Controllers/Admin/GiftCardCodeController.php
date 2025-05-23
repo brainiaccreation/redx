@@ -40,13 +40,19 @@ class GiftCardCodeController extends Controller
                 })
 
                 ->addColumn('action', function ($code) {
-                    return '
-                        <div style="display: flex;justify-content:center; gap: 8px;">
-                            <a href="' . route('admin.code.edit', $code->id) . '" class="action_btn edit-item">
-                                <i class="ri-edit-line"></i>
-                            </a>
-                        </div>
-                    ';
+                    if ($code->status == 'used') {
+                        $editIcon = '<div style="display: flex;justify-content:center; gap: 8px;">--
+                            </div>';
+                    } else {
+                        $editIcon = '
+                            <div style="display: flex;justify-content:center; gap: 8px;">
+                                <a href="' . route('admin.code.edit', $code->id) . '" class="action_btn edit-item">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                            </div>
+                        ';
+                    }
+                    return $editIcon;
                 })
 
                 ->rawColumns(['product', 'status', 'used_date', 'action'])

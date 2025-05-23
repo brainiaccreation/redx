@@ -72,9 +72,29 @@
                                     {{-- <form action="#" id="contact-form2" method="POST"> --}}
                                     <div class="account-info">
                                         <h3>Information</h3>
-                                        <form action="{{ route('user.updateProfile', auth()->user()->id) }}" method="POST">
+                                        <form action="{{ route('user.updateProfile', auth()->user()->id) }}" method="POST"
+                                            enctype="multipart/form-data">
                                             @csrf
                                             <div class="row g-4">
+                                                <div class="col-lg-12">
+                                                    <div class="form-clt">
+                                                        <input type="file" name="avatar" id="avatar"
+                                                            class="@error('avatar') is-invalid @enderror">
+                                                    </div>
+                                                    @if (auth()->user()->avatar)
+                                                        <div class="mt-2">
+                                                            <a href="{{ asset(auth()->user()->avatar) }}"
+                                                                class="text-danger" target="_blank">Uploaded
+                                                                Avatar <i class="fa fa-external-link"
+                                                                    aria-hidden="true"></i></a>
+                                                        </div>
+                                                    @endif
+                                                    @error('avatar')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
                                                 <div class="col-lg-6">
                                                     <div class="form-clt">
                                                         <input type="text" name="name" id="name"
@@ -126,16 +146,55 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-6">
                                                     <div class="form-clt">
                                                         <div class="form">
-                                                            <input type="text" name="country" id="number"
-                                                                placeholder="Country"
+                                                            <input type="text" name="towncity" placeholder="City"
+                                                                value="{{ old('towncity', auth()->user()->towncity) }}"
+                                                                class="@error('towncity') is-invalid @enderror">
+                                                        </div>
+                                                    </div>
+                                                    @error('towncity')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-clt">
+                                                        <div class="form">
+                                                            <input type="text" name="country" placeholder="Country"
                                                                 value="{{ old('country', auth()->user()->country) }}"
                                                                 class="@error('country') is-invalid @enderror">
                                                         </div>
                                                     </div>
                                                     @error('country')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="col-lg-6">
+                                                    <div class="form-clt">
+                                                        <div class="form">
+                                                            <textarea name="address" rows="4" class="form-control" style="resize:none" placeholder="Address Line 1">{{ old('address', auth()->user()->address) }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    @error('address')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-clt">
+                                                        <div class="form">
+                                                            <textarea name="address2" rows="4" class="form-control" style="resize:none" placeholder="Address Line 2">{{ old('address2', auth()->user()->address2) }}
+                                                           </textarea>
+                                                        </div>
+                                                    </div>
+                                                    @error('address2')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
                                                         </span>
@@ -161,7 +220,7 @@
                                                                 placeholder="Password"
                                                                 class="@error('old_password') is-invalid @enderror"
                                                                 required>
-                                                            <div class="icon">
+                                                            <div class="icon toggle-password" data-target="#password2">
                                                                 <i class="far fa-eye-slash"></i>
                                                             </div>
                                                         </div>
@@ -177,7 +236,7 @@
                                                                 placeholder="Create Password"
                                                                 class="@error('new_password') is-invalid @enderror"
                                                                 required>
-                                                            <div class="icon">
+                                                            <div class="icon toggle-password" data-target="#password3">
                                                                 <i class="far fa-eye-slash"></i>
                                                             </div>
                                                         </div>
@@ -187,6 +246,7 @@
                                                             </span>
                                                         @enderror
                                                     </div>
+
                                                     <div class="col-lg-12">
                                                         <div class="form-clt">
                                                             <input id="password4" type="password"
@@ -194,7 +254,7 @@
                                                                 name="new_password_confirmation"
                                                                 class="@error('new_password_confirmation') is-invalid @enderror"
                                                                 required>
-                                                            <div class="icon">
+                                                            <div class="icon toggle-password" data-target="#password4">
                                                                 <i class="far fa-eye-slash"></i>
                                                             </div>
                                                         </div>
@@ -204,6 +264,7 @@
                                                             </span>
                                                         @enderror
                                                     </div>
+
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="custom-rdxbtnr">Update</button>
@@ -217,10 +278,11 @@
                                 </div>
                             </div>
                             <div id="order" class="tab-pane fade">
-                                <div class="cart-list-area">
+                                <div class="transaction-history">
+                                    <h3>Orders</h3>
                                     <div class="table-responsive">
-                                        <table class="table common-table">
-                                            <thead data-aos="fade-down">
+                                        <table class="table transaction-table" id="orderTable" style="width: 100%">
+                                            <thead>
                                                 <tr>
                                                     <th class="text-center">Order ID</th>
                                                     <th class="text-center">Payment Method</th>
@@ -228,15 +290,11 @@
                                                     <th class="text-center">Status</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            {{-- <tbody>
                                                 @foreach ($orders as $order)
                                                     <tr class="align-items-center py-3">
                                                         <td>
                                                             <div class="cart-item-thumb d-flex align-items-center gap-4">
-                                                                {{-- <i class="fas fa-times"></i> --}}
-                                                                {{-- <img class="w-100"
-                                                                    src="{{ URL('front/assets') }}/img/cart/03.jpg"
-                                                                    alt="product"> --}}
                                                                 <a href="{{ route('user.order.details', $order->unique_id) }}"
                                                                     style="color: #011e5e;"><span
                                                                         class="text-nowrap">#{{ $order->order_number }}</span></a>
@@ -261,7 +319,7 @@
                                                         </td>
                                                     </tr>
                                                 @endforeach
-                                            </tbody>
+                                            </tbody> --}}
                                         </table>
                                     </div>
                                 </div>
@@ -436,6 +494,20 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script>
+        $(document).on('click', '.toggle-password', function() {
+            const targetInput = $($(this).data('target'));
+            const icon = $(this).find('i');
+
+            if (targetInput.attr('type') === 'password') {
+                targetInput.attr('type', 'text');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+                targetInput.attr('type', 'password');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+        });
+    </script>
+    <script>
         $(document).ready(function() {
             $('#walletTable').DataTable({
                 processing: true,
@@ -459,6 +531,32 @@
                     },
                     {
                         data: 'status_badge',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+            $('#orderTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: "{{ route('order.get.data') }}",
+                order: [],
+                columns: [{
+                        data: 'order_number',
+                        name: 'order_number'
+                    },
+                    {
+                        data: 'payment_method',
+                        name: 'payment_method'
+                    },
+                    {
+                        data: 'total_amount',
+                        name: 'total_amount'
+                    },
+                    {
+                        data: 'status',
                         name: 'status',
                         orderable: false,
                         searchable: false
