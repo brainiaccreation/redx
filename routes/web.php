@@ -113,7 +113,7 @@ Route::get('/category/{unique_id}/{slug}', [HomeController::class, 'category'])-
 Route::get('/contact', [HomeController::class, 'contact'])->name('front.contact');
 Route::get('/product/{slug}', [App\Http\Controllers\Front\ProductController::class, 'show'])->name('product.detail');
 Route::get('/product-search-suggestions', [App\Http\Controllers\Front\ProductController::class, 'autocomplete'])->name('product.autocomplete');
-Route::get('/ajax-filter-products', [App\Http\Controllers\Front\ProductController::class, 'ajaxFilter'])->name('ajax.filter.products');
+Route::get('/shop/filters', [App\Http\Controllers\Front\ProductController::class, 'ajaxFilter'])->name('filter.products');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'showCart'])->name('front.cart');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
