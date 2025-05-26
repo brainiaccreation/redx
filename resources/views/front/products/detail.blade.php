@@ -168,7 +168,7 @@
                     </li> --}}
                     <li class="nav-item">
                         <a href="#review" data-bs-toggle="tab" class="nav-link">
-                            <h6>reviews (2)</h6>
+                            <h6>reviews ({{ count($product->review) }})</h6>
                         </a>
                     </li>
                 </ul>
@@ -209,13 +209,63 @@
                     </div> --}}
                     <div id="review" class="tab-pane fade">
                         <div class="review-items">
-                            <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
-                                <div class="admin-img pb-4 pb-md-0 me-4">
-                                    <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                            @if ($reviews)
+                                <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
+                                    <div class="admin-img pb-4 pb-md-0 me-4">
+                                        <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                                    </div>
+                                    <div class="content p-4">
+                                        <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
+                                            <h5>miklos salsa<span>27June 2025 at 5.44pm</span></h5>
+                                            <div class="star">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="content p-4">
-                                    <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
-                                        <h5>miklos salsa<span>27June 2025 at 5.44pm</span></h5>
+                                <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
+                                    <div class="admin-img pb-4 pb-md-0 me-4">
+                                        <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                                    </div>
+                                    <div class="content p-4">
+                                        <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
+                                            <h5>Ethan Turner <span>27June 2025 at 5.44pm</span></h5>
+                                            <div class="star">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+                            @if (auth()->check())
+                                {{-- <div class="star-rating" id="star-rating">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <span class="star" data-value="{{ $i }}">☆</span>
+                                    @endfor
+                                    <span class="rating-text" id="rating-text">0/5 Stars</span>
+                                </div> --}}
+                                <div class="review-title mt-5 py-15 mb-30">
+                                    <h4>add a review</h4>
+                                    <div class="rate-now d-flex align-items-center">
+                                        <p>Rate this product? *</p>
                                         <div class="star">
                                             <i class="fas fa-star"></i>
                                             <i class="fas fa-star"></i>
@@ -224,76 +274,25 @@
                                             <i class="fas fa-star"></i>
                                         </div>
                                     </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.
-                                    </p>
                                 </div>
-                            </div>
-                            <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
-                                <div class="admin-img pb-4 pb-md-0 me-4">
-                                    <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
-                                </div>
-                                <div class="content p-4">
-                                    <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
-                                        <h5>Ethan Turner <span>27June 2025 at 5.44pm</span></h5>
-                                        <div class="star">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="review-title mt-5 py-15 mb-30">
-                                <h4>add a review</h4>
-                                <div class="rate-now d-flex align-items-center">
-                                    <p>Rate this product? *</p>
-                                    <div class="star">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="review-form">
-                                <form action="#" id="contact-form2" method="POST">
-                                    <div class="row g-4">
-                                        <div class="col-lg-6">
-                                            <div class="form-clt">
-                                                <input type="text" name="name" id="name"
-                                                    placeholder="Full Name">
+                                <div class="review-form">
+                                    <form action="#" id="contact-form2" method="POST">
+                                        <div class="row g-4">
+                                            <div class="col-lg-12 wow fadeInUp" data-wow-delay=".8">
+                                                <div class="form-clt-big form-clt">
+                                                    <textarea name="message" id="message" placeholder="message"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 wow fadeInUp" data-wow-delay=".9">
+                                                <button type="submit" class="theme-btn hover-color">
+                                                    Post Submit
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-clt">
-                                                <input type="text" name="email" id="email"
-                                                    placeholder="email addres">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 wow fadeInUp" data-wow-delay=".8">
-                                            <div class="form-clt-big form-clt">
-                                                <textarea name="message" id="message" placeholder="message"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 wow fadeInUp" data-wow-delay=".9">
-                                            <button type="submit" class="theme-btn hover-color">
-                                                Post Submit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
+                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -356,6 +355,40 @@
     </section>
 @endsection
 @section('scripts')
+    {{-- <script>
+        const stars = document.querySelectorAll('.star-rating .star');
+        const ratingInput = document.getElementById('rating-input');
+        const ratingText = document.getElementById('rating-text');
+        let selectedRating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', () => {
+                const val = parseInt(star.dataset.value);
+                highlightStars(val);
+                ratingText.textContent = `${val}/5 Stars`;
+            });
+
+            star.addEventListener('mouseout', () => {
+                highlightStars(selectedRating);
+                ratingText.textContent = `${selectedRating}/5 Stars`;
+            });
+
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.dataset.value);
+                ratingInput.value = selectedRating;
+                highlightStars(selectedRating);
+                ratingText.textContent = `${selectedRating}/5 Stars`;
+            });
+        });
+
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                const val = parseInt(star.dataset.value);
+                star.classList.toggle('filled', val <= rating);
+            });
+        }
+    </script> --}}
+
     <script>
         $(document).on('click', '.pricing-card', function() {
             if ($(this).hasClass('active')) {

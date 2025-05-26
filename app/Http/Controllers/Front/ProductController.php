@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 
 class ProductController extends Controller
 {
@@ -14,12 +15,13 @@ class ProductController extends Controller
     {
 
         $product = Product::where('slug', $slug)->firstOrFail();
+        $reviews = Review::where('product_id', $product->id)->orderBy('id', 'DESC')->get();
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->inRandomOrder()
             ->take(4)
             ->get();
-        return view('front.products.detail', compact('product', 'relatedProducts'));
+        return view('front.products.detail', compact('product', 'relatedProducts', 'reviews'));
     }
 
     public function autocomplete(Request $request)
