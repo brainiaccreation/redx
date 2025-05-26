@@ -97,6 +97,12 @@
                      </a>
                  </li>
                  <li class="nav-item">
+                     <a class="nav-link menu-link {{ request()->routeIs('admin.code*') ? 'active' : '' }}"
+                         href="{{ route('admin.code.list') }}">
+                         <i class="ri-gamepad-line"></i> <span data-key="t-widgets">Gift Card Inventory</span>
+                     </a>
+                 </li>
+                 <li class="nav-item">
                      <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
                          href="{{ route('admin.orders.list') }}">
                          <i class="bx bx-archive"></i> <span data-key="t-widgets">Orders</span>

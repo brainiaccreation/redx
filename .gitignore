@@ -5,6 +5,7 @@
 /public/storage
 /public/product/featured_image
 /public/wallet/receipts
+/public/user/avatar
 /storage/*.key
 /vendor
 .env

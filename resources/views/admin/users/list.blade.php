@@ -44,8 +44,9 @@
                                         <th>ID</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        {{-- <th>Status</th> --}}
-                                        <th>Action</th>
+                                        <th>Wallet Balance</th>
+                                        <th>Account Type</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -101,10 +102,14 @@
                         data: 'email',
                         name: 'email'
                     },
-                    // {
-                    //     data: 'status',
-                    //     name: 'status'
-                    // },
+                    {
+                        data: 'wallet_balance',
+                        name: 'wallet_balance'
+                    },
+                    {
+                        data: 'account_type',
+                        name: 'account_type'
+                    },
                     {
                         data: 'action',
                         name: 'action',

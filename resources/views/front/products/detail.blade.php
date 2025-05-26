@@ -84,19 +84,20 @@
                             <div class="price-list">
                                 <h3>Select Package</h3>
                                 <div class="row">
-                                    @foreach ($product->variants as $variant)
+                                    @foreach ($product->variants as $index => $variant)
                                         <div class="col-6 col-md-6 card-container">
                                             <div class="pricing-card" data-id="{{ $variant->id }}"
                                                 data-name="{{ $variant->name }}" data-sku="{{ $variant->sku }}"
                                                 data-price="{{ calculatedPrice($variant->price) }}"
                                                 data-product-id="{{ $variant->product_id }}">
-                                                <div class="lattice-count">{{ $variant->name }}</div>
+
+                                                <div class="lattice-count">{{ $variant->name }} {{ $loop->first }}</div>
                                                 <div class="price">{{ config('app.currency') }}
-                                                    {{ calculatedPrice($variant->price) }}
-                                                </div>
+                                                    {{ calculatedPrice($variant->price) }}</div>
                                             </div>
                                         </div>
                                     @endforeach
+
                                 </div>
                                 <h3 id="product_price">0.00</h3>
                             </div>
@@ -139,7 +140,8 @@
                             </div>
                             {{-- <h6 class="details-info"><span>SKU:</span> <a href="product-details.html">124224</a></h6> --}}
                             <h6 class="details-info"><span>Categories:</span> <a
-                                    href="javascript:void(0);">{{ $product->category->name }}</a></h6>
+                                    href="{{ route('front.category', ['slug' => $product->category->slug, 'unique_id' => $product->category->unique_id]) }}">{{ $product->category->name }}</a>
+                            </h6>
                             {{-- <h6 class="details-info style-2"><span>Tags:</span> <a href="product-details.html">
                                     <b>accessories</b> <b>business</b></a></h6> --}}
                         </div>
@@ -166,7 +168,7 @@
                     </li> --}}
                     <li class="nav-item">
                         <a href="#review" data-bs-toggle="tab" class="nav-link">
-                            <h6>reviews (2)</h6>
+                            <h6>reviews ({{ count($product->review) }})</h6>
                         </a>
                     </li>
                 </ul>
@@ -207,13 +209,63 @@
                     </div> --}}
                     <div id="review" class="tab-pane fade">
                         <div class="review-items">
-                            <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
-                                <div class="admin-img pb-4 pb-md-0 me-4">
-                                    <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                            @if ($reviews)
+                                <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
+                                    <div class="admin-img pb-4 pb-md-0 me-4">
+                                        <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                                    </div>
+                                    <div class="content p-4">
+                                        <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
+                                            <h5>miklos salsa<span>27June 2025 at 5.44pm</span></h5>
+                                            <div class="star">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="content p-4">
-                                    <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
-                                        <h5>miklos salsa<span>27June 2025 at 5.44pm</span></h5>
+                                <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
+                                    <div class="admin-img pb-4 pb-md-0 me-4">
+                                        <img src="{{ URL('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
+                                    </div>
+                                    <div class="content p-4">
+                                        <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
+                                            <h5>Ethan Turner <span>27June 2025 at 5.44pm</span></h5>
+                                            <div class="star">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
+                                            vestibulum Phasellus rhoncus dolor eget viverra pretium.
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+                            @if (auth()->check())
+                                {{-- <div class="star-rating" id="star-rating">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <span class="star" data-value="{{ $i }}">☆</span>
+                                    @endfor
+                                    <span class="rating-text" id="rating-text">0/5 Stars</span>
+                                </div> --}}
+                                <div class="review-title mt-5 py-15 mb-30">
+                                    <h4>add a review</h4>
+                                    <div class="rate-now d-flex align-items-center">
+                                        <p>Rate this product? *</p>
                                         <div class="star">
                                             <i class="fas fa-star"></i>
                                             <i class="fas fa-star"></i>
@@ -222,76 +274,25 @@
                                             <i class="fas fa-star"></i>
                                         </div>
                                     </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.
-                                    </p>
                                 </div>
-                            </div>
-                            <div class="admin-items d-flex flex-wrap flex-md-nowrap align-items-center pb-4">
-                                <div class="admin-img pb-4 pb-md-0 me-4">
-                                    <img src="{{ asset('front/assets') }}/img/testimonial/avatar-1.jpg" alt="img">
-                                </div>
-                                <div class="content p-4">
-                                    <div class="head-content pb-1 d-flex flex-wrap justify-content-between">
-                                        <h5>Ethan Turner <span>27June 2025 at 5.44pm</span></h5>
-                                        <div class="star">
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.Curabitur vulputate
-                                        vestibulum Phasellus rhoncus dolor eget viverra pretium.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="review-title mt-5 py-15 mb-30">
-                                <h4>add a review</h4>
-                                <div class="rate-now d-flex align-items-center">
-                                    <p>Rate this product? *</p>
-                                    <div class="star">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="review-form">
-                                <form action="#" id="contact-form2" method="POST">
-                                    <div class="row g-4">
-                                        <div class="col-lg-6">
-                                            <div class="form-clt">
-                                                <input type="text" name="name" id="name"
-                                                    placeholder="Full Name">
+                                <div class="review-form">
+                                    <form action="#" id="contact-form2" method="POST">
+                                        <div class="row g-4">
+                                            <div class="col-lg-12 wow fadeInUp" data-wow-delay=".8">
+                                                <div class="form-clt-big form-clt">
+                                                    <textarea name="message" id="message" placeholder="message"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 wow fadeInUp" data-wow-delay=".9">
+                                                <button type="submit" class="theme-btn hover-color">
+                                                    Post Submit
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-clt">
-                                                <input type="text" name="email" id="email"
-                                                    placeholder="email addres">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 wow fadeInUp" data-wow-delay=".8">
-                                            <div class="form-clt-big form-clt">
-                                                <textarea name="message" id="message" placeholder="message"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 wow fadeInUp" data-wow-delay=".9">
-                                            <button type="submit" class="theme-btn hover-color">
-                                                Post Submit
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                                    </form>
+                                </div>
+                            @endif
+
                         </div>
                     </div>
                 </div>
@@ -319,7 +320,9 @@
                                     <div class="product-image">
                                         <img src="{{ $relatedProduct->featured_image ? asset($relatedProduct->featured_image) : URL('front/assets/img/product/01.jpg') }}"
                                             alt="{{ $relatedProduct->name }}">
-                                        {{-- <div class="badge">35%</div> --}}
+                                        @if (auth()->check() && auth()->user()->account_type === 'reseller')
+                                            <div class="badge">1%</div>
+                                        @endif
                                     </div>
                                     <div class="product-content text-center">
                                         <h4>
@@ -352,6 +355,40 @@
     </section>
 @endsection
 @section('scripts')
+    {{-- <script>
+        const stars = document.querySelectorAll('.star-rating .star');
+        const ratingInput = document.getElementById('rating-input');
+        const ratingText = document.getElementById('rating-text');
+        let selectedRating = 0;
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', () => {
+                const val = parseInt(star.dataset.value);
+                highlightStars(val);
+                ratingText.textContent = `${val}/5 Stars`;
+            });
+
+            star.addEventListener('mouseout', () => {
+                highlightStars(selectedRating);
+                ratingText.textContent = `${selectedRating}/5 Stars`;
+            });
+
+            star.addEventListener('click', () => {
+                selectedRating = parseInt(star.dataset.value);
+                ratingInput.value = selectedRating;
+                highlightStars(selectedRating);
+                ratingText.textContent = `${selectedRating}/5 Stars`;
+            });
+        });
+
+        function highlightStars(rating) {
+            stars.forEach(star => {
+                const val = parseInt(star.dataset.value);
+                star.classList.toggle('filled', val <= rating);
+            });
+        }
+    </script> --}}
+
     <script>
         $(document).on('click', '.pricing-card', function() {
             if ($(this).hasClass('active')) {
@@ -401,7 +438,9 @@
     </script>
     <script>
         $(document).ready(function() {
-
+            setTimeout(() => {
+                $('.pricing-card').first().trigger('click');
+            }, 150);
             // Handle variant selection
             $('.pricing-card').on('click', function() {
                 $('.pricing-card').removeClass('selected');

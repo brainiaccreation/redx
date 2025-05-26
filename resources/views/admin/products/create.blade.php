@@ -53,10 +53,10 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                <div class="col-md-3 col-lg-3 col-sm-12">
                                     <label for="name" class="form-label">Category <span
                                             class="text-danger">*</span></label>
-                                    <select class="js-example-basic-single" name="category_id">
+                                    <select class="js-example-basic-single" name="category_id" id="category">
                                         <option disabled {{ old('category_id') ? '' : 'selected' }}>Select Category</option>
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}"
@@ -71,7 +71,25 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                <div class="col-md-3 col-lg-3 col-sm-12">
+                                    <label for="name" class="form-label">Type <span class="text-danger">*</span></label>
+                                    <select class="js-example-basic-single" name="type" id="type">
+                                        <option value="gift_card" {{ old('type') == 'gift_card' ? 'selected' : '' }}>Gift
+                                            Card
+                                        </option>
+                                        <option value="auto" {{ old('type') == 'auto' ? 'selected' : '' }}>
+                                            Auto
+                                        </option>
+                                        <option value="manual" {{ old('type') == 'manual' ? 'selected' : '' }}>Manual
+                                        </option>
+                                    </select>
+                                    @error('type')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-sm-12">
                                     <label for="name" class="form-label">Status <span
                                             class="text-danger">*</span></label>
                                     <select class="js-example-basic-single" name="status">
@@ -89,7 +107,7 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-md-4 col-lg-4 col-sm-12">
+                                <div class="col-md-3 col-lg-3 col-sm-12">
                                     <label for="featured" class="form-label"></label>
                                     <div class="form-check mt-3">
                                         <input class="form-check-input" type="checkbox" id="formCheck2" name="is_featured"
@@ -282,6 +300,41 @@
 
                 $(this).val(cleanedSlug);
             });
+
+            $('#category').on('change', function() {
+                var selectedCategoryText = $('#category option:selected').text().trim();
+                var $typeSelect = $('#type');
+                $typeSelect.find('option').prop('disabled', false);
+
+                if (selectedCategoryText === 'Gift Cards') {
+                    $typeSelect.find('option').each(function() {
+                        var optionText = $(this).text().replace(/\s+/g, ' ').trim();
+                        if (optionText === 'Gift Card') {
+                            $(this).prop('disabled', false).prop('selected', true);
+                        } else {
+                            $(this).prop('disabled', true).prop('selected', false);
+                        }
+                    });
+
+                } else if (selectedCategoryText === 'Game Reloads') {
+                    $typeSelect.find('option').each(function() {
+                        var optionText = $(this).text().replace(/\s+/g, ' ').trim();
+                        if (optionText === 'Manual') {
+                            $(this).prop('disabled', false).prop('selected', true);
+                        } else if (optionText === 'Gift Card') {
+                            $(this).prop('disabled', true).prop('selected', false);
+                        } else {
+                            $(this).prop('disabled', false).prop('selected', false);
+                        }
+                    });
+                } else {
+                    $typeSelect.find('option').prop('disabled', false);
+                    $typeSelect.val('');
+                }
+
+                $typeSelect.trigger('change.select2');
+            });
+
 
         });
         let variants = [];

@@ -24,7 +24,8 @@ class Order extends Model
         'coupon_code',
         'discount_amount',
         'notes',
-        'unique_id'
+        'unique_id',
+        'delivery_status'
     ];
 
     public function items()

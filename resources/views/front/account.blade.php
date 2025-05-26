@@ -72,9 +72,29 @@
                                     {{-- <form action="#" id="contact-form2" method="POST"> --}}
                                     <div class="account-info">
                                         <h3>Information</h3>
-                                        <form action="{{ route('user.updateProfile', auth()->user()->id) }}" method="POST">
+                                        <form action="{{ route('user.updateProfile', auth()->user()->id) }}" method="POST"
+                                            enctype="multipart/form-data">
                                             @csrf
                                             <div class="row g-4">
+                                                <div class="col-lg-12">
+                                                    <div class="form-clt">
+                                                        <input type="file" name="avatar" id="avatar"
+                                                            class="@error('avatar') is-invalid @enderror">
+                                                    </div>
+                                                    @if (auth()->user()->avatar)
+                                                        <div class="mt-2">
+                                                            <a href="{{ asset(auth()->user()->avatar) }}"
+                                                                class="text-danger" target="_blank">Uploaded
+                                                                Avatar <i class="fa fa-external-link"
+                                                                    aria-hidden="true"></i></a>
+                                                        </div>
+                                                    @endif
+                                                    @error('avatar')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
                                                 <div class="col-lg-6">
                                                     <div class="form-clt">
                                                         <input type="text" name="name" id="name"
@@ -126,16 +146,55 @@
                                                         </span>
                                                     @enderror
                                                 </div>
-                                                <div class="col-lg-12">
+                                                <div class="col-lg-6">
                                                     <div class="form-clt">
                                                         <div class="form">
-                                                            <input type="text" name="country" id="number"
-                                                                placeholder="Country"
+                                                            <input type="text" name="towncity" placeholder="City"
+                                                                value="{{ old('towncity', auth()->user()->towncity) }}"
+                                                                class="@error('towncity') is-invalid @enderror">
+                                                        </div>
+                                                    </div>
+                                                    @error('towncity')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-clt">
+                                                        <div class="form">
+                                                            <input type="text" name="country" placeholder="Country"
                                                                 value="{{ old('country', auth()->user()->country) }}"
                                                                 class="@error('country') is-invalid @enderror">
                                                         </div>
                                                     </div>
                                                     @error('country')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="col-lg-6">
+                                                    <div class="form-clt">
+                                                        <div class="form">
+                                                            <textarea name="address" rows="4" class="form-control" style="resize:none" placeholder="Address Line 1">{{ old('address', auth()->user()->address) }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    @error('address')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-clt">
+                                                        <div class="form">
+                                                            <textarea name="address2" rows="4" class="form-control" style="resize:none" placeholder="Address Line 2">{{ old('address2', auth()->user()->address2) }}
+                                                           </textarea>
+                                                        </div>
+                                                    </div>
+                                                    @error('address2')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
                                                         </span>
@@ -161,7 +220,7 @@
                                                                 placeholder="Password"
                                                                 class="@error('old_password') is-invalid @enderror"
                                                                 required>
-                                                            <div class="icon">
+                                                            <div class="icon toggle-password" data-target="#password2">
                                                                 <i class="far fa-eye-slash"></i>
                                                             </div>
                                                         </div>
@@ -177,7 +236,7 @@
                                                                 placeholder="Create Password"
                                                                 class="@error('new_password') is-invalid @enderror"
                                                                 required>
-                                                            <div class="icon">
+                                                            <div class="icon toggle-password" data-target="#password3">
                                                                 <i class="far fa-eye-slash"></i>
                                                             </div>
                                                         </div>
@@ -187,6 +246,7 @@
                                                             </span>
                                                         @enderror
                                                     </div>
+
                                                     <div class="col-lg-12">
                                                         <div class="form-clt">
                                                             <input id="password4" type="password"
@@ -194,7 +254,7 @@
                                                                 name="new_password_confirmation"
                                                                 class="@error('new_password_confirmation') is-invalid @enderror"
                                                                 required>
-                                                            <div class="icon">
+                                                            <div class="icon toggle-password" data-target="#password4">
                                                                 <i class="far fa-eye-slash"></i>
                                                             </div>
                                                         </div>
@@ -204,6 +264,7 @@
                                                             </span>
                                                         @enderror
                                                     </div>
+
                                                     <div class="col-lg-12">
                                                         <div class="text-end">
                                                             <button type="submit" class="custom-rdxbtnr">Update</button>
@@ -217,10 +278,11 @@
                                 </div>
                             </div>
                             <div id="order" class="tab-pane fade">
-                                <div class="cart-list-area">
+                                <div class="transaction-history">
+                                    <h3>Orders</h3>
                                     <div class="table-responsive">
-                                        <table class="table common-table">
-                                            <thead data-aos="fade-down">
+                                        <table class="table transaction-table" id="orderTable" style="width: 100%">
+                                            <thead>
                                                 <tr>
                                                     <th class="text-center">Order ID</th>
                                                     <th class="text-center">Payment Method</th>
@@ -228,89 +290,89 @@
                                                     <th class="text-center">Status</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            {{-- <tbody>
                                                 @foreach ($orders as $order)
                                                     <tr class="align-items-center py-3">
                                                         <td>
                                                             <div class="cart-item-thumb d-flex align-items-center gap-4">
                                                                 {{-- <i class="fas fa-times"></i> --}}
-                                                                {{-- <img class="w-100"
+                                            {{-- <img class="w-100"
                                                                     src="{{ asset('front/assets') }}/img/cart/03.jpg"
                                                                     alt="product"> --}}
-                                                                <a href="{{ route('user.order.details', $order->unique_id) }}"
-                                                                    style="color: #011e5e;"><span
-                                                                        class="text-nowrap">#{{ $order->order_number }}</span></a>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span class="price-usd">
-                                                                {{ ucfirst($order->payment_method) }}
-                                                            </span>
-                                                        </td>
-
-                                                        <td class="text-center">
-                                                            <span class="price-usd">
-                                                                {{ number_format($order->total_amount, 2) }}
-                                                                {{ config('app.currency') }}
-                                                            </span>
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span class="price-usd">
-                                                                {{ ucfirst($order->status) }}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                            <a href="{{ route('user.order.details', $order->unique_id) }}"
+                                                style="color: #011e5e;"><span
+                                                    class="text-nowrap">#{{ $order->order_number }}</span></a>
                                     </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="price-usd">
+                                            {{ ucfirst($order->payment_method) }}
+                                        </span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="price-usd">
+                                            {{ number_format($order->total_amount, 2) }}
+                                            {{ config('app.currency') }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="price-usd">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </td>
+                                    </tr>
+                                    @endforeach
+                                    </tbody> --}}
+                                    </table>
                                 </div>
                             </div>
-                            <div id="wallet" class="tab-pane fade">
-                                <div class="axil-dashboard-address">
-                                    {{-- <p class="notice-text">The following addresses will be used on the checkout page by
+                        </div>
+                        <div id="wallet" class="tab-pane fade">
+                            <div class="axil-dashboard-address">
+                                {{-- <p class="notice-text">The following addresses will be used on the checkout page by
                                         default.</p> --}}
-                                    <div class="row g-4">
-                                        <div class="col-lg-12">
-                                            <div class="wallet-container">
-                                                <div class="wallet-header">
-                                                    <h2>My Wallet</h2>
-                                                    <button class="top-up-btn" data-bs-toggle="modal"
-                                                        data-bs-target="#topUpModal">TOP UP</button>
-                                                </div>
-                                                <div class="balance-section">
-                                                    <h3>{{ config('app.currency') }}
-                                                        {{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
-                                                </div>
-                                                <div class="account-status">
-                                                    <p>Account Status: {{ ucfirst(auth()->user()->account_type) }}</p>
-                                                    <p>Top up over RM 10,000 to automatically become a Reseller with 1%
-                                                        discount</p>
-                                                </div>
-                                                <div class="transaction-history">
-                                                    <h3>Transaction History</h3>
-                                                    <div class="table-responsive">
+                                <div class="row g-4">
+                                    <div class="col-lg-12">
+                                        <div class="wallet-container">
+                                            <div class="wallet-header">
+                                                <h2>My Wallet</h2>
+                                                <button class="top-up-btn" data-bs-toggle="modal"
+                                                    data-bs-target="#topUpModal">TOP UP</button>
+                                            </div>
+                                            <div class="balance-section">
+                                                <h3>{{ config('app.currency') }}
+                                                    {{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
+                                            </div>
+                                            <div class="account-status">
+                                                <p>Account Status: {{ ucfirst(auth()->user()->account_type) }}</p>
+                                                <p>Top up over RM 10,000 to automatically become a Reseller with 1%
+                                                    discount</p>
+                                            </div>
+                                            <div class="transaction-history">
+                                                <h3>Transaction History</h3>
+                                                <div class="table-responsive">
 
-                                                        <table class="table transaction-table" id="walletTable"
-                                                            style="width: 100%">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Transaction</th>
-                                                                    <th>Amount</th>
-                                                                    <th>Date</th>
-                                                                    <th>Status</th>
-                                                                </tr>
-                                                            </thead>
-                                                        </table>
-                                                    </div>
-
+                                                    <table class="table transaction-table" id="walletTable"
+                                                        style="width: 100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Transaction</th>
+                                                                <th>Amount</th>
+                                                                <th>Date</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            {{-- <div id="Reviews" class="tab-pane fade">
+                        </div>
+                        {{-- <div id="Reviews" class="tab-pane fade">
                                 <div class="account-wrapper">
                                     <div class="account-box">
                                         <h3 class="mb-3">Login to Sofia.</h3>
@@ -357,84 +419,98 @@
                                     </div>
                                 </div>
                             </div> --}}
-                        </div>
                     </div>
-                    {{-- model --}}
-                    <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Wallet</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <form id="walletForm" action="{{ route('wallet.topup') }}" method="POST"
-                                    enctype="multipart/form-data">
-                                    @csrf
-
-                                    <div class="modal-body">
-                                        <label>Enter amount to add to your wallet (in RM):</label>
-                                        <input type="number" class="form-control" value="500.00" id="wallet_amount"
-                                            name="amount" step="0.1">
-
-                                        <label>Select payment method:</label>
-                                        <div class="payment-methods selected">
-                                            <div class="payment-option" data-method="bank">
-                                                <input type="radio" name="payment_method" value="bank" checked>
-                                                <label>ONLINE BANKING</label>
-                                                <p>Direct bank transfer</p>
-                                            </div>
-                                            <div class="payment-option" data-method="stripe">
-                                                <input type="radio" name="payment_method" value="stripe">
-                                                <label>Stripe</label>
-                                                <p>Visa, Mastercard, etc.</p>
-                                            </div>
-
-                                            <div class="payment-option" data-method="paydibs    ">
-                                                <input type="radio" name="payment_method" value="paydibs    ">
-                                                <label>Paydibs</label>
-                                                <p>Visa, Mastercard, et
-                                            </div>
-                                        </div>
-
-                                        <div id="payment-details">
-                                            <div class="method-details" id="method-card" style="display: none;">
-                                                {{-- <p>Enter your card info here.</p> --}}
-                                            </div>
-                                            <div class="method-details" id="method-bank" style="display: block;">
-                                                <p><b>Bank Name:</b> Maybank</p>
-                                                <p><b>Title of Account:</b> Test Bank</p>
-                                                <p><b>Account No:</b> 00000020023456789</p>
-                                                <p><b>IBAN:</b> MB00 0000 1111 2222 3333</p>
-                                                <p>Upload receipt</p>
-                                                <div class="mb-2">
-                                                    <input type="file" name="receipt_image" class="form-control"
-                                                        id="receipt_image" accept=".jpg, .jpeg, .png">
-                                                </div>
-                                            </div>
-                                            <div class="method-details" id="method-ewallet" style="display: none;">
-                                                {{-- <p>Select your preferred e-wallet to proceed.</p> --}}
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn-confirm">CONFIRM PAYMENT</button>
-                                    </div>
-                                </form>
-
-
-                            </div>
-                        </div>
-                    </div>
-                    {{-- model end --}}
                 </div>
+                {{-- model --}}
+                <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="topUpModalLabel">Top Up Your Wallet</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form id="walletForm" action="{{ route('wallet.topup') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+
+                                <div class="modal-body">
+                                    <label>Enter amount to add to your wallet (in RM):</label>
+                                    <input type="number" class="form-control" value="500.00" id="wallet_amount"
+                                        name="amount" step="0.1">
+
+                                    <label>Select payment method:</label>
+                                    <div class="payment-methods selected">
+                                        <div class="payment-option" data-method="bank">
+                                            <input type="radio" name="payment_method" value="bank" checked>
+                                            <label>ONLINE BANKING</label>
+                                            <p>Direct bank transfer</p>
+                                        </div>
+                                        <div class="payment-option" data-method="stripe">
+                                            <input type="radio" name="payment_method" value="stripe">
+                                            <label>Stripe</label>
+                                            <p>Visa, Mastercard, etc.</p>
+                                        </div>
+
+                                        <div class="payment-option" data-method="paydibs    ">
+                                            <input type="radio" name="payment_method" value="paydibs    ">
+                                            <label>Paydibs</label>
+                                            <p>Visa, Mastercard, et
+                                        </div>
+                                    </div>
+
+                                    <div id="payment-details">
+                                        <div class="method-details" id="method-card" style="display: none;">
+                                            {{-- <p>Enter your card info here.</p> --}}
+                                        </div>
+                                        <div class="method-details" id="method-bank" style="display: block;">
+                                            <p><b>Bank Name:</b> Maybank</p>
+                                            <p><b>Title of Account:</b> Test Bank</p>
+                                            <p><b>Account No:</b> 00000020023456789</p>
+                                            <p><b>IBAN:</b> MB00 0000 1111 2222 3333</p>
+                                            <p>Upload receipt</p>
+                                            <div class="mb-2">
+                                                <input type="file" name="receipt_image" class="form-control"
+                                                    id="receipt_image" accept=".jpg, .jpeg, .png">
+                                            </div>
+                                        </div>
+                                        <div class="method-details" id="method-ewallet" style="display: none;">
+                                            {{-- <p>Select your preferred e-wallet to proceed.</p> --}}
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn-confirm">CONFIRM PAYMENT</button>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+                {{-- model end --}}
             </div>
+        </div>
         </div>
     </section>
 @endsection
 @section('scripts')
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).on('click', '.toggle-password', function() {
+            const targetInput = $($(this).data('target'));
+            const icon = $(this).find('i');
+
+            if (targetInput.attr('type') === 'password') {
+                targetInput.attr('type', 'text');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            } else {
+                targetInput.attr('type', 'password');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            }
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('#walletTable').DataTable({
@@ -459,6 +535,32 @@
                     },
                     {
                         data: 'status_badge',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+            $('#orderTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: "{{ route('order.get.data') }}",
+                order: [],
+                columns: [{
+                        data: 'order_number',
+                        name: 'order_number'
+                    },
+                    {
+                        data: 'payment_method',
+                        name: 'payment_method'
+                    },
+                    {
+                        data: 'total_amount',
+                        name: 'total_amount'
+                    },
+                    {
+                        data: 'status',
                         name: 'status',
                         orderable: false,
                         searchable: false

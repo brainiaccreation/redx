@@ -26,7 +26,8 @@ class ManageOrderController extends Controller
                     return '<a href="' . route('admin.order.details', $order->unique_id) . '">' . $order->order_number . '</a>';
                 })
                 ->addColumn('customer', function ($order) {
-                    return $order->user ? $order->user->name : $order->order_detail->name;
+                    // return $order->user ? $order->user->name : $order->order_detail->name;
+                    return  $order->user ? '<a href="' . route('admin.user.view', $order->user->id) . '">' . $order->user->name . ' ' . $order->user->last_name . '</a>'  : $order->order_detail->name;
                 })
                 ->addColumn('order_date', function ($order) {
                     return runTimeDateFormat($order->created_at);

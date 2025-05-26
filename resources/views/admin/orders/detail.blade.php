@@ -27,6 +27,7 @@
                                             <th scope="col">Item Price</th>
                                             <th scope="col">Quantity</th>
                                             {{-- <th scope="col">Rating</th> --}}
+                                            <th scope="col">Status</th>
                                             <th scope="col">Total Amount</th>
                                         </tr>
                                     </thead>
@@ -45,16 +46,44 @@
                                                                     class="link-primary"
                                                                     target="_blank">{{ $order_item->product->name }}</a>
                                                             </h5>
-                                                            <p class="text-muted mb-0">Variant: <span
-                                                                    class="fw-medium">{{ $order_item->variant->name }}</span>
+                                                            <p class="mb-0"><span class="text-dark">Variant: </span><span
+                                                                    class="fw-medium text-muted">{{ $order_item->variant->name }}</span>
                                                             </p>
+                                                            <p class="mb-0"><span class="text-dark">User ID: </span><span
+                                                                    class="fw-medium text-muted">{{ $order_item->game_id }}</span>
                                                             </p>
+                                                            @if ($order_item->giftCardCode && $order_item->giftCardCode->code)
+                                                                <div class="gift-card-container">
+                                                                    <div class="gift-card-label">GIFT CARD CODE</div>
+                                                                    <div class="gift-card-code-wrapper">
+                                                                        <div class="gift-card-code">
+                                                                            {{ $order_item->giftCardCode->code }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{{ config('app.currency') }} {{ number_format($order_item->price, 2) }}
+                                                <td>{{ config('app.currency') }}
+                                                    {{ number_format($order_item->price, 2) }}
                                                 </td>
                                                 <td>{{ $order_item->quantity }}</td>
+                                                <td>
+                                                    @if ($order_item->product->type == 'gift_card')
+                                                        @if ($order_item->delivery_status == 'code_assigned')
+                                                            <h5><span class="badge bg-success-subtle text-success">Code
+                                                                    Assigned</span></h5>
+                                                        @elseif($order_item->delivery_status == 'pending_code')
+                                                            <h5><span class="badge bg-warning-subtle text-warning">Pending
+                                                                    Code</span></h5>
+                                                        @endif
+                                                    @else
+                                                        <h5><span
+                                                                class="badge bg-success-subtle text-success">Completed</span>
+                                                        </h5>
+                                                    @endif
+                                                </td>
                                                 {{-- <td>
                                                     <div class="text-warning fs-15">
                                                         <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i
@@ -97,7 +126,7 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-sm-flex align-items-center">
-                                <h5 class="card-title flex-grow-1 mb-0">Order Status</h5>
+                                <h5 class="card-title flex-grow-1 mb-0">Order History</h5>
                                 {{-- <div class="flex-shrink-0 mt-2 mt-sm-0">
                                     <a href="javascript:void(0);"
                                         class="btn btn-soft-info material-shadow-none btn-sm mt-2 mt-sm-0"><i
@@ -157,7 +186,12 @@
                             <div class="d-flex">
                                 <h5 class="card-title flex-grow-1 mb-0">Customer Details</h5>
                                 <div class="flex-shrink-0">
-                                    {{-- <a href="javascript:void(0);" class="link-secondary">View Profile</a> --}}
+                                    @if ($order->user)
+                                        <a href="{{ route('admin.user.view', $order->user->id) }}" class="link-secondary">
+                                            View Profile
+                                        </a>
+                                    @endif
+
                                 </div>
                             </div>
                         </div>
@@ -167,10 +201,10 @@
                                     <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0">
                                             @if ($order->user)
-                                                <img src="{{ $order->user->avatar ? URL($order->user->avatar) : URL('admin/assets/images/users/avatar-1.jpg') }}"
+                                                <img src="{{ $order->user->avatar ? asset($order->user->avatar) : asset('admin/assets/images/users/avatar-1.jpg') }}"
                                                     class="avatar-sm rounded material-shadow" />
                                             @else
-                                                <img src="{{ URL('admin/assets/images/users/avatar-1.jpg') }}"
+                                                <img src="{{ asset('admin/assets/images/users/avatar-1.jpg') }}"
                                                     class="avatar-sm rounded material-shadow" />
                                             @endif
 
@@ -202,7 +236,8 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0"><i class="ri-secure-payment-line align-bottom me-1 text-muted"></i>
+                            <h5 class="card-title mb-0"><i
+                                    class="ri-secure-payment-line align-bottom me-1 text-muted"></i>
                                 Payment
                                 Details</h5>
                         </div>

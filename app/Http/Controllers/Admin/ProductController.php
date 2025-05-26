@@ -10,9 +10,11 @@ use App\Models\Category;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+
 class ProductController extends Controller
 {
-    public function list() {
+    public function list()
+    {
         return view('admin.products.list');
     }
 
@@ -25,9 +27,8 @@ class ProductController extends Controller
                 ->addIndexColumn()
                 ->addColumn('image', function ($product) {
                     return $product->featured_image
-                            ? '<img src="' . asset($product->featured_image) . '" width="50" class="table-image" />'
-                            : '<div class="user-name-avatar">' . usernameAvatar($product->name) . '</div>';
-
+                        ? '<img src="' . asset($product->featured_image) . '" width="50" class="table-image" />'
+                        : '<div class="user-name-avatar">' . usernameAvatar($product->name) . '</div>';
                 })
                 ->addColumn('category', function ($product) {
                     return $product->category ? $product->category->name : 'N/A';
@@ -68,14 +69,16 @@ class ProductController extends Controller
         }
     }
 
-    public function add() {
+    public function add()
+    {
         $categories = Category::all();
-        return view('admin.products.create',compact('categories'));
+        return view('admin.products.create', compact('categories'));
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
-         $request->validate([
+        $request->validate([
             'name' => 'required|string',
             'slug' => 'required|string|unique:products,slug',
             'category_id' => 'required|exists:categories,id',
@@ -89,6 +92,7 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->slug = $request->slug;
         $product->category_id = $request->category_id;
+        $product->type = $request->type;
         $product->status = $request->status;
         $product->is_featured = $request->has('is_featured') ? 1 : 0;
         $product->short_description = $request->short_description;
@@ -96,15 +100,14 @@ class ProductController extends Controller
 
         if ($request->featured_image) {
             $featuredImage = $request->file('featured_image');
-            $featuredImageName = $request->slug.'_'.time() . '.' . $featuredImage->getClientOriginalExtension();
+            $featuredImageName = $request->slug . '_' . time() . '.' . $featuredImage->getClientOriginalExtension();
             $featuredImagePath = public_path('product/featured_image/');
             $featuredImage->move($featuredImagePath, $featuredImageName);
 
-            if (file_exists(public_path($name =  $featuredImage->getClientOriginalName()))) 
-            {
+            if (file_exists(public_path($name =  $featuredImage->getClientOriginalName()))) {
                 unlink(public_path($name));
             };
-            $product->featured_image = 'product/featured_image/'.$featuredImageName;
+            $product->featured_image = 'product/featured_image/' . $featuredImageName;
         }
         $product->save();
 
@@ -133,10 +136,11 @@ class ProductController extends Controller
         return redirect()->route('admin.products.list')->with('success', 'Request has been completed');
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $categories = Category::all();
         $product = Product::find($id);
-        return view('admin.products.edit',compact('categories','product'));
+        return view('admin.products.edit', compact('categories', 'product'));
     }
     public function update(Request $request, $id)
     {
@@ -155,6 +159,7 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->slug = $request->slug;
         $product->category_id = $request->category_id;
+        $product->type = $request->type;
         $product->status = $request->status;
         $product->is_featured = $request->has('is_featured') ? 1 : 0;
         $product->short_description = $request->short_description;
@@ -217,9 +222,9 @@ class ProductController extends Controller
                 ->delete();
         }
 
-
         return redirect()->route('admin.products.list')->with('success', 'Request has been completed');
     }
+
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
@@ -234,5 +239,4 @@ class ProductController extends Controller
 
         return redirect()->back()->with('success', 'Request has been completed');
     }
-
 }

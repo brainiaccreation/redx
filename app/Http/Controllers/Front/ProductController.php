@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 
 class ProductController extends Controller
 {
@@ -13,12 +15,13 @@ class ProductController extends Controller
     {
 
         $product = Product::where('slug', $slug)->firstOrFail();
+        $reviews = Review::where('product_id', $product->id)->orderBy('id', 'DESC')->get();
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->inRandomOrder()
             ->take(4)
             ->get();
-        return view('front.products.detail', compact('product', 'relatedProducts'));
+        return view('front.products.detail', compact('product', 'relatedProducts', 'reviews'));
     }
 
     public function autocomplete(Request $request)
@@ -47,12 +50,16 @@ class ProductController extends Controller
 
     public function ajaxFilter(Request $request)
     {
-        $minPrice = $request->input('min_price', 0);
-        $maxPrice = $request->input('max_price', 10000);
-        $search   = $request->input('search');
+        $search    = $request->input('search');
+        $minPrice  = (float) $request->input('minPrice') ?? $request->query('minPrice');
+        $maxPrice  = (float) $request->input('maxPrice') ?? $request->query('maxPrice');
+        $categorySlug = $request->input('category') ?? $request->query('category');
 
-        $variantQuery = ProductVariant::query()
-            ->whereBetween('price', [$minPrice, $maxPrice]);
+        $variantQuery = ProductVariant::query();
+
+        if (!is_null($minPrice) && !is_null($maxPrice)) {
+            $variantQuery->whereBetween('price', [$minPrice, $maxPrice]);
+        }
 
         if ($search) {
             $variantQuery->whereHas('product', function ($q) use ($search) {
@@ -62,9 +69,29 @@ class ProductController extends Controller
 
         $productIds = $variantQuery->pluck('product_id')->unique();
 
-        $products = Product::whereIn('id', $productIds)->limit(12)->get();
-        $html = view('front.layouts.partials.filtered-products', compact('products'))->render();
+        $productsQuery = Product::whereIn('id', $productIds);
 
-        return response()->json(['html' => $html]);
+        if ($categorySlug) {
+            $category = Category::where('slug', $categorySlug)->first();
+
+            if ($category) {
+                $productsQuery->where('category_id', $category->id);
+            } else {
+                $productsQuery->whereRaw('0 = 1');
+            }
+        }
+
+        $products = $productsQuery->paginate(12);
+
+        $categories = Category::withCount('products')
+            ->orderBy('products_count', 'desc')
+            ->get();
+
+        $minPrice = ProductVariant::min('price');
+        $maxPrice = ProductVariant::max('price');
+
+        $html = view('front.shop', compact('products', 'categories', 'minPrice', 'maxPrice'))->render();
+
+        return $html;
     }
 }

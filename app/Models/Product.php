@@ -14,9 +14,13 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-  public function variants()
+    public function variants()
     {
         return $this->hasMany(ProductVariant::class)->orderBy('order', 'asc');
     }
 
+    public function review()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

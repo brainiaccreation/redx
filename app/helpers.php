@@ -138,7 +138,7 @@ if (!function_exists('normal_product_price_range')) {
         if ($prices->isEmpty()) return 'N/A';
         $min = number_format($prices->min(), 2);
         $max = number_format($prices->max(), 2);
-        return $min === $max ? " $min" : " $min - $max";
+        return $min === $max ? config('app.currency') . " $min" : config('app.currency') . " $min - $max";
     }
 }
 
@@ -158,5 +158,35 @@ if (!function_exists('calculatedPrice')) {
 
 
         return $price;
+    }
+}
+
+
+if (!function_exists('format_count')) {
+    function format_count($number, $precision = 1)
+    {
+        if ($number >= 1000000) {
+            return number_format($number / 1000000, $precision) . 'M';
+        }
+
+        if ($number >= 1000) {
+            return number_format($number / 1000, $precision) . 'K';
+        }
+
+        return (string) $number;
+    }
+}
+if (!function_exists('wallet_balance_format')) {
+    function wallet_balance_format($number, $precision = 2)
+    {
+        if ($number >= 1000000) {
+            return number_format($number / 1000000, $precision, '.', '') . 'M';
+        }
+
+        if ($number >= 1000) {
+            return number_format($number / 1000, $precision, '.', '') . 'K';
+        }
+
+        return number_format($number, $precision, '.', '');
     }
 }

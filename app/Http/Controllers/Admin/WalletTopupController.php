@@ -22,7 +22,7 @@ class WalletTopupController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('user', function ($row) {
-                    return $row->wallet->user->name . ' ' . $row->wallet->user->last_name;
+                    return '<a href="' . route('admin.user.view', $row->wallet->user->id) . '">' . $row->wallet->user->name . ' ' . $row->wallet->user->last_name . '</a>';
                 })
                 ->addColumn('amount', function ($row) {
                     return config('app.currency') . ' ' . number_format($row->amount, 2);
@@ -56,7 +56,7 @@ class WalletTopupController extends Controller
                     ';
                 })
 
-                ->rawColumns(['status', 'submitted_at', 'action'])
+                ->rawColumns(['user', 'status', 'submitted_at', 'action'])
                 ->make(true);
         }
     }

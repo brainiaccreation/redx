@@ -6,7 +6,8 @@
     <meta content="RedX Gaming Admin & Dashboard" name="description" />
     <meta content="RedX" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('admin/assets') }}/images/favicon.ico">
+    <link rel="shortcut icon" href="{{ URL('admin/assets') }}/images/logo-favicon.jpg">
+
 
     <!-- Layout config Js -->
     <script src="{{ asset('admin/assets') }}/js/layout.js"></script>

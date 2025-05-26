@@ -145,7 +145,7 @@
 </div>
 
 <!-- Header top Section Start -->
-<div class="header-top-section style-2">
+{{-- <div class="header-top-section style-2">
     <div class="container">
         <div class="header-top-wrapper style-2">
             <ul class="contact-list">
@@ -168,7 +168,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Header Section Start -->
 <header id="header-sticky" class=" header-1 header-2">
