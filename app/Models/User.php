@@ -28,7 +28,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_suspended',
         'email_verified_at',
         'google_id',
-        'wallet_balance'
+        'wallet_balance',
+        'weekly_limit'
     ];
 
     /**

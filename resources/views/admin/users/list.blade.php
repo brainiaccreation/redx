@@ -26,6 +26,7 @@
                             <div class="d-flex justify-content-between">
                                 <div class="p-0">
                                     <h4 class="card-title mb-0 flex-grow-1">Users Management</h4>
+                                    <p class="text-muted mb-0">Manage users, wallets, and purchase limits</p>
                                 </div>
                                 <div class="p-0">
                                     {{-- @if (checkPermission('/members/equipment/create')) --}}
@@ -42,11 +43,12 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
+                                        <th>User</th>
                                         <th>Wallet Balance</th>
-                                        <th>Account Type</th>
-                                        <th>Actions</th>
+                                        <th>Weekly Limit</th>
+                                        <th>Weekly Spent</th>
+                                        <th class="text-center">Account Type</th>
+                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -54,6 +56,131 @@
                     </div>
                 </div><!--end col-->
             </div><!--end row-->
+        </div>
+    </div>
+    {{-- add balanace modal --}}
+    <div class="modal fade bs-example-modal-center" tabindex="-1" aria-labelledby="mySmallModalLabel" aria-modal="true"
+        role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gridModalLabel">Add Balance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="d-flex justify-items-center align-items-center">
+                        <div class="user-name-avatar" id="modalUserAvatar">{{ usernameAvatar('Ahmed Hassan') }}</div>
+                        <div class="ms-2">
+                            <div class="font-medium text-gray-900" id="modalUserName">
+                                Ahmed Hassan
+                            </div>
+                            <div class="text-sm text-gray-500" id="modalUserEmail">
+                                ahmed@example.com
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label mb-2">Current Balance</label>
+                        <p class="text-2xl font-bold text-green-600" id="modalUserBalance">{{ config('app.currency') }}
+                            15,000</p>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label mb-2">Amount to Add</label>
+                        <input placeholder="Enter amount" class="form-control" type="number" step="0.1"
+                            id="addBalanceAmount" required>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label mb-2">Reason</label>
+                        <textarea name="reason" rows="3" style="resize: none" id="addBalanceReason" class="form-control"
+                            placeholder="Enter reasoin for adding balance" required></textarea>
+                    </div>
+                    <input type="hidden" id="modalUserId">
+                    <div class="d-flex justify-content-end algin-items-center mt-3">
+                        <div class="px-2"><button class="btn btn-light" data-bs-dismiss="modal" aria-label="Close"
+                                type="button">Cancel</button></div>
+                        <div>
+                            <button class="btn btn-danger add-balance-btn" type="button">Add Balance</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
+    {{-- weekly limit balanace modal --}}
+    <div class="modal fade weeklyLimitModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Set Weekly Purchase Limit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center">
+                        <div class="user-name-avatar" id="modalUserAvatar">AH</div>
+                        <div class="ms-2">
+                            <div class="font-medium text-gray-900" id="modalUserName">Ahmed Hassan</div>
+                            <div class="text-sm text-gray-500" id="modalUserEmail">ahmed@example.com</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="form-label">Current Weekly Limit</label>
+                        <h3 class="text-2xl font-bold text-blue-600" id="modalWeeklyLimit">Rs. 50,000</h3>
+                    </div>
+
+                    <div class="mt-2">
+                        <label class="form-label">Weekly Spent</label>
+                        <p class="text-lg font-semibold text-red-600" id="modalWeeklySpent">Rs. 0</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" id="progressBarSpent" role="progressbar"
+                                style="width: 0%" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <label class="form-label">New Weekly Limit</label>
+                        <input placeholder="Enter new weekly limit" class="form-control" type="number" step="0.01"
+                            id="addWeeklyLimit">
+                    </div>
+
+                    <input type="hidden" id="modalUserId">
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger set-weekly-limit-btn" type="button">Update Limit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- transaction histories --}}
+    <div class="modal fade transaactionHistoryModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transaction History</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="transaction-loader" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div id="transaction-list" class="d-none" data-simplebar style="max-height: 400px;">
+                        <ul class="list-group" id="transaction-items">
+                        </ul>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3 d-none" id="load-more-container">
+                        <button class="btn btn-outline-danger btn-sm" id="load-more-transactions">Load More</button>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 @endsection
@@ -70,6 +197,326 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
     <script src="{{ asset('admin/assets') }}/js/pages/datatables.init.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var modal = new bootstrap.Modal(document.querySelector('.bs-example-modal-center'));
+
+            $(document).on('click', '.open-balance-modal', function() {
+                const userId = $(this).data('id');
+                const name = $(this).data('name');
+                const email = $(this).data('email');
+                const balance = $(this).data('balance');
+                let initials = name.trim().split(' ');
+                let avatarText = '';
+
+                if (initials.length > 1) {
+                    avatarText = initials[0].charAt(0).toUpperCase() + initials[1].charAt(0).toUpperCase();
+                } else {
+                    avatarText = initials[0].charAt(0).toUpperCase();
+                }
+                $('#modalUserId').val(userId);
+                $('#modalUserAvatar').html(avatarText);
+
+                $('#modalUserName').text(name);
+                $('#modalUserEmail').text(email);
+                $('#modalUserBalance').text(balance);
+
+            });
+            // add wallet balance
+            $(document).on('click', '.add-balance-btn', function(e) {
+                e.preventDefault();
+                const $btn = $(this);
+                const amount = $('#addBalanceAmount').val();
+                const reason = $('#addBalanceReason').val();
+                const userId = $('#modalUserId').val();
+
+                if (!amount || parseFloat(amount) <= 0) {
+                    toastr.error('Amount is required and must be greater than 0.');
+                    return;
+                }
+
+                if (!reason.trim()) {
+                    toastr.error('Reason is required.');
+                    return;
+                }
+                $btn.prop('disabled', true).text('Processing...');
+                $.ajax({
+                    url: "{{ route('admin.user.add_balance') }}",
+                    method: 'POST',
+                    data: {
+                        '_token': "{{ csrf_token() }}",
+                        amount,
+                        reason,
+                        'user_id': userId
+                    },
+                    success: function(res) {
+                        toastr.success('Balance added successfully.');
+
+
+                        $('#addBalanceAmount').val('');
+                        $('#addBalanceReason').val('');
+                        $('#modalUserId').val('');
+                        $('.bs-example-modal-center').modal('hide');
+                        const currency = '{{ config('app.currency') }}';
+                        const formattedBalance =
+                            `${currency} ${parseFloat(res.new_balance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+                        $(`#user-balance-${userId}`).html(
+                            `<span class="text-success"><i class="ri-wallet-line"></i> ${formattedBalance}</span>`
+                        );
+                    },
+                    error: function(xhr) {
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            const errors = xhr.responseJSON.errors;
+                            for (let key in errors) {
+                                toastr.error(errors[key][0]);
+                            }
+                        } else {
+                            toastr.error('An error occurred. Please try again.');
+                        }
+                    },
+                    complete: function() {
+                        $btn.prop('disabled', false).text('Add Balance');
+                    }
+                });
+            });
+
+            // close modal
+            $('.bs-example-modal-center').on('hidden.bs.modal', function() {
+                $('#addBalanceAmount').val('');
+                $('#addBalanceReason').val('');
+                $('#modalUserId').val('');
+            });
+            // weekly limit modal
+            let $currentBtn = null;
+
+            $(document).on('click', '.weekly-balance-modal', function() {
+                $currentBtn = $(this);
+                const name = $currentBtn.data('name');
+                const email = $currentBtn.data('email');
+                const userId = $currentBtn.data('id');
+                const limit = $currentBtn.data('limit') || 0;
+                const spent = $currentBtn.data('spent') || 0;
+                const currency = '{{ config('app.currency') }}';
+                console.log("limit:- " + limit);
+                console.log("spent:- " + spent);
+
+                let initials = name.trim().split(' ');
+                let avatarText = '';
+
+                if (initials.length > 1) {
+                    avatarText = initials[0].charAt(0).toUpperCase() + initials[1].charAt(0).toUpperCase();
+                } else {
+                    avatarText = initials[0].charAt(0).toUpperCase();
+                }
+
+                const percentage = limit > 0 ? Math.min(100, (spent / limit) * 100).toFixed(2) : 0;
+
+                $('#modalUserName').text(name);
+                $('#modalUserEmail').text(email);
+                $('#modalUserAvatar').text(avatarText);
+                $('#modalWeeklyLimit').text(`${currency} ${limit.toLocaleString()}`);
+                $('#modalWeeklySpent').text(`${currency} ${spent.toLocaleString()}`);
+
+                $('#progressBarSpent')
+                    .css('width', `${percentage}%`)
+                    .attr('aria-valuenow', percentage)
+                    .text(`${percentage}%`);
+
+                $('#modalUserId').val(userId);
+            });
+
+
+            // update weekly limit
+            $(document).on('click', '.set-weekly-limit-btn', function() {
+                const $btn = $(this);
+                const userId = $('#modalUserId').val();
+                const newLimit = $('#addWeeklyLimit').val();
+                const currency = '{{ config('app.currency') }}';
+
+                if (!newLimit) {
+                    toastr.error('Weekly limit is required.');
+                    return;
+                }
+
+                $btn.prop('disabled', true).text('Processing...');
+
+                $.ajax({
+                    url: '{{ route('user.updateWeeklyLimit') }}',
+                    type: 'POST',
+                    data: {
+                        user_id: userId,
+                        weekly_limit: newLimit,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            const limit = parseFloat(response.weekly_limit);
+                            const spent = parseFloat(response
+                                .weekly_spent);
+                            const percentage = limit > 0 ? Math.min(100, (spent / limit) * 100)
+                                .toFixed(2) : 0;
+
+                            $('#modalWeeklyLimit').text(currency + ' ' + limit
+                                .toLocaleString());
+                            $('#modalWeeklySpent').text(currency + ' ' + spent
+                                .toLocaleString());
+                            $('#progressBarSpent').css('width', `${percentage}%`).attr(
+                                'aria-valuenow', percentage);
+
+                            $(`#weekly-limit-${response.user_id}`).html(
+                                `<i class="ri-wallet-line"></i> ${currency} ${limit.toFixed(2)}`
+                            );
+
+
+                            const $triggerBtn = $(
+                                `.weekly-balance-modal[data-id='${response.user_id}']`);
+                            $triggerBtn.attr('data-limit', limit.toFixed(2));
+                            $triggerBtn.attr('data-spent', spent.toFixed(2));
+                            $('#users-table').DataTable().ajax.reload(null, false);
+
+                            $('.weeklyLimitModal').modal('hide');
+                            toastr.success('Weekly limit updated successfully.');
+                        }
+
+                        $btn.prop('disabled', false).text('Update Limit');
+                    },
+                    error: function() {
+                        toastr.error('Something went wrong.');
+                        $btn.prop('disabled', false).text('Update Limit');
+                    }
+                });
+            });
+
+            // Reset modal on hide
+            $('.weeklyLimitModal').on('hidden.bs.modal', function() {
+                $('#addWeeklyLimit').val('');
+                $('#modalUserName').text('');
+                $('#modalUserEmail').text('');
+                $('#modalUserAvatar').text('');
+                $('#modalWeeklyLimit').text('');
+                $('#modalWeeklySpent').text('');
+                $('#progressBarSpent').css('width', '0%').attr('aria-valuenow', 0).text('0%');
+            });
+
+            // transaction history
+            let currentPage = 1;
+            let currentUserId = null;
+
+            $(document).on('click', '.view-transactions', function() {
+                currentUserId = $(this).data('user-id');
+                currentPage = 1;
+
+                $('#transaction-list').addClass('d-none');
+                $('#transaction-items').empty();
+                $('#transaction-loader').removeClass('d-none');
+                $('#load-more-container').addClass('d-none');
+
+                fetchTransactions(currentUserId, currentPage);
+            });
+
+            $('#load-more-transactions').on('click', function() {
+                currentPage++;
+                fetchTransactions(currentUserId, currentPage);
+            });
+
+            function fetchTransactions(userId, page = 1) {
+                $.ajax({
+                    url: "{{ route('admin.user.transactions') }}",
+                    type: 'GET',
+                    data: {
+                        user_id: userId,
+                        page: page
+                    },
+                    success: function(response) {
+                        $('#transaction-loader').addClass('d-none');
+                        $('#transaction-list').removeClass('d-none');
+
+                        if (response.data.length === 0 && page === 1) {
+                            $('#transaction-items').append(
+                                '<li class="list-group-item text-center text-muted">No transactions found.</li>'
+                            );
+                            return;
+                        }
+
+                        response.data.forEach(tx => {
+                            let iconClass = tx.type === 'credit' ?
+                                'bg-success-subtle text-success' :
+                                'bg-danger-subtle text-danger';
+                            let amountClass = tx.type === 'credit' ? 'text-success' :
+                                'text-danger';
+                            let sign = tx.type === 'credit' ? '+' : '-';
+
+                            let iconSvg = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                                stroke-linecap="round" stroke-linejoin="round" 
+                                class="lucide lucide-trending-up">
+                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                <polyline points="16 7 22 7 22 13"></polyline>
+                            </svg>`;
+
+                            // Status badge class
+                            let statusClass = '';
+                            switch (tx.status) {
+                                case 'pending':
+                                    statusClass = 'bg-warning-subtle text-warning';
+                                    break;
+                                case 'approved':
+                                    statusClass = 'bg-success-subtle text-success';
+                                    break;
+                                case 'rejected':
+                                    statusClass = 'bg-secondary-subtle text-secondary';
+                                    break;
+                                default:
+                                    statusClass = 'bg-info-subtle text-info';
+                            }
+                            let statusText = tx.status ? tx.status.charAt(0).toUpperCase() + tx
+                                .status.slice(1) : 'Unknown';
+
+                            $('#transaction-items').append(`
+                                <li class="list-group-item">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 avatar-xs">
+                                                    <div class="avatar-title ${iconClass} rounded">
+                                                        ${iconSvg}
+                                                    </div>
+                                                </div>
+                                                <div class="flex-shrink-0 ms-2">
+                                                    <h6 class="fs-14 mb-0">${tx.description}</h6>
+                                                    <small class="text-muted d-block">${tx.date}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0">
+                                            <span class="${amountClass}">${sign}${tx.amount}</span>
+                                             <h6 class="mt-1"><span class="badge ${statusClass}">${tx.status?.charAt(0).toUpperCase() + tx.status?.slice(1) || 'Unknown'}</span></h6>
+                                        </div>
+                                    </div>
+                                </li>
+                            `);
+                        });
+
+
+                        if (response.has_more) {
+                            $('#load-more-container').removeClass('d-none');
+                        } else {
+                            $('#load-more-container').addClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        $('#transaction-loader').html(
+                            '<div class="text-danger">Failed to load transactions.</div>');
+                    }
+                });
+            }
+
+
+        });
+    </script>
     <script>
         $(document).ready(function() {
             var table = $('#users-table').DataTable({
@@ -95,16 +542,22 @@
                         orderable: false
                     },
                     {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'email',
-                        name: 'email'
+                        data: 'user_info',
+                        name: 'user_info'
                     },
                     {
                         data: 'wallet_balance',
                         name: 'wallet_balance'
+                    },
+                    {
+                        data: 'weekly_limit',
+                        name: 'weekly_limit'
+                    },
+                    {
+                        data: 'weekly_spent',
+                        name: 'weekly_spent',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'account_type',
@@ -168,7 +621,7 @@
                 e.preventDefault();
 
                 let button = $(this);
-                let userId = button.closest('form').attr('action').split('/').pop();
+                let userId = button.data('id'); // get user ID from data attribute
                 let currentStatus = parseInt(button.data('suspended'));
 
                 $.ajax({
@@ -182,21 +635,32 @@
                     success: function(response) {
                         let newStatus = response.is_suspended;
                         let iconClass = newStatus == 1 ? 'ri-check-fill' : 'ri-forbid-line';
-                        let buttonClass = newStatus == 1 ? 'success-item' : 'delete-item';
+                        let buttonText = newStatus == 1 ? 'Unsuspend' : 'Suspend';
                         let titleText = newStatus == 1 ? 'Unsuspend User' : 'Suspend User';
+
+                        button.find('i')
+                            .removeClass('ri-check-fill ri-forbid-line')
+                            .addClass(iconClass);
+
+                        button.contents().filter(function() {
+                            return this.nodeType === 3;
+                        }).remove();
+                        button.append(' ' + buttonText);
 
                         button
                             .data('suspended', newStatus)
-                            .attr('title', titleText)
-                            .removeClass('delete-item success-item')
-                            .addClass(buttonClass)
-                            .find('i')
-                            .attr('class', iconClass);
+                            .attr('title', titleText);
 
                         if (typeof bootstrap !== 'undefined') {
                             var tooltip = bootstrap.Tooltip.getInstance(button[0]);
                             if (tooltip) tooltip.dispose();
                             new bootstrap.Tooltip(button[0]);
+                        }
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(
+                                `User has been ${newStatus == 1 ? 'suspended' : 'unsuspended'} successfully.`
+                            );
                         }
                     },
                     error: function() {
@@ -204,6 +668,7 @@
                     }
                 });
             });
+
         });
     </script>
 @endsection

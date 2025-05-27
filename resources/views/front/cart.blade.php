@@ -43,6 +43,12 @@
                                                         alt="{{ $cartItem->product->name }}">
                                                     <span class="head text-nowrap">{{ $cartItem->product->name }} -
                                                         {{ $cartItem->product_variant->name }}</span>
+                                                    @if ($cartItem->game_user_id)
+                                                        <span class="text-sm d-flex text-nowrap"> <span
+                                                                class="text-dark">User
+                                                                ID: &nbsp;</span>
+                                                            {{ $cartItem->game_user_id }}</span>
+                                                    @endif
                                                 </div>
                                             </td>
                                             <td class="text-center">

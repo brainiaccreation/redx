@@ -91,7 +91,7 @@
                                                 data-price="{{ calculatedPrice($variant->price) }}"
                                                 data-product-id="{{ $variant->product_id }}">
 
-                                                <div class="lattice-count">{{ $variant->name }} {{ $loop->first }}</div>
+                                                <div class="lattice-count">{{ $variant->name }}</div>
                                                 <div class="price">{{ config('app.currency') }}
                                                     {{ calculatedPrice($variant->price) }}</div>
                                             </div>

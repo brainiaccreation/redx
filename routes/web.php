@@ -215,6 +215,9 @@ Route::prefix('admin')->group(function () {
             Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.user.status');
             Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
             Route::post('/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('admin.user.toggle_suspend');
+            Route::post('/add-balance', [UserController::class, 'addBalance'])->name('admin.user.add_balance');
+            Route::post('/user/update-weekly-limit', [UserController::class, 'updateWeeklyLimit'])->name('user.updateWeeklyLimit');
+            Route::get('/transactions', [UserController::class, 'fetchTransactions'])->name('admin.user.transactions');
         });
         // gift card inventory management
         Route::get('/gift-card-codes', [GiftCardCodeController::class, 'list'])->name('admin.code.list');

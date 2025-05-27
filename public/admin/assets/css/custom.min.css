@@ -192,16 +192,17 @@ a.delete-variant {
 }
 
 .user-name-avatar {
-    background: #d3d3d3;
-    border-radius: 12px;
-    color: #000;
+    background: #ff0000ed;
+    color: #ffffff;
     font-weight: 500;
-    width: 50px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid #00000017;
+    border-radius: 50px;
+    font-size: 15px;
 }
 
 .edit-item {
@@ -216,6 +217,15 @@ a.delete-variant {
 }
 
 .action_btn {
+    font-size: 18px;
+    background: #fff;
+    border: 1px solid #0000005e;
+    border-radius: 5px;
+    padding: 1px 7px 1px 7px;
+
+}
+
+.action_dropdown_btn {
     font-size: 18px;
     background: #fff;
     border: 1px solid #0000005e;
@@ -614,4 +624,160 @@ textarea {
 
 .page-link {
     color: #f90000;
+}
+
+.btn-export-custom {
+    background: #f3f3f9 !important;
+    border: 1px solid #00000045 !important;
+    font-size: 12px !important;
+    padding: 6px 11px !important;
+    font-weight: 600;
+    font-family: 'remixicon';
+    color: #3a3a3a !important;
+}
+
+.dt-buttons .buttons-excel {
+    margin-left: auto;
+}
+
+
+.row-Import-wrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+.row-import {
+    position: relative;
+}
+
+.row-import .btn__wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.row-import .btn__wrapper button,
+.row-import .btn__wrapper a {
+    background: #EBEBEB !important;
+    border-radius: 5px !important;
+    color: #26303B !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 10px 14px;
+    ;
+}
+
+.row-import .btn__wrapper button>svg,
+.row-import .btn__wrapper a>svg {
+    width: 16px;
+}
+
+.toggler_opt {
+    display: none;
+}
+
+.text-gray-500 {
+    opacity: 1;
+    color: #6b7280;
+}
+
+.text-sm {
+    font-size: 12px;
+    line-height: 1.25rem;
+}
+
+.text-gray-900 {
+    opacity: 1;
+    color: #111827;
+}
+
+.text-gray-400 {
+    opacity: 1;
+    color: #9ca3af;
+}
+
+.text-xs {
+    font-size: 11px;
+    line-height: 1rem;
+}
+
+.btn-soft-danger {
+    --vz-btn-color: #ff0000 !important;
+    --vz-btn-border-color: transparent !important;
+    --vz-btn-hover-bg: #ff0000 !important;
+    --vz-btn-active-bg: #ff0000 !important;
+}
+
+.bg-gray-50 {
+    opacity: 1;
+    background-color: #f9fafb;
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.text-green-600 {
+    opacity: 1;
+    color: #16a34a;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-gray-700 {
+    opacity: 1;
+    color: #374151;
+}
+
+.modal {
+    backdrop-filter: blur(2px);
+}
+
+.text-red-600 {
+    opacity: 1;
+    color: #dc2626;
+}
+
+.text-blue-600 {
+    opacity: 1;
+    color: #2563eb;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.btn-outline-danger {
+    --vz-btn-color: #ff0000 !important;
+    --vz-btn-border-color: #ff0000 !important;
+    --vz-btn-hover-bg: #ff0000 !important;
+    --vz-btn-hover-border-color: #ff0000 !important;
+    --vz-btn-active-bg: #ff0000 !important;
+    --vz-btn-active-border-color: #ff0000 !important;
+}
+
+.bg-success {
+    opacity: 1;
+    background-color: #42a60b !important;
+}
+
+.action_btn:hover,
+.action_btn:active,
+.action_btn:focus {
+    color: red;
+    border: 1px solid red;
 }
