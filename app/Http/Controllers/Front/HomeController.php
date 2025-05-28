@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\HomeSlider;
 use App\Models\Product;
 use App\Models\ProductVariant;
 
@@ -14,7 +15,8 @@ class HomeController extends Controller
     {
         $products = Product::latest()->take(12)->get();
         $featured_products = Product::where('is_featured', 1)->take(12)->get();
-        return view('front.home', compact('products', 'featured_products'));
+        $homeSliders = HomeSlider::orderBy('created_at', 'DESC')->get();
+        return view('front.home', compact('products', 'featured_products', 'homeSliders'));
     }
     public function about()
     {

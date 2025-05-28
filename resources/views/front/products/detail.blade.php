@@ -91,7 +91,7 @@
                                                 data-price="{{ calculatedPrice($variant->price) }}"
                                                 data-product-id="{{ $variant->product_id }}">
 
-                                                <div class="lattice-count">{{ $variant->name }} {{ $loop->first }}</div>
+                                                <div class="lattice-count">{{ $variant->name }}</div>
                                                 <div class="price">{{ config('app.currency') }}
                                                     {{ calculatedPrice($variant->price) }}</div>
                                             </div>
@@ -101,11 +101,42 @@
                                 </div>
                                 <h3 id="product_price">0.00</h3>
                             </div>
-                            <div class="cart-quantity">
-                                <label for="user_id" class="form-label">User ID <span class="text-danger">*</span> </label>
-                                <input type='text' name='user_id' placeholder="Please enter your User ID here"
-                                    class='form-control'>
-                            </div>
+                            @if ($product->game_user_id == 1)
+                                <div class="cart-quantity mt-2">
+                                    <label for="user_id" class="form-label">User ID <span
+                                            class="text-danger">*</span></label>
+                                    <input type='text' name='user_id' placeholder="Please enter your User ID here"
+                                        class='form-control'>
+                                </div>
+                            @endif
+
+                            @if ($product->game_server_id == 1)
+                                <div class="cart-quantity mt-2">
+                                    <label for="server_id" class="form-label">Server ID <span
+                                            class="text-danger">*</span></label>
+                                    <input type='text' name='server_id' placeholder="Please enter your Server ID here"
+                                        class='form-control'>
+                                </div>
+                            @endif
+
+                            @if ($product->game_user_name == 1)
+                                <div class="cart-quantity mt-2">
+                                    <label for="user_name" class="form-label">User Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type='text' name='user_name' placeholder="Please enter your User Name here"
+                                        class='form-control'>
+                                </div>
+                            @endif
+
+                            @if ($product->game_email == 1)
+                                <div class="cart-quantity mt-2">
+                                    <label for="email" class="form-label">Email <span
+                                            class="text-danger">*</span></label>
+                                    <input type='email' name='email' placeholder="Please enter your Email here"
+                                        class='form-control'>
+                                </div>
+                            @endif
+
                             <div class="cart-wrp">
                                 <div class="cart-quantity">
                                     <form id='myform' method='POST' class='quantity' action='#'>
@@ -456,13 +487,47 @@
                     toastr.error('Please select a variant.');
                     return;
                 }
-                var userId = $("input[name='user_id']").val().trim();
+                // var userId = $("input[name='user_id']").val().trim();
 
-                if (userId === '') {
-                    // alert('Please enter your User ID.');
-                    toastr.error('Please enter your User ID.');
-                    return;
+                // if (userId === '') {
+                //     toastr.error('Please enter your User ID.');
+                //     return;
+                // }
+
+                let isValid = true;
+                const requiredFields = ['user_id', 'server_id', 'user_name', 'email'];
+
+                for (let fieldName of requiredFields) {
+                    const input = $("input[name='" + fieldName + "']:visible");
+                    if (input.length && input.val().trim() === '') {
+                        toastr.error(
+                            `Please enter your ${input.prev('label').text().replace('*', '').trim()}.`);
+                        isValid = false;
+                        break;
+                    }
                 }
+
+                if (!isValid) return;
+                let data = {
+                    _token: '{{ csrf_token() }}',
+                    variant_id: selected.data('id'),
+                    product_id: selected.data('product-id'),
+                    price: selected.data('price'),
+                    quantity: quantity,
+                };
+                const fieldMapping = {
+                    user_id: 'game_user_id',
+                    server_id: 'game_server_id',
+                    user_name: 'game_user_name',
+                    email: 'game_email',
+                };
+
+                Object.keys(fieldMapping).forEach(function(key) {
+                    const input = $("input[name='" + key + "']:visible");
+                    const backendKey = fieldMapping[key];
+                    data[backendKey] = input.length ? input.val().trim() : null;
+                });
+
                 var variant = {
                     id: selected.data('id'),
                     name: selected.data('name'),
@@ -471,18 +536,16 @@
                     product_id: selected.data('product-id')
                 };
 
-
+                ['user_id', 'server_id', 'user_name', 'email'].forEach(function(key) {
+                    const input = $("input[name='" + key + "']:visible");
+                    if (input.length) {
+                        data[key] = input.val().trim();
+                    }
+                });
                 $.ajax({
                     url: "{{ route('cart.add') }}",
                     method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        variant_id: variant.id,
-                        product_id: variant.product_id,
-                        price: variant.price,
-                        quantity: quantity,
-                        game_user_id: userId
-                    },
+                    data: data,
                     success: function(response) {
                         toastr.success('Item added to cart successfully.');
                         setTimeout(() => {

@@ -19,7 +19,8 @@ class GiftCardCodeController extends Controller
     public function get(Request $request)
     {
         if ($request->ajax()) {
-            $codes = GiftCardCode::with(['product']);
+            $codes = GiftCardCode::with(['product', 'product_variant'])->select('gift_card_codes.*');
+
 
             return DataTables::of($codes)
                 ->addIndexColumn()
@@ -36,7 +37,13 @@ class GiftCardCodeController extends Controller
                     return '<h5><span class="' . $badgeClass . '">' . ucfirst($code->status) . '</span></h5>';
                 })
                 ->addColumn('used_date', function ($code) {
-                    return $code->used_date ? runTimeDateFormat($code->used_date) : '-';
+                    if ($code->used_date) {
+                        $used_date = '<div style="display: flex;justify-content:center; gap: 8px;">--
+                            </div>';
+                    } else {
+                        $used_date = runTimeDateFormat($code->used_date);
+                    }
+                    return $used_date;
                 })
 
                 ->addColumn('action', function ($code) {
@@ -54,7 +61,48 @@ class GiftCardCodeController extends Controller
                     }
                     return $editIcon;
                 })
+                ->addColumn('published_date', function ($code) {
+                    return runTimeDateFormat($code->created_at);
+                })
+                ->filterColumn('product', function ($query, $keyword) {
+                    $query->whereHas('product', function ($q) use ($keyword) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                    })->orWhereHas('product_variant', function ($q) use ($keyword) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                    });
+                })
 
+                ->filterColumn('status', function ($query, $keyword) {
+                    $query->whereRaw('LOWER(status) LIKE ?', ['%' . strtolower($keyword) . '%']);
+                })
+                ->filterColumn('published_date', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->whereDate('gift_card_codes.created_at', $keyword)
+                            ->orWhereRaw("DATE_FORMAT(gift_card_codes.created_at, '%Y-%m-%d') LIKE ?", ["%{$keyword}%"])
+                            ->orWhereRaw("DATE_FORMAT(gift_card_codes.created_at, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                            ->orWhereRaw("DATE_FORMAT(gift_card_codes.created_at, '%M') LIKE ?", ["%{$keyword}%"]);
+                    });
+                })
+                ->filterColumn('used_date', function ($query, $keyword) {
+                    $query->whereRaw('DATE_FORMAT(used_date, "%d-%m-%Y") LIKE ?', ["%$keyword%"]);
+                })
+                ->orderColumn('product', function ($query, $order) {
+                    $query->join('products', 'gift_card_codes.product_id', '=', 'products.id')
+                        ->join('product_variants', 'gift_card_codes.product_variant_id', '=', 'product_variants.id')
+                        ->orderByRaw("CONCAT(products.name, ' - ', product_variants.name) $order")
+                        ->select('gift_card_codes.*');
+                })
+
+                ->orderColumn('status', function ($query, $order) {
+                    $query->select('gift_card_codes.*')->orderBy('status', $order);
+                })
+
+                ->orderColumn('used_date', function ($query, $order) {
+                    $query->select('gift_card_codes.*')->orderBy('used_date', $order);
+                })
+                ->orderColumn('published_date', function ($query, $order) {
+                    $query->orderBy('gift_card_codes.created_at', $order);
+                })
                 ->rawColumns(['product', 'status', 'used_date', 'action'])
                 ->make(true);
         }

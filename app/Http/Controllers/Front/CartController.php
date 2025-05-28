@@ -16,6 +16,9 @@ class CartController extends Controller
         $productId = $request->product_id;
         $price = $request->price;
         $game_user_id = $request->game_user_id;
+        $game_server_id = $request->game_server_id;
+        $game_user_name = $request->game_user_name;
+        $game_email = $request->game_email;
         $quantity = $request->quantity ?? 1;
         if (Auth::check()) {
             Cart::updateOrCreate(
@@ -29,6 +32,9 @@ class CartController extends Controller
                     'quantity' =>  $quantity,
                     'price' => $price,
                     'game_user_id' => $game_user_id,
+                    'game_server_id' => $game_server_id,
+                    'game_user_name' => $game_user_name,
+                    'game_email' => $game_email,
                 ]
             );
         } else {
@@ -41,7 +47,11 @@ class CartController extends Controller
                     'product_id' => $productId,
                     'variant_id' => $variantId,
                     'quantity' => $quantity,
-                    'price' => $price
+                    'price' => $price,
+                    'game_user_id' => $game_user_id,
+                    'game_server_id' => $game_server_id,
+                    'game_user_name' => $game_user_name,
+                    'game_email' => $game_email,
                 ];
             }
 
@@ -91,10 +101,16 @@ class CartController extends Controller
                         'product_variant' => $variant,
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
+                        'game_user_id' => $item['game_user_id'],
+                        'game_server_id' => $item['game_server_id'],
+                        'game_user_name' => $item['game_user_name'],
+                        'game_email' => $item['game_email'],
                     ];
                 }
             }
         }
+        // session()->forget('cart');
+        // return $cartItems;
         return view('front.cart', compact('cartItems', 'total'));
     }
 

@@ -23,23 +23,27 @@
                                         <h4>Billing Details</h4>
                                         <div class="checkout-single-form">
                                             <div class="row g-4">
-                                                <div class="col-lg-6">
-                                                    <div class="input-single">
-                                                        <span>First Name*</span>
-                                                        <input type="text" name="name" id="userFirstName"
-                                                            required="" placeholder="First Name"
-                                                            value="{{ auth()->check() ? auth()->user()->name : '' }}">
+                                                @if (!auth()->check())
+                                                    <div class="col-lg-6">
+                                                        <div class="input-single">
+                                                            <span>First Name*</span>
+                                                            <input type="text" name="name" id="userFirstName"
+                                                                required="" placeholder="First Name"
+                                                                value="{{ auth()->check() ? auth()->user()->name : '' }}">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="input-single">
-                                                        <span>Last Name*</span>
-                                                        <input type="text" name="last_name" id="userLastName"
-                                                            required="" placeholder="Last Name"
-                                                            value="{{ auth()->check() ? auth()->user()->last_name : '' }}">
+                                                    <div class="col-lg-6">
+                                                        <div class="input-single">
+                                                            <span>Last Name*</span>
+                                                            <input type="text" name="last_name" id="userLastName"
+                                                                required="" placeholder="Last Name"
+                                                                value="{{ auth()->check() ? auth()->user()->last_name : '' }}">
+                                                        </div>
+
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
+                                                @endif
+
+                                                {{-- <div class="col-lg-12">
                                                     <div class="input-single">
                                                         <span>Country*</span>
                                                         <input name="country" id="country" placeholder="Country"
@@ -68,22 +72,25 @@
                                                         <input name="towncity" id="towncity" placeholder="City"
                                                             value="{{ auth()->check() ? auth()->user()->towncity : '' }}">
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
-                                                    <div class="input-single">
-                                                        <span>Phone*</span>
-                                                        <input name="phone" id="phone" placeholder="phone"
-                                                            value="{{ auth()->check() ? auth()->user()->phone : '' }}">
+                                                </div> --}}
+                                                @if (!auth()->check())
+                                                    <div class="col-lg-12">
+                                                        <div class="input-single">
+                                                            <span>Whatsapp Number*</span>
+                                                            <input name="phone" id="phone"
+                                                                placeholder="Whatsapp Number"
+                                                                value="{{ auth()->check() ? auth()->user()->phone : '' }}">
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
+                                                @endif
+                                                {{-- <div class="col-lg-12">
                                                     <div class="input-single">
                                                         <span>Email Address*</span>
                                                         <input name="email" id="email22" placeholder="email"
                                                             value="{{ auth()->check() ? auth()->user()->email : '' }}">
                                                     </div>
-                                                </div>
-                                                <div class="col-lg-12">
+                                                </div> --}}
+                                                {{-- <div class="col-lg-12">
                                                     <div class="input-check payment-save">
                                                         <input type="checkbox" class="form-check-input" name="save-for-next"
                                                             id="saveForNext111">
@@ -94,10 +101,10 @@
                                                             id="saveForNext2">
                                                         <label for="saveForNext2">Ship to a different address?</label>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-lg-12">
                                                     <div class="input-single">
-                                                        <span>order notes (optional)</span>
+                                                        <span>Order notes (optional)</span>
                                                         <textarea name="notes" id="notes" placeholder="Notes about your order, e.g special notes for delivery."></textarea>
                                                     </div>
                                                 </div>

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
@@ -21,21 +22,27 @@ class ProductController extends Controller
     public function get(Request $request)
     {
         if ($request->ajax()) {
-            $products = Product::with(['category', 'variants']);
-
+            $products = Product::with(['category', 'variants'])
+                ->withCount('variants')
+                ->select('products.*');
             return DataTables::of($products)
+
                 ->addIndexColumn()
+
                 ->addColumn('image', function ($product) {
                     return $product->featured_image
                         ? '<img src="' . asset($product->featured_image) . '" width="50" class="table-image" />'
                         : '<div class="user-name-avatar">' . usernameAvatar($product->name) . '</div>';
                 })
+
                 ->addColumn('category', function ($product) {
                     return $product->category ? $product->category->name : 'N/A';
                 })
+
                 ->addColumn('variants', function ($product) {
                     return $product->variants->count();
                 })
+
                 ->addColumn('price_range', function ($product) {
                     $prices = $product->variants->pluck('price');
                     if ($prices->isEmpty()) return 'N/A';
@@ -43,31 +50,100 @@ class ProductController extends Controller
                     $max = number_format($prices->max(), 2);
                     return $min === $max ? "$$min" : "$$min - $$max";
                 })
+
                 ->addColumn('status', function ($product) {
                     return ucfirst($product->status);
                 })
+
                 ->addColumn('action', function ($product) {
                     return '
-                        <div style="display: flex; gap: 8px;">
-                            <a href="' . route('admin.product.edit', $product->id) . '" class="action_btn edit-item">
-                                <i class="ri-edit-line"></i>
-                            </a>
-                            <form method="POST" action="' . route('admin.product.destroy', $product->id) . '" style="display:inline;">
-                                ' . csrf_field() . method_field('DELETE') . '
-                                <button type="submit" class="action_btn delete-item show_confirm" data-name="Product">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    ';
+                    <div style="display: flex; gap: 8px;">
+                        <a href="' . route('admin.product.edit', $product->id) . '" class="action_btn edit-item">
+                            <i class="ri-edit-line"></i>
+                        </a>
+                        <form method="POST" action="' . route('admin.product.destroy', $product->id) . '" style="display:inline;">
+                            ' . csrf_field() . method_field('DELETE') . '
+                            <button type="submit" class="action_btn delete-item show_confirm" data-name="Product">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                ';
+                })
+                ->addColumn('published_date', function ($product) {
+                    return runTimeDateFormat($product->created_at);
+                })
+
+                ->filterColumn('category', function ($query, $keyword) {
+                    $query->whereHas('category', function ($q) use ($keyword) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($keyword) . "%"]);
+                    });
+                })
+
+                ->filterColumn('variants', function ($query, $keyword) {
+                    $query->whereHas('variants', function ($q) use ($keyword) {
+                        $q->select('product_id') // <- safer
+                            ->groupBy('product_id')
+                            ->havingRaw('COUNT(*) LIKE ?', ["%$keyword%"]);
+                    });
+                })
+
+                ->filterColumn('price_range', function ($query, $keyword) {
+                    $query->whereHas('variants', function ($q) use ($keyword) {
+                        $q->whereRaw('price LIKE ?', ["%$keyword%"]);
+                    });
+                })
+
+                ->filterColumn('status', function ($query, $keyword) {
+                    $query->whereRaw('LOWER(status) LIKE ?', ["%" . strtolower($keyword) . "%"]);
+                })
+
+                ->filterColumn('name', function ($query, $keyword) {
+                    $query->whereRaw('LOWER(name) LIKE ?', ["%" . strtolower($keyword) . "%"]);
+                })
+                ->filterColumn('published_date', function ($query, $keyword) {
+                    $query->where(function ($q) use ($keyword) {
+                        $q->whereDate('products.created_at', $keyword)
+                            ->orWhereRaw("DATE_FORMAT(products.created_at, '%Y-%m-%d') LIKE ?", ["%{$keyword}%"])
+                            ->orWhereRaw("DATE_FORMAT(products.created_at, '%d-%m-%Y') LIKE ?", ["%{$keyword}%"])
+                            ->orWhereRaw("DATE_FORMAT(products.created_at, '%M') LIKE ?", ["%{$keyword}%"]);
+                    });
+                })
+
+                ->orderColumn('category', function ($query, $order) {
+                    $query->join('categories', 'products.category_id', '=', 'categories.id')
+                        ->orderBy('categories.name', $order);
+                })
+
+                ->orderColumn('variants', function ($query, $order) {
+                    $query->withCount('variants')->orderBy('variants_count', $order);
                 })
 
 
+                ->orderColumn('price_range', function ($query, $order) {
+                    $query->leftJoin('product_variants as pv', 'products.id', '=', 'pv.product_id')
+                        ->select('products.*', DB::raw('MIN(pv.price) as min_price'))
+                        ->groupBy('products.id')
+                        ->orderBy('min_price', $order);
+                })
 
-                ->rawColumns(['image', 'action'])
+                ->orderColumn('name', function ($query, $order) {
+                    $query->select('products.*')->orderBy('products.name', $order);
+                })
+
+                ->orderColumn('status', function ($query, $order) {
+                    $query->select('products.*')->orderBy('products.status', $order);
+                })
+                ->orderColumn('published_date', function ($query, $order) {
+                    $query->orderBy('products.created_at', $order);
+                })
+
+
+                ->rawColumns(['image', 'published_date', 'action'])
                 ->make(true);
         }
     }
+
 
     public function add()
     {
@@ -97,6 +173,11 @@ class ProductController extends Controller
         $product->is_featured = $request->has('is_featured') ? 1 : 0;
         $product->short_description = $request->short_description;
         $product->description = $request->description;
+        $product->game_user_id = $request->has('game_user_id') ? 1 : 0;
+        $product->game_server_id = $request->has('game_server_id') ? 1 : 0;
+        $product->game_user_name = $request->has('game_user_name') ? 1 : 0;
+        $product->game_email = $request->has('game_email') ? 1 : 0;
+        $product->no_info_required = $request->has('no_info_required') ? 1 : 0;
 
         if ($request->featured_image) {
             $featuredImage = $request->file('featured_image');
@@ -106,9 +187,11 @@ class ProductController extends Controller
 
             if (file_exists(public_path($name =  $featuredImage->getClientOriginalName()))) {
                 unlink(public_path($name));
-            };
+            }
+
             $product->featured_image = 'product/featured_image/' . $featuredImageName;
         }
+
         $product->save();
 
         $variantNames = $request->variant_name;
@@ -164,7 +247,11 @@ class ProductController extends Controller
         $product->is_featured = $request->has('is_featured') ? 1 : 0;
         $product->short_description = $request->short_description;
         $product->description = $request->description;
-
+        $product->game_user_id = $request->has('game_user_id') ? 1 : 0;
+        $product->game_server_id = $request->has('game_server_id') ? 1 : 0;
+        $product->game_user_name = $request->has('game_user_name') ? 1 : 0;
+        $product->game_email = $request->has('game_email') ? 1 : 0;
+        $product->no_info_required = $request->has('no_info_required') ? 1 : 0;
         if ($request->hasFile('featured_image')) {
             if ($product->featured_image && file_exists(public_path($product->featured_image))) {
                 unlink(public_path($product->featured_image));

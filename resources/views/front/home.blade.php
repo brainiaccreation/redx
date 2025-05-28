@@ -15,42 +15,44 @@
         </div>
         <div class="swiper hero-slider">
             <div class="swiper-wrapper">
-                <div class="swiper-slide custom-hero-swiper">
-                    <div class="hero-2">
-                        <div class="hero-bg " style="background-image: url({{ asset('front/assets') }}/img/hero/bg.jpg);">
-                            <div class="hero-overlay"></div>
-                            <div class="hitboox-border-shape bottom-right">
-                                <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M147.269 54.72L117.876 25.28C114.502 21.9015 109.919 20 105.145 20H0V60H160C155.226 60 150.642 58.0985 147.269 54.72Z">
-                                    </path>
-                                    <path d="M0 0V20H20C8.95435 20 0 11.0457 0 0Z"></path>
-                                </svg>
+                @foreach ($homeSliders as $homeSlider)
+                    <div class="swiper-slide custom-hero-swiper">
+                        <div class="hero-2">
+                            <div class="hero-bg "
+                                style="background-image: url({{ asset($homeSlider->background_image) }});">
+                                <div class="hero-overlay"></div>
+                                <div class="hitboox-border-shape bottom-right">
+                                    <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M147.269 54.72L117.876 25.28C114.502 21.9015 109.919 20 105.145 20H0V60H160C155.226 60 150.642 58.0985 147.269 54.72Z">
+                                        </path>
+                                        <path d="M0 0V20H20C8.95435 20 0 11.0457 0 0Z"></path>
+                                    </svg>
+                                </div>
+                                <div class="hitboox-border-shape bottom-left">
+                                    <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M147.269 54.72L117.876 25.28C114.502 21.9015 109.919 20 105.145 20H0V60H160C155.226 60 150.642 58.0985 147.269 54.72Z">
+                                        </path>
+                                        <path d="M0 0V20H20C8.95435 20 0 11.0457 0 0Z"></path>
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="hitboox-border-shape bottom-left">
-                                <svg viewBox="0 0 160 60" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M147.269 54.72L117.876 25.28C114.502 21.9015 109.919 20 105.145 20H0V60H160C155.226 60 150.642 58.0985 147.269 54.72Z">
-                                    </path>
-                                    <path d="M0 0V20H20C8.95435 20 0 11.0457 0 0Z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="container">
-                            <div class="row g-4">
-                                <div class="col-lg-12">
-                                    <div class="hero-content">
-                                        <h1>
-                                            game art &<br>development studio
-                                        </h1>
-                                        <div class="hero-icon-item">
-                                            <div class="herobtn">
-                                                <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
-                                            </div>
-                                            <div class="icon-item style-2">
-                                                <div class="content">
-                                                    <p>A game studio crafting exciting, high-quality video games,<br>
-                                                        prioritizing immersive gameplay and mechanics.</p>
+                            <div class="container">
+                                <div class="row g-4">
+                                    <div class="col-lg-12">
+                                        <div class="hero-content">
+                                            <h1>
+                                                {{ $homeSlider->heading }}
+                                            </h1>
+                                            <div class="hero-icon-item">
+                                                <div class="herobtn">
+                                                    <a href="javascript:void(0);" class="custom-rdxbtn">Our Games</a>
+                                                </div>
+                                                <div class="icon-item style-2">
+                                                    <div class="content">
+                                                        <p>{{ $homeSlider->content }} </p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -59,7 +61,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                @endforeach
+                {{-- 
                 <div class="swiper-slide custom-hero-swiper">
                     <div class="hero-2">
                         <div class="hero-bg " style="background-image: url({{ asset('front/assets') }}/img/hero/bg-2.jpg);">
@@ -104,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>

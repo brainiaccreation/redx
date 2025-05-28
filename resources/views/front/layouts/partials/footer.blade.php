@@ -32,7 +32,7 @@
                         </div>
                         <div class="col-md-7 footmenu-2">
                             <div class="row">
-                                <div class="col-md-4 ps-lg-5 wow fadeInUp" data-wow-delay=".4s">
+                                {{-- <div class="col-md-4 ps-lg-5 wow fadeInUp" data-wow-delay=".4s">
                                     <div class="single-footer-widget">
                                         <div class="widget-head">
                                             <h3>Our Studio</h3>
@@ -94,7 +94,25 @@
                                             </li>
                                         </ul>
                                     </div>
-                                </div>
+                                </div> --}}
+
+                                @foreach ($footerSections as $sectionName => $links)
+                                    <div class="col-md-4 ps-lg-5 wow fadeInUp" data-wow-delay=".4s">
+                                        <div class="single-footer-widget">
+                                            <div class="widget-head">
+                                                <h3>{{ $sectionName }}</h3>
+                                            </div>
+                                            <ul class="list-items">
+                                                @foreach ($links as $link)
+                                                    <li>
+                                                        <a href="{{ $link->link_url }}">{{ $link->link_text }}</a>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    </div>
+                                @endforeach
+
                             </div>
                             <div class="row justify-content-between">
                                 <div class="col-md-4 ps-lg-5 wow fadeInUp" data-wow-delay=".6s">
@@ -117,11 +135,22 @@
                                     </div>
                                     <div class="footer-content">
                                         <div class="social-item">
+                                            @php
+                                                $iconMap = [
+                                                    'Facebook' => 'fab fa-facebook-f',
+                                                    'Twitter' => 'fab fa-twitter',
+                                                    'Instagram' => 'fab fa-instagram',
+                                                    'Youtube' => 'fab fa-youtube',
+                                                ];
+                                            @endphp
+
                                             <div class="social-icon d-flex align-items-center">
-                                                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                                <a href="#"><i class="fab fa-twitter"></i></a>
-                                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                                <a href="#"><i class="fa-brands fa-vimeo-v"></i></a>
+                                                @foreach ($followUsFooterSections['Follow Us'] ?? [] as $item)
+                                                    @php $icon = $iconMap[$item->link_text] ?? 'fas fa-globe'; @endphp
+                                                    <a href="{{ $item->link_url }}" target="_blank" rel="noopener">
+                                                        <i class="{{ $icon }}"></i>
+                                                    </a>
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>

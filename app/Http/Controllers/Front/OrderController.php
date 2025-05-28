@@ -50,6 +50,10 @@ class OrderController extends Controller
                         'product_variant' => $variant,
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
+                        'game_user_id' => $item['game_user_id'],
+                        'game_server_id' => $item['game_server_id'],
+                        'game_user_name' => $item['game_user_name'],
+                        'game_email' => $item['game_email'],
                     ];
                 }
             }
@@ -92,6 +96,10 @@ class OrderController extends Controller
                         'product_variant' => $variant,
                         'quantity' => $item['quantity'],
                         'price' => $item['price'],
+                        'game_user_id' => $item['game_user_id'],
+                        'game_server_id' => $item['game_server_id'],
+                        'game_user_name' => $item['game_user_name'],
+                        'game_email' => $item['game_email'],
                     ];
                 }
             }
@@ -158,6 +166,7 @@ class OrderController extends Controller
                     'towncity' => $request->towncity,
                     'phone' => $request->phone,
                     'email' => $request->email,
+                    'notes' => $request->notes,
                 ]
             ]);
 
@@ -219,6 +228,7 @@ class OrderController extends Controller
                 'towncity' => $request->towncity,
                 'phone' => $request->phone,
                 'email' => $request->email,
+                'notes' => $request->notes,
             ]
         ]);
 
@@ -314,6 +324,7 @@ class OrderController extends Controller
                 'total_amount' => $totalAmount,
                 'payment_method' => 'paydibs',
                 'status' => 'processing',
+                'notes' => $checkoutData['notes'],
             ]);
 
             OrderDetail::create([
@@ -335,7 +346,10 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'] ?? $item->product_id,
                     'product_variant_id' => $item['variant_id'] ?? $item->variant_id,
-                    'game_id' => $item['game_user_id'] ?? $item->game_user_id,
+                    'game_id'    => isset($item['game_user_id']) ? $item['game_user_id'] : ($item->game_user_id ?? null),
+                    'server_id'  => isset($item['game_server_id']) ? $item['game_server_id'] : ($item->game_server_id ?? null),
+                    'user_name'  => isset($item['game_user_name']) ? $item['game_user_name'] : ($item->game_user_name ?? null),
+                    'email'      => isset($item['game_email']) ? $item['game_email'] : ($item->game_email ?? null),
                     'quantity' => $item['quantity'] ?? $item->quantity,
                     'price' => $item['price'] ?? $item->price,
                     'delivery_method' => 'manual',
@@ -449,7 +463,10 @@ class OrderController extends Controller
                                 'order_id' => $order->id,
                                 'product_id' => $item['product_id'],
                                 'product_variant_id' => $item['variant_id'],
-                                'game_id' => $item['game_user_id'],
+                                'game_id' => $item['game_user_id'] ?? null,
+                                'server_id' => $item['game_server_id'] ?? null,
+                                'user_name' => $item['game_user_name'] ?? null,
+                                'email' => $item['game_email'] ?? null,
                                 'quantity' => $item['quantity'],
                                 'price' => $item['price'],
                                 'delivery_method' => 'manual',
@@ -517,15 +534,15 @@ class OrderController extends Controller
             $totalAmount = $checkoutData['total_amount'];
 
             if ($user) {
-                $user->update([
-                    // 'name' => $checkoutData['user_first_name'],
-                    'country' => $checkoutData['country'],
-                    'address' => $checkoutData['address'],
-                    'address2' => $checkoutData['address2'],
-                    'towncity' => $checkoutData['towncity'],
-                    'phone' => $checkoutData['phone'],
-                    'email' => $checkoutData['email'],
-                ]);
+                // $user->update([
+                //     // 'name' => $checkoutData['user_first_name'],
+                //     'country' => $checkoutData['country'],
+                //     'address' => $checkoutData['address'],
+                //     'address2' => $checkoutData['address2'],
+                //     'towncity' => $checkoutData['towncity'],
+                //     'phone' => $checkoutData['phone'],
+                //     'email' => $checkoutData['email'],
+                // ]);
             }
 
             $order = Order::create([
@@ -535,6 +552,7 @@ class OrderController extends Controller
                 'total_amount' => $totalAmount,
                 'payment_method' => 'stripe',
                 'status' => 'processing',
+                'notes' => $checkoutData['notes'],
             ]);
             OrderDetail::create([
                 'order_id' => $order->id,
@@ -559,7 +577,10 @@ class OrderController extends Controller
                     'order_id'           => $order->id,
                     'product_id'         => $item->product->id ?? $item->product_id,
                     'product_variant_id' => $item->product_variant->id ?? $item->variant_id,
-                    'game_id'            => $item->game_user_id ?? null,
+                    'game_id' => $item->game_user_id ?? null,
+                    'server_id' => $item->game_server_id ?? null,
+                    'user_name' => $item->game_user_name ?? null,
+                    'email' => $item->game_email ?? null,
                     'quantity'           => $item->quantity,
                     'price'              => $item->price,
                     'delivery_method'    => 'manual',
@@ -625,15 +646,15 @@ class OrderController extends Controller
                         $totalAmount = $checkoutData['total_amount'];
 
                         if ($user) {
-                            $user->update([
-                                // 'name' => $checkoutData['user_first_name'],
-                                'country' => $checkoutData['country'],
-                                'address' => $checkoutData['address'],
-                                'address2' => $checkoutData['address2'],
-                                'towncity' => $checkoutData['towncity'],
-                                'phone' => $checkoutData['phone'],
-                                'email' => $checkoutData['email'],
-                            ]);
+                            // $user->update([
+                            //     // 'name' => $checkoutData['user_first_name'],
+                            //     'country' => $checkoutData['country'],
+                            //     'address' => $checkoutData['address'],
+                            //     'address2' => $checkoutData['address2'],
+                            //     'towncity' => $checkoutData['towncity'],
+                            //     'phone' => $checkoutData['phone'],
+                            //     'email' => $checkoutData['email'],
+                            // ]);
                         }
 
                         $order = Order::firstOrCreate(
@@ -653,7 +674,10 @@ class OrderController extends Controller
                                 'order_id' => $order->id,
                                 'product_id' => $item['product_id'],
                                 'product_variant_id' => $item['variant_id'],
-                                'game_id' => $item['game_user_id'],
+                                'game_id' => $item['game_user_id'] ?? null,
+                                'server_id' => $item['game_server_id'] ?? null,
+                                'user_name' => $item['game_user_name'] ?? null,
+                                'email' => $item['game_email'] ?? null,
                                 'quantity' => $item['quantity'],
                                 'price' => $item['price'],
                                 'delivery_method' => 'manual',
@@ -707,7 +731,12 @@ class OrderController extends Controller
         $user = auth()->user();
         $cartTotal = $totalAmount;
         $useWallet = $request->has('use_wallet');
-
+        $weeklySpent = getWeeklySpent($user->id);
+        if (($weeklySpent + $cartTotal) > $user->weekly_limit) {
+            return redirect()->back()->with([
+                'error' => 'You have exceeded your weekly purchase limit.',
+            ]);
+        }
         $wallet = $user->wallet ?? Wallet::create(['user_id' => $user->id, 'balance' => $totalAmount]);
         $walletBalance = $wallet ? $wallet->balance : 0;
 
@@ -755,6 +784,7 @@ class OrderController extends Controller
                 'total_amount' => $totalAmount,
                 'payment_method' => 'wallet',
                 'status' => 'processing',
+                'notes' => $request->notes,
             ]);
 
             OrderDetail::create([
@@ -775,7 +805,10 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
                     'product_variant_id' => $item['variant_id'],
-                    'game_id' => $item['game_user_id'],
+                    'game_id' => $item['game_user_id'] ?? null,
+                    'server_id' => $item['game_server_id'] ?? null,
+                    'user_name' => $item['game_user_name'] ?? null,
+                    'email' => $item['game_email'] ?? null,
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                     'delivery_method' => 'manual',

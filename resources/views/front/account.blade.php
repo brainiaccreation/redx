@@ -295,10 +295,10 @@
                                                     <tr class="align-items-center py-3">
                                                         <td>
                                                             <div class="cart-item-thumb d-flex align-items-center gap-4">
-                                                                {{-- <i class="fas fa-times"></i> --}}
+                                                                <i class="fas fa-times"></i> --}}
                                             {{-- <img class="w-100"
                                                                     src="{{ asset('front/assets') }}/img/cart/03.jpg"
-                                                                    alt="product"> --}}
+                                                                    alt="product">
                                             <a href="{{ route('user.order.details', $order->unique_id) }}"
                                                 style="color: #011e5e;"><span
                                                     class="text-nowrap">#{{ $order->order_number }}</span></a>
@@ -324,55 +324,72 @@
                                     </tr>
                                     @endforeach
                                     </tbody> --}}
-                                    </table>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div id="wallet" class="tab-pane fade">
-                            <div class="axil-dashboard-address">
-                                {{-- <p class="notice-text">The following addresses will be used on the checkout page by
+                            <div id="wallet" class="tab-pane fade">
+                                <div class="axil-dashboard-address">
+                                    {{-- <p class="notice-text">The following addresses will be used on the checkout page by
                                         default.</p> --}}
-                                <div class="row g-4">
-                                    <div class="col-lg-12">
-                                        <div class="wallet-container">
-                                            <div class="wallet-header">
-                                                <h2>My Wallet</h2>
-                                                <button class="top-up-btn" data-bs-toggle="modal"
-                                                    data-bs-target="#topUpModal">TOP UP</button>
-                                            </div>
-                                            <div class="balance-section">
-                                                <h3>{{ config('app.currency') }}
-                                                    {{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
-                                            </div>
-                                            <div class="account-status">
-                                                <p>Account Status: {{ ucfirst(auth()->user()->account_type) }}</p>
-                                                <p>Top up over RM 10,000 to automatically become a Reseller with 1%
-                                                    discount</p>
-                                            </div>
-                                            <div class="transaction-history">
-                                                <h3>Transaction History</h3>
-                                                <div class="table-responsive">
-
-                                                    <table class="table transaction-table" id="walletTable"
-                                                        style="width: 100%">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Transaction</th>
-                                                                <th>Amount</th>
-                                                                <th>Date</th>
-                                                                <th>Status</th>
-                                                            </tr>
-                                                        </thead>
-                                                    </table>
+                                    <div class="row g-4">
+                                        <div class="col-lg-12">
+                                            <div class="wallet-container">
+                                                <div class="wallet-header">
+                                                    <h2>My Wallet</h2>
+                                                    <button class="top-up-btn" data-bs-toggle="modal"
+                                                        data-bs-target="#topUpModal">TOP UP</button>
                                                 </div>
+                                                <div class="balance-section">
+                                                    <h3>{{ config('app.currency') }}
+                                                        {{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="">
+                                                        <h6>Weekly Limit</h6>
+                                                        <div class="balance-section">
+                                                            <h5 class="text-primary">{{ config('app.currency') }}
+                                                                {{ number_format(auth()->user()->weekly_limit, 2) }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="">
+                                                        <h6>Weekly Spent</h6>
+                                                        <div class="balance-section">
+                                                            <h5 class="text-success">{{ config('app.currency') }}
+                                                                {{ number_format(getWeeklySpent(auth()->user()->id), 2) }}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="account-status">
+                                                    <p>Account Status: {{ ucfirst(auth()->user()->account_type) }}</p>
+                                                    <p>Top up over RM 10,000 to automatically become a Reseller with 1%
+                                                        discount</p>
+                                                </div>
+                                                <div class="transaction-history">
+                                                    <h3>Transaction History</h3>
+                                                    <div class="table-responsive">
 
+                                                        <table class="table transaction-table" id="walletTable"
+                                                            style="width: 100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Transaction</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Date</th>
+                                                                    <th>Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        {{-- <div id="Reviews" class="tab-pane fade">
+                            {{-- <div id="Reviews" class="tab-pane fade">
                                 <div class="account-wrapper">
                                     <div class="account-box">
                                         <h3 class="mb-3">Login to Sofia.</h3>
@@ -419,78 +436,78 @@
                                     </div>
                                 </div>
                             </div> --}}
-                    </div>
-                </div>
-                {{-- model --}}
-                <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="topUpModalLabel">Top Up Your Wallet</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <form id="walletForm" action="{{ route('wallet.topup') }}" method="POST"
-                                enctype="multipart/form-data">
-                                @csrf
-
-                                <div class="modal-body">
-                                    <label>Enter amount to add to your wallet (in RM):</label>
-                                    <input type="number" class="form-control" value="500.00" id="wallet_amount"
-                                        name="amount" step="0.1">
-
-                                    <label>Select payment method:</label>
-                                    <div class="payment-methods selected">
-                                        <div class="payment-option" data-method="bank">
-                                            <input type="radio" name="payment_method" value="bank" checked>
-                                            <label>ONLINE BANKING</label>
-                                            <p>Direct bank transfer</p>
-                                        </div>
-                                        <div class="payment-option" data-method="stripe">
-                                            <input type="radio" name="payment_method" value="stripe">
-                                            <label>Stripe</label>
-                                            <p>Visa, Mastercard, etc.</p>
-                                        </div>
-
-                                        <div class="payment-option" data-method="paydibs    ">
-                                            <input type="radio" name="payment_method" value="paydibs    ">
-                                            <label>Paydibs</label>
-                                            <p>Visa, Mastercard, et
-                                        </div>
-                                    </div>
-
-                                    <div id="payment-details">
-                                        <div class="method-details" id="method-card" style="display: none;">
-                                            {{-- <p>Enter your card info here.</p> --}}
-                                        </div>
-                                        <div class="method-details" id="method-bank" style="display: block;">
-                                            <p><b>Bank Name:</b> Maybank</p>
-                                            <p><b>Title of Account:</b> Test Bank</p>
-                                            <p><b>Account No:</b> 00000020023456789</p>
-                                            <p><b>IBAN:</b> MB00 0000 1111 2222 3333</p>
-                                            <p>Upload receipt</p>
-                                            <div class="mb-2">
-                                                <input type="file" name="receipt_image" class="form-control"
-                                                    id="receipt_image" accept=".jpg, .jpeg, .png">
-                                            </div>
-                                        </div>
-                                        <div class="method-details" id="method-ewallet" style="display: none;">
-                                            {{-- <p>Select your preferred e-wallet to proceed.</p> --}}
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn-confirm">CONFIRM PAYMENT</button>
-                                </div>
-                            </form>
-
-
                         </div>
                     </div>
+                    {{-- model --}}
+                    <div class="modal fade" id="topUpModal" tabindex="-1" aria-labelledby="topUpModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="topUpModalLabel">Top Up Your Wallet</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <form id="walletForm" action="{{ route('wallet.topup') }}" method="POST"
+                                    enctype="multipart/form-data">
+                                    @csrf
+
+                                    <div class="modal-body">
+                                        <label>Enter amount to add to your wallet (in RM):</label>
+                                        <input type="number" class="form-control" value="500.00" id="wallet_amount"
+                                            name="amount" step="0.1">
+
+                                        <label>Select payment method:</label>
+                                        <div class="payment-methods selected">
+                                            <div class="payment-option" data-method="bank">
+                                                <input type="radio" name="payment_method" value="bank" checked>
+                                                <label>ONLINE BANKING</label>
+                                                <p>Direct bank transfer</p>
+                                            </div>
+                                            <div class="payment-option" data-method="stripe">
+                                                <input type="radio" name="payment_method" value="stripe">
+                                                <label>Stripe</label>
+                                                <p>Visa, Mastercard, etc.</p>
+                                            </div>
+
+                                            <div class="payment-option" data-method="paydibs    ">
+                                                <input type="radio" name="payment_method" value="paydibs    ">
+                                                <label>Paydibs</label>
+                                                <p>Visa, Mastercard, et
+                                            </div>
+                                        </div>
+
+                                        <div id="payment-details">
+                                            <div class="method-details" id="method-card" style="display: none;">
+                                                {{-- <p>Enter your card info here.</p> --}}
+                                            </div>
+                                            <div class="method-details" id="method-bank" style="display: block;">
+                                                <p><b>Bank Name:</b> Maybank</p>
+                                                <p><b>Title of Account:</b> Test Bank</p>
+                                                <p><b>Account No:</b> 00000020023456789</p>
+                                                <p><b>IBAN:</b> MB00 0000 1111 2222 3333</p>
+                                                <p>Upload receipt</p>
+                                                <div class="mb-2">
+                                                    <input type="file" name="receipt_image" class="form-control"
+                                                        id="receipt_image" accept=".jpg, .jpeg, .png">
+                                                </div>
+                                            </div>
+                                            <div class="method-details" id="method-ewallet" style="display: none;">
+                                                {{-- <p>Select your preferred e-wallet to proceed.</p> --}}
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn-confirm">CONFIRM PAYMENT</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    {{-- model end --}}
                 </div>
-                {{-- model end --}}
             </div>
-        </div>
         </div>
     </section>
 @endsection

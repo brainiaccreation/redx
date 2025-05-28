@@ -48,6 +48,7 @@
                                         <th>Variants</th>
                                         <th>Price Range</th>
                                         <th>Status</th>
+                                        <th>Published Date</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -89,7 +90,9 @@
                 dom: "<'d-flex align-items-center justify-content-start'<'search-container me-1'><'dropdown-container ms-1 position-relative'>>" +
                     "<'row'<'col-md-12'tr>>" +
                     "<'row'<'col-md-5'i><'col-md-7'p>>",
-                order: [],
+                order: [
+                    [7, 'desc']
+                ],
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -117,12 +120,14 @@
                     {
                         data: 'price_range',
                         name: 'price_range',
-                        orderable: false,
-                        searchable: false
                     },
                     {
                         data: 'status',
                         name: 'status'
+                    },
+                    {
+                        data: 'published_date',
+                        name: 'published_date'
                     },
                     {
                         data: 'action',

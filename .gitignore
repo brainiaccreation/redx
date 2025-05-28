@@ -6,6 +6,7 @@
 /public/product/featured_image
 /public/wallet/receipts
 /public/user/avatar
+/public/home/sliders
 /storage/*.key
 /vendor
 .env

@@ -1,4 +1,11 @@
 <?php
+
+use App\Models\Footer;
+use App\Models\WalletTransaction;
+use App\Models\Wallet;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 if (!function_exists('usernameAvatar')) {
     function usernameAvatar($name)
     {
@@ -157,7 +164,7 @@ if (!function_exists('calculatedPrice')) {
         }
 
 
-        return $price;
+        return number_format($price, 2);
     }
 }
 
@@ -188,5 +195,33 @@ if (!function_exists('wallet_balance_format')) {
         }
 
         return number_format($number, $precision, '.', '');
+    }
+}
+
+
+if (!function_exists('getWeeklySpent')) {
+
+    function getWeeklySpent($userId)
+    {
+        $walletIds = Wallet::where('user_id', $userId)->pluck('id');
+
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+        return WalletTransaction::whereIn('wallet_id', $walletIds)
+            ->where('type', 'debit')
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->sum('amount');
+    }
+}
+if (!function_exists('getGroupedFooterLinks')) {
+    function getGroupedFooterLinks()
+    {
+        return Footer::where('section', '!=', 'Follow Us')->get()->groupBy('section');
+    }
+}
+if (!function_exists('getFollowUsFooterLinks')) {
+    function getFollowUsFooterLinks()
+    {
+        return Footer::where('section', 'Follow Us')->get()->groupBy('section');
     }
 }

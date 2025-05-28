@@ -17,6 +17,8 @@ class OrderItem extends Model
         'price',
         'game_id',
         'server_id',
+        'user_name',
+        'email',
         'special_instructions',
         'status',
         'delivery_method',

@@ -54,6 +54,8 @@
                                 </div>
                             </div>
                             <p>or Sign in with Email</p>
+
+
                             <div class="contact-form-item">
                                 <form method="POST" action="{{ route('login') }}" id="contact-form2">
                                     @csrf
