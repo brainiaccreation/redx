@@ -76,8 +76,9 @@
                                                 @if (!auth()->check())
                                                     <div class="col-lg-12">
                                                         <div class="input-single">
-                                                            <span>Phone*</span>
-                                                            <input name="phone" id="phone" placeholder="phone"
+                                                            <span>Whatsapp Number*</span>
+                                                            <input name="phone" id="phone"
+                                                                placeholder="Whatsapp Number"
                                                                 value="{{ auth()->check() ? auth()->user()->phone : '' }}">
                                                         </div>
                                                     </div>
@@ -103,7 +104,7 @@
                                                 </div> --}}
                                                 <div class="col-lg-12">
                                                     <div class="input-single">
-                                                        <span>order notes (optional)</span>
+                                                        <span>Order notes (optional)</span>
                                                         <textarea name="notes" id="notes" placeholder="Notes about your order, e.g special notes for delivery."></textarea>
                                                     </div>
                                                 </div>

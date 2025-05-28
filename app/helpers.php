@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Footer;
 use App\Models\WalletTransaction;
 use App\Models\Wallet;
 use Carbon\Carbon;
@@ -163,7 +164,7 @@ if (!function_exists('calculatedPrice')) {
         }
 
 
-        return $price;
+        return number_format($price, 2);
     }
 }
 
@@ -210,5 +211,17 @@ if (!function_exists('getWeeklySpent')) {
             ->where('type', 'debit')
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->sum('amount');
+    }
+}
+if (!function_exists('getGroupedFooterLinks')) {
+    function getGroupedFooterLinks()
+    {
+        return Footer::where('section', '!=', 'Follow Us')->get()->groupBy('section');
+    }
+}
+if (!function_exists('getFollowUsFooterLinks')) {
+    function getFollowUsFooterLinks()
+    {
+        return Footer::where('section', 'Follow Us')->get()->groupBy('section');
     }
 }

@@ -89,14 +89,78 @@
                                     </div>
                                 </div>
 
-                                <div class="col-sm-12">
-                                    <label class="form-label">Short Description</label>
-                                    <textarea class="form-control" rows="3" name="short_description">{{ old('short_description', $product->short_description) }}</textarea>
-                                </div>
+                                <div class="col-lg-12">
+                                    <div class="row mt-2" style="--vz-gutter-x: 1rem !important;">
+                                        <div class="col-lg-8">
+                                            <div class="col-sm-12">
+                                                <label class="form-label">Short Description</label>
+                                                <textarea class="form-control" rows="3" name="short_description">{{ old('short_description', $product->short_description) }}</textarea>
+                                            </div>
 
-                                <div class="col-sm-12">
-                                    <label class="form-label">Description</label>
-                                    <textarea class="form-control" id="description" name="description">{{ old('description', $product->description) }}</textarea>
+                                            <div class="col-sm-12">
+                                                <label class="form-label">Description</label>
+                                                <textarea class="form-control" id="description" name="description">{{ old('description', $product->description) }}</textarea>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="checkbox-section">
+                                                <div class="section-title">Required Information</div>
+                                                <div class="checkbox-group">
+                                                    <div class="checkbox-item {{ $product->game_user_id ? 'checked' : '' }}"
+                                                        data-field="userId">
+                                                        <input type="checkbox" id="userId" name="game_user_id"
+                                                            value="1" {{ $product->game_user_id ? 'checked' : '' }}>
+                                                        <label for="userId" class="checkbox-label">Game User ID</label>
+                                                        <span
+                                                            class="required-badge {{ $product->game_user_id ? 'show' : '' }}">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item {{ $product->game_server_id ? 'checked' : '' }}"
+                                                        data-field="serverId">
+                                                        <input type="checkbox" id="serverId" name="game_server_id"
+                                                            value="1"
+                                                            {{ $product->game_server_id ? 'checked' : '' }}>
+                                                        <label for="serverId" class="checkbox-label">Game Server
+                                                            ID</label>
+                                                        <span
+                                                            class="required-badge {{ $product->game_server_id ? 'show' : '' }}">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item {{ $product->game_user_name ? 'checked' : '' }}"
+                                                        data-field="userName">
+                                                        <input type="checkbox" id="userName" name="game_user_name"
+                                                            value="1"
+                                                            {{ $product->game_user_name ? 'checked' : '' }}>
+                                                        <label for="userName" class="checkbox-label">Game User
+                                                            Name</label>
+                                                        <span
+                                                            class="required-badge {{ $product->game_user_name ? 'show' : '' }}">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item {{ $product->game_email ? 'checked' : '' }}"
+                                                        data-field="email">
+                                                        <input type="checkbox" id="email" name="game_email"
+                                                            value="1" {{ $product->game_email ? 'checked' : '' }}>
+                                                        <label for="email" class="checkbox-label">Game Email</label>
+                                                        <span
+                                                            class="required-badge {{ $product->game_email ? 'show' : '' }}">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item {{ $product->no_info_required ? 'checked' : '' }} no-info"
+                                                        data-field="noInfo">
+                                                        <input type="checkbox" id="noInfo" name="no_info_required"
+                                                            value="1"
+                                                            {{ $product->no_info_required ? 'checked' : '' }}>
+                                                        <label for="noInfo" class="checkbox-label">🚫 No Info
+                                                            Required</label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-12">
@@ -105,7 +169,6 @@
                                         data-default-file="{{ asset($product->featured_image) }}" id="featured_image"
                                         data-height="180" accept=".jpg, .jpeg, .png, .webp">
                                 </div>
-
                                 <h3>Product Variants</h3>
                                 <div class="col-md-12">
                                     <div class="text-end">
@@ -176,7 +239,7 @@
             $('#description').summernote({
                 placeholder: 'Add description here',
                 tabsize: 2,
-                height: 200,
+                height: 250,
                 toolbar: [
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['font', ['strikethrough']],
@@ -346,6 +409,75 @@
                 $('#variantForm')[0].reset();
                 $('#editIndex').val('');
             });
+        });
+    </script>
+
+    {{-- required checkbox --}}
+    <script>
+        $(document).ready(function() {
+            $('input[type="checkbox"]').on('change', function() {
+                var $checkbox = $(this);
+                var $item = $checkbox.closest('.checkbox-item');
+                var $badge = $item.find('.required-badge');
+                var field = $item.data('field');
+                var $input = $('#' + field + 'Input');
+
+                if ($checkbox.attr('id') === 'noInfo') {
+                    handleNoInfoToggle($checkbox.is(':checked'));
+                } else {
+                    handleRegularCheckbox($checkbox, $item, $badge, $input);
+                }
+
+            });
+
+            function handleNoInfoToggle(isChecked) {
+                var $regularCheckboxes = $('input[type="checkbox"]').not('#noInfo');
+                var $noInfoItem = $('[data-field="noInfo"]');
+
+                if (isChecked) {
+                    $regularCheckboxes.each(function() {
+                        var $cb = $(this);
+                        var $item = $cb.closest('.checkbox-item');
+                        var $badge = $item.find('.required-badge');
+                        var $input = $('#' + $item.data('field') + 'Input');
+
+                        $cb.prop('checked', false);
+                        $item.removeClass('checked');
+                        $badge.removeClass('show');
+
+                        if ($input.length) {
+                            $input.removeAttr('required').css('opacity', '0.5');
+                        }
+                    });
+
+                    $noInfoItem.addClass('checked');
+                } else {
+                    $noInfoItem.removeClass('checked');
+                }
+            }
+
+            function handleRegularCheckbox($checkbox, $item, $badge, $input) {
+                if ($checkbox.is(':checked')) {
+                    $('#noInfo').prop('checked', false);
+                    $('[data-field="noInfo"]').removeClass('checked');
+                }
+
+                if ($checkbox.is(':checked')) {
+                    $item.addClass('checked');
+                    $badge.addClass('show');
+                    if ($input.length) {
+                        $input.attr('required', 'required').css('opacity', '1');
+                    }
+                } else {
+                    $item.removeClass('checked');
+                    $badge.removeClass('show');
+                    if ($input.length) {
+                        $input.removeAttr('required').css('opacity', '0.5');
+                    }
+                }
+            }
+
+
         });
     </script>
 @endsection

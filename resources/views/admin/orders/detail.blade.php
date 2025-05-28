@@ -49,9 +49,26 @@
                                                             <p class="mb-0"><span class="text-dark">Variant: </span><span
                                                                     class="fw-medium text-muted">{{ $order_item->variant->name }}</span>
                                                             </p>
-                                                            <p class="mb-0"><span class="text-dark">User ID: </span><span
-                                                                    class="fw-medium text-muted">{{ $order_item->game_id }}</span>
-                                                            </p>
+                                                            @php
+                                                                $fields = [
+                                                                    'game_id' => 'User ID',
+                                                                    'server_id' => 'Server ID',
+                                                                    'user_name' => 'User Name',
+                                                                    'email' => 'Email',
+                                                                ];
+                                                            @endphp
+                                                            @foreach ($fields as $key => $label)
+                                                                @switch(true)
+                                                                    @case(!empty($order_item->$key))
+                                                                        <p class="mb-0">
+                                                                            <span class="text-dark">{{ $label }}: </span>
+                                                                            <span
+                                                                                class="fw-medium text-muted">{{ $order_item->$key }}</span>
+                                                                        </p>
+                                                                    @break
+                                                                @endswitch
+                                                            @endforeach
+
                                                             @if ($order_item->giftCardCode && $order_item->giftCardCode->code)
                                                                 <div class="gift-card-container">
                                                                     <div class="gift-card-label">GIFT CARD CODE</div>
@@ -117,6 +134,24 @@
                                                 </table>
                                             </td>
                                         </tr>
+                                        @if ($order->notes)
+                                            <tr class="border-top border-top-dashed">
+                                                {{-- <td colspan="1"></td> --}}
+                                                <td colspan="5" class="fw-medium p-0">
+                                                    <table class="table table-borderless mb-0">
+                                                        <tbody>
+                                                            <tr class="border-top border-top-dashed">
+                                                                <th scope="row">Notes :</th>
+                                                                <th class="text-left">
+                                                                    <span style="white-space: normal;">
+                                                                        {{ $order->notes }}</span>
+                                                                </th>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -217,9 +252,14 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li><i class="ri-mail-line me-2 align-middle text-muted fs-16"></i>
-                                    {{ $order->user ? $order->user->email : $order->order_detail->email }}
-                                </li>
+                                @php
+                                    $email = $order->user ? $order->user->email : $order->order_detail->email;
+                                @endphp
+                                @if ($email)
+                                    <li><i class="ri-mail-line me-2 align-middle text-muted fs-16"></i>
+                                        {{ $order->user ? $order->user->email : $order->order_detail->email }}
+                                    </li>
+                                @endif
                                 @php
                                     $phone = $order->user ? $order->user->phone : $order->order_detail->phone;
                                 @endphp

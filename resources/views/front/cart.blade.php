@@ -31,24 +31,41 @@
                                             $subtotal = $cartItem->price * $cartItem->quantity;
                                             // $total += $subtotal;
                                         @endphp
-                                        <tr class="align-items-center py-3" data-product-id="{{ $cartItem->product_id }}"
-                                            data-variant-id="{{ $cartItem->variant_id }}"
+                                        <tr class="align-items-center py-3"data-product-id="{{ isset($cartItem->product_id) ? $cartItem->product_id : (isset($cartItem->product['id']) ? $cartItem->product['id'] : '') }}"
+                                            data-variant-id="{{ isset($cartItem->variant_id) ? $cartItem->variant_id : (isset($cartItem->product_variant['id']) ? $cartItem->product_variant['id'] : '') }}"
                                             data-is-model="{{ isset($cartItem->id) ? 'true' : 'false' }}">
                                             <td>
                                                 <div class="cart-item-thumb d-flex align-items-center gap-4">
                                                     <i class="fas fa-times remove-cart-item" style="cursor:pointer;"
                                                         title="Remove item"></i>
-                                                    <img class="w-100"
-                                                        src="{{ $cartItem->product->featured_image ? asset($cartItem->product->featured_image) : URL('front/assets/img/cart/03.jpg') }}"
+                                                    <img src="{{ $cartItem->product->featured_image ? asset($cartItem->product->featured_image) : URL('front/assets/img/cart/03.jpg') }}"
                                                         alt="{{ $cartItem->product->name }}">
-                                                    <span class="head text-nowrap">{{ $cartItem->product->name }} -
-                                                        {{ $cartItem->product_variant->name }}</span>
-                                                    @if ($cartItem->game_user_id)
-                                                        <span class="text-sm d-flex text-nowrap"> <span
-                                                                class="text-dark">User
-                                                                ID: &nbsp;</span>
-                                                            {{ $cartItem->game_user_id }}</span>
-                                                    @endif
+                                                    <div class="d-flex flex-column">
+                                                        <span class="head">{{ $cartItem->product->name }} -
+                                                            {{ $cartItem->product_variant->name }}</span>
+                                                        @if ($cartItem->game_user_id)
+                                                            <span class="text-sm d-flex text-nowrap"> <span
+                                                                    class="text-dark">User
+                                                                    ID: &nbsp;</span>
+                                                                {{ $cartItem->game_user_id }}</span>
+                                                        @endif
+                                                        @if ($cartItem->game_server_id)
+                                                            <span class="text-sm d-flex text-nowrap"> <span
+                                                                    class="text-dark">Server
+                                                                    ID: &nbsp;</span>
+                                                                {{ $cartItem->game_server_id }}</span>
+                                                        @endif
+                                                        @if ($cartItem->game_user_name)
+                                                            <span class="text-sm d-flex text-nowrap"> <span
+                                                                    class="text-dark">User Name: &nbsp;</span>
+                                                                {{ $cartItem->game_user_name }}</span>
+                                                        @endif
+                                                        @if ($cartItem->game_email)
+                                                            <span class="text-sm d-flex text-nowrap"> <span
+                                                                    class="text-dark">Email: &nbsp;</span>
+                                                                {{ $cartItem->game_email }}</span>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="text-center">

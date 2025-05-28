@@ -124,24 +124,76 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="col-sm-12">
-                                    <label for="short_description" class="form-label">Short Description</label>
-                                    <textarea type="text" class="form-control" rows="3" id="short_description" name="short_description"
-                                        placeholder="Short Description">{{ old('short_description') }}</textarea>
-                                    @error('short_description')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <div class="col-sm-12">
+                                                <label for="short_description" class="form-label">Short Description</label>
+                                                <textarea type="text" class="form-control" rows="3" id="short_description" name="short_description"
+                                                    placeholder="Short Description">{{ old('short_description') }}</textarea>
+                                                @error('short_description')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <label for="description" class="form-label">Description</label>
+                                                <textarea type="text" class="form-control" id="description" name="description" placeholder="Description">{{ old('description') }}</textarea>
+                                                @error('description')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
                                         </div>
-                                    @enderror
-                                </div>
-                                <div class="col-sm-12">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea type="text" class="form-control" id="description" name="description" placeholder="Description">{{ old('description') }}</textarea>
-                                    @error('description')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
+                                        <div class="col-lg-4">
+                                            <div class="checkbox-section">
+                                                <div class="section-title">Required Information</div>
+                                                <div class="checkbox-group">
+                                                    <div class="checkbox-item" data-field="userId">
+                                                        <input type="checkbox" id="userId" name="game_user_id"
+                                                            value="1">
+                                                        <label for="userId" class="checkbox-label">Game User
+                                                            ID</label>
+                                                        <span class="required-badge">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item" data-field="serverId">
+                                                        <input type="checkbox" id="serverId" name="game_server_id"
+                                                            value="1">
+                                                        <label for="serverId" class="checkbox-label">Game Server
+                                                            ID</label>
+                                                        <span class="required-badge">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item" data-field="userName">
+                                                        <input type="checkbox" id="userName" name="game_user_name"
+                                                            value="1">
+                                                        <label for="userName" class="checkbox-label">Game User
+                                                            Name</label>
+                                                        <span class="required-badge">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item" data-field="email">
+                                                        <input type="checkbox" id="email" name="game_email"
+                                                            value="1">
+                                                        <label for="email" class="checkbox-label">Game
+                                                            Email</label>
+                                                        <span class="required-badge">Required</span>
+                                                    </div>
+
+                                                    <div class="checkbox-item no-info" data-field="noInfo">
+                                                        <input type="checkbox" id="noInfo" name="no_info_required"
+                                                            value="1">
+                                                        <label for="noInfo" class="checkbox-label">🚫 No Info
+                                                            Required</label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
                                         </div>
-                                    @enderror
+                                    </div>
                                 </div>
                                 <div class="col-sm-12">
                                     <label for="description" class="form-label">Featured Image</label>
@@ -269,7 +321,7 @@
             $('#description').summernote({
                 placeholder: 'Add description here',
                 tabsize: 2,
-                height: 200,
+                height: 250,
                 toolbar: [
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['font', ['strikethrough']],

@@ -111,7 +111,7 @@
                  <li class="nav-item">
                      <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
                          href="{{ route('admin.users.list') }}">
-                         <i class=" ri-user-3-line"></i> <span data-key="t-widgets">Users</span>
+                         <i class=" ri-user-3-line"></i> <span data-key="t-widgets">User Management</span>
                      </a>
                  </li>
                  <li class="nav-item">
@@ -120,7 +120,30 @@
                          <i class="ri-wallet-line"></i> <span data-key="t-widgets">Wallet Transactions</span>
                      </a>
                  </li>
-
+                 <li class="nav-item">
+                     <a class="nav-link menu-link {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'active' : '' }}"
+                         href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                         aria-controls="sidebarSettings">
+                         <i class="ri-settings-2-line"></i> <span data-key="t-settingss">Settings</span>
+                     </a>
+                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'show' : '' }}"
+                         id="sidebarSettings">
+                         <ul class="nav nav-sm flex-column">
+                             <li class="nav-item">
+                                 <a href="{{ route('admin.home_sliders.list') }}"
+                                     class="nav-link {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*') ? 'active' : '' }}"
+                                     data-key="t-home-sliders">
+                                     Home Sliders </a>
+                             </li>
+                             <li class="nav-item">
+                                 <a href="{{ route('admin.footer.index') }}"
+                                     class="nav-link {{ request()->routeIs('admin.footer*') ? 'active' : '' }}"
+                                     data-key="t-home-sliders">
+                                     Footer Management </a>
+                             </li>
+                         </ul>
+                     </div>
+                 </li> <!-- end Dashboard Menu -->
              </ul>
          </div>
          <!-- Sidebar -->

@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\GiftCardCodeController;
+use App\Http\Controllers\Admin\HomeSliderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
@@ -165,12 +167,15 @@ Route::get('/wallet/stripe/success', [WalletController::class, 'handleStripeSucc
 Route::get('/wallet/paydibs/success', [WalletController::class, 'handlePaydibsSuccess'])->name('wallet.paydibs.success');
 Route::get('/wallet/transactions/data', [WalletController::class, 'getWalletTransactions'])->name('wallet.transactions.data');
 
-Route::group(['middleware' => ['auth', 'verified']], function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-});
+Route::group(['middleware' => ['auth', 'verified']], function () {});
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
-
+Route::get('/admin/footer', [FooterController::class, 'index'])->name('admin.footer.index');
+Route::post('/admin/footer', [FooterController::class, 'store'])->name('admin.footer.store');
+Route::put('/admin/footer/{id}', [FooterController::class, 'update'])->name('admin.footer.update');
+Route::delete('/admin/footer/{id}', [FooterController::class, 'destroy'])->name('admin.footer.destroy');
+Route::get('/footer-data', [FooterController::class, 'getFooterData'])->name('footer.data');
 // Admin routes with 'admin' prefix
 Route::prefix('admin')->group(function () {
     Route::middleware('guest')->group(function () {
@@ -231,6 +236,17 @@ Route::prefix('admin')->group(function () {
             Route::delete('/delete/{id}', [GiftCardCodeController::class, 'destroy'])->name('admin.code.destroy');
             Route::get('/get-product-variants/{id}', [GiftCardCodeController::class, 'getProductVariants'])->name('admin.code.variants');
         });
+
+        Route::get('/home-sliders', [HomeSliderController::class, 'list'])->name('admin.home_sliders.list');
+        Route::get('/home-sliders/get', [HomeSliderController::class, 'get'])->name('admin.home_sliders.get');
+        Route::prefix('home-slider')->group(function () {
+            Route::get('/add', [HomeSliderController::class, 'add'])->name('admin.home_slider.add');
+            Route::post('/store', [HomeSliderController::class, 'store'])->name('admin.home_slider.store');
+            Route::get('/edit/{id}', [HomeSliderController::class, 'edit'])->name('admin.home_slider.edit');
+            Route::put('/update/{id}', [HomeSliderController::class, 'update'])->name('admin.home_slider.update');
+            Route::delete('/delete/{id}', [HomeSliderController::class, 'destroy'])->name('admin.home_slider.destroy');
+        });
+
         Route::get('/orders', [ManageOrderController::class, 'list'])->name('admin.orders.list');
         Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');
         Route::get('/order/details/{id}', [ManageOrderController::class, 'detail'])->name('admin.order.details');

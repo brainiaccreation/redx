@@ -344,6 +344,23 @@
                                                     <h3>{{ config('app.currency') }}
                                                         {{ number_format(auth()->user()->wallet_balance, 2) }}</h3>
                                                 </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="">
+                                                        <h6>Weekly Limit</h6>
+                                                        <div class="balance-section">
+                                                            <h5 class="text-primary">{{ config('app.currency') }}
+                                                                {{ number_format(auth()->user()->weekly_limit, 2) }}</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="">
+                                                        <h6>Weekly Spent</h6>
+                                                        <div class="balance-section">
+                                                            <h5 class="text-success">{{ config('app.currency') }}
+                                                                {{ number_format(getWeeklySpent(auth()->user()->id), 2) }}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="account-status">
                                                     <p>Account Status: {{ ucfirst(auth()->user()->account_type) }}</p>
                                                     <p>Top up over RM 10,000 to automatically become a Reseller with 1%

@@ -72,7 +72,9 @@ class UserController extends Controller
                     <div class="user-name-avatar">' . usernameAvatar($fullName) . '</div>
                     <div class="ms-2">
                         <div class="font-medium text-gray-900">
+                         <a href="' . route('admin.user.view', $row->id) . '" >
                             ' . e($fullName) . '
+                            </a>
                         </div>
                         <div class="text-sm text-gray-500">
                             ' . e($email) . '
@@ -187,7 +189,7 @@ class UserController extends Controller
                                             class='dropdown-item changeStatus'
                                             data-name='User'
                                             data-suspended='" . $isSuspended . "'
-                                            data-id='" . $userId . "'
+                                            data-id='" . $userId . "' data-bs-toggle='tooltip' data-bs-placement='bottom'
                                             title='" . $suspendTitle . "'>
                                             <i class='" . $suspendIcon . " align-bottom me-2 text-muted'></i> " . $suspendText . "
                                         </button>

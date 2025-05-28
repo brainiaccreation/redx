@@ -85,7 +85,9 @@
                 dom: "<'row-Import-wrapper'<'row-import'B><'d-flex align-items-center justify-content-start'<'search-container me-1'f><'dropdown-container ms-1'l>>>" +
                     "<'row'<'col-md-12'tr>>" +
                     "<'row'<'col-md-5'i><'col-md-7'p>>",
-                order: [],
+                order: [
+                    [2, 'desc']
+                ],
                 // dom: "B<'d-flex align-items-center justify-content-start'<'search-container me-1'><'dropdown-container ms-1 position-relative'>>" +
                 //     "<'row'<'col-md-12'tr>>" +
                 //     "<'row'<'col-md-5'i><'col-md-7'p>>",

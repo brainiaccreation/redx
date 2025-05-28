@@ -781,3 +781,129 @@ textarea {
     color: red;
     border: 1px solid red;
 }
+
+
+/* required checkbox */
+
+.checkbox-section {
+    background: #f8f9ff;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 30px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fe0000;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.section-title::before {
+    content: '⚙️';
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.checkbox-item:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.checkbox-item.checked {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea10, #764ba210);
+}
+
+.checkbox-item.no-info {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #ef444410, #dc262610);
+}
+
+.checkbox-item.no-info.checked {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #ef444420, #dc262620);
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: #667eea;
+    margin-bottom: 6px;
+}
+
+
+
+.checkbox-item.no-info input[type="checkbox"] {
+    accent-color: #ef4444;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    flex: 1;
+}
+
+.required-badge {
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 10px;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+}
+
+.required-badge.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.status-message {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: none;
+}
+
+.status-message.show {
+    display: block;
+}
+
+.status-message.success {
+    background: #dcfce7;
+    color: #166534;
+    border: 2px solid #bbf7d0;
+}

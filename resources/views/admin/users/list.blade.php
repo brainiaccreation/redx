@@ -651,11 +651,11 @@
                             .data('suspended', newStatus)
                             .attr('title', titleText);
 
-                        if (typeof bootstrap !== 'undefined') {
-                            var tooltip = bootstrap.Tooltip.getInstance(button[0]);
-                            if (tooltip) tooltip.dispose();
-                            new bootstrap.Tooltip(button[0]);
-                        }
+                        // if (typeof bootstrap !== 'undefined') {
+                        //     var tooltip = bootstrap.Tooltip.getInstance(button[0]);
+                        //     if (tooltip) tooltip.dispose();
+                        //     new bootstrap.Tooltip(button[0]);
+                        // }
 
                         if (typeof toastr !== 'undefined') {
                             toastr.success(

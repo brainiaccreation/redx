@@ -11386,15 +11386,8 @@ input.main-search-input::placeholder {
   box-sizing: border-box;
 }
 
-.cart-list-area .common-table .cart-item-thumb {
-  width: 86px;
-}
 
-@media (max-width: 1399px) {
-  .cart-list-area .common-table .cart-item-thumb {
-    flex-wrap: wrap;
-  }
-}
+
 
 .cart-list-area .common-table .cart-item-thumb .head {
   color: #1B1F2A;
@@ -13781,4 +13774,8 @@ p {
     clip-path: inset(0 0 0 0);
     opacity: 1;
   }
+}
+
+.cart-item-thumb img {
+  width: 60px;
 }

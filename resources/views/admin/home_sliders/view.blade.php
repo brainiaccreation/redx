@@ -56,10 +56,8 @@
                         <div class="row text text-white-50 text-center">
                             <div class="col-lg-6 col-6">
                                 <div class="p-2">
-                                    <h4 class="text-white mb-1">
-                                        {{ wallet_balance_format(getWeeklySpent($user->id)) }}
-                                    </h4>
-                                    <p class="fs-14 mb-0 text-white">Weekly Spent in ({{ config('app.currency') }})</p>
+                                    <h4 class="text-white mb-1"> {{ format_count(count($user->orders)) }} </h4>
+                                    <p class="fs-14 mb-0 text-white">Total Orders</p>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-6">
@@ -185,22 +183,6 @@
                                                                     <th class="ps-0" scope="row">Wallet Balance</th>
                                                                     <td class="text-muted">
                                                                         {{ config('app.currency') . ' ' . number_format($user->wallet_balance, 2) }}
-                                                                    </td>
-                                                                </tr>
-                                                            @endif
-                                                            @if ($user->weekly_limit)
-                                                                <tr>
-                                                                    <th class="ps-0" scope="row">Weekly Limit</th>
-                                                                    <td class="text-muted">
-                                                                        {{ config('app.currency') . ' ' . number_format($user->weekly_limit, 2) }}
-                                                                    </td>
-                                                                </tr>
-                                                            @endif
-                                                            @if (getWeeklySpent($user->id) > 0)
-                                                                <tr>
-                                                                    <th class="ps-0" scope="row">Weekly Spent</th>
-                                                                    <td class="text-muted">
-                                                                        {{ config('app.currency') . ' ' . number_format(getWeeklySpent($user->id), 2) }}
                                                                     </td>
                                                                 </tr>
                                                             @endif

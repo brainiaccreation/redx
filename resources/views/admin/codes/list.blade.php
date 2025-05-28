@@ -46,6 +46,7 @@
                                             <th>Code</th>
                                             <th>Status</th>
                                             <th>Used Date</th>
+                                            <th>Created Date</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -87,7 +88,9 @@
                     dom: "<'d-flex align-items-center justify-content-start'<'search-container me-1'><'dropdown-container ms-1 position-relative'>>" +
                         "<'row'<'col-md-12'tr>>" +
                         "<'row'<'col-md-5'i><'col-md-7'p>>",
-                    order: [],
+                    order: [
+                        [5, 'desc']
+                    ],
                     columns: [{
                             data: 'DT_RowIndex',
                             name: 'DT_RowIndex',
@@ -96,9 +99,7 @@
                         },
                         {
                             data: 'product',
-                            name: 'product',
-                            orderable: false,
-                            searchable: false
+                            name: 'product'
                         },
                         {
                             data: 'code',
@@ -111,6 +112,10 @@
                         {
                             data: 'used_date',
                             name: 'used_date'
+                        },
+                        {
+                            data: 'published_date',
+                            name: 'published_date'
                         },
                         {
                             data: 'action',
