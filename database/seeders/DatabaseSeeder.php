@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(GiftCardCodeSeeder::class);
+        $this->call(CodeEmailedSeeder::class);
+        $this->call(FooterSeeder::class);
+        $this->call(UpdateCategoryUniqueIdSeeder::class);
 
         // \App\Models\User::factory(10)->create();
 
