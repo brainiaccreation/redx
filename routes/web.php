@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\HomeSliderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\RefundController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\WalletTopupController;
 use App\Http\Controllers\Front\HomeController;
@@ -184,7 +186,7 @@ Route::prefix('account')->group(function () {
         Route::post('/login', [LoginController::class, 'login'])->name('admin.login.submit');
     });
 
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware(['auth', 'role:admin|staff', 'global.permission'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         // category routes
         Route::get('/categories', [CategoryController::class, 'list'])->name('admin.categories.list');
@@ -225,7 +227,7 @@ Route::prefix('account')->group(function () {
             Route::post('/user/update-weekly-limit', [UserController::class, 'updateWeeklyLimit'])->name('customer.updateWeeklyLimit');
             Route::get('/transactions', [UserController::class, 'fetchTransactions'])->name('admin.customer.transactions');
         });
-        // member management
+        // user management
         Route::get('/users', [StaffController::class, 'list'])->name('admin.users.list');
         Route::get('/users/get', [StaffController::class, 'get'])->name('admin.users.get');
         Route::prefix('user')->group(function () {
@@ -237,6 +239,12 @@ Route::prefix('account')->group(function () {
             Route::post('/status/{id}', [StaffController::class, 'status'])->name('admin.user.status');
             Route::delete('/delete/{id}', [StaffController::class, 'destroy'])->name('admin.user.destroy');
         });
+
+        // Permissions management
+        Route::get('/permissions', [PermissionController::class, 'list'])->name('admin.permissions.list');
+        Route::get('/permissions/get', [PermissionController::class, 'get'])->name('admin.permissions.get');
+        Route::get('/permissions/manage/{role}', [PermissionController::class, 'manage'])->name('admin.permissions.manage');
+        Route::put('/permissions/update/{role}', [PermissionController::class, 'update'])->name('admin.permissions.update');
         // gift card inventory management
         Route::get('/gift-card-codes', [GiftCardCodeController::class, 'list'])->name('admin.code.list');
         Route::get('/gift-card-codes/get', [GiftCardCodeController::class, 'get'])->name('admin.code.get');
@@ -259,6 +267,7 @@ Route::prefix('account')->group(function () {
             Route::put('/update/{id}', [HomeSliderController::class, 'update'])->name('admin.home_slider.update');
             Route::delete('/delete/{id}', [HomeSliderController::class, 'destroy'])->name('admin.home_slider.destroy');
         });
+        Route::post('/admin/initiate-refund', [RefundController::class, 'initiate'])->name('admin.initiate.refund');
 
         Route::get('/orders', [ManageOrderController::class, 'list'])->name('admin.orders.list');
         Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');

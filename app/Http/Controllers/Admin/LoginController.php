@@ -32,10 +32,10 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            if (Auth::user()->role_id === 1) {
+            if (!auth()->user()->hasRole('customer')) {
                 $request->session()->regenerate();
 
-                return redirect()->intended('admin/dashboard');
+                return redirect()->intended('account/dashboard');
             } else {
                 Auth::logout();
                 return back()->withErrors([

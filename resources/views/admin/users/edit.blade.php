@@ -27,134 +27,148 @@
                         <div class="card-body">
                             <form class="row g-3" method="POST" action="{{ route('admin.user.update', $user->id) }}"
                                 enctype="multipart/form-data">
-                                @method('PUT')
                                 @csrf
-                                <div class="col-md-12 col-lg-12 col-sm-12">
-                                    <label for="avatar" class="form-label">Avatar <span
+                                @method('PUT')
+
+                                <div class="col-md-6">
+                                    <label for="first_name" class="form-label">First Name <span
                                             class="text-danger">*</span></label>
-                                    <input type="file" class="form-control" id="avatar" name="avatar"
-                                        placeholder="Avatar">
-                                    @if ($user->avatar)
-                                        <div class="mt-2">
-                                            <a href="{{ asset($user->avatar) }}" class="text-danger"
-                                                target="_blank">Uploaded
-                                                Avatar <i class="ri-external-link-line"></i></a>
-                                        </div>
-                                    @endif
-                                    @error('avatar')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Name" value="{{ old('name', $user->name) }}" required>
+                                    <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                        id="first_name" name="name" value="{{ old('name', $user->name) }}"
+                                        placeholder="First Name" required>
                                     @error('name')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
+
+                                <div class="col-md-6">
                                     <label for="last_name" class="form-label">Last Name <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name"
-                                        placeholder="Last Name" value="{{ old('last_name', $user->last_name) }}" required>
+                                    <input type="text" class="form-control @error('last_name') is-invalid @enderror"
+                                        id="last_name" name="last_name" value="{{ old('last_name', $user->last_name) }}"
+                                        placeholder="Last Name" required>
                                     @error('last_name')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                <div class="col-md-6">
                                     <label for="email" class="form-label">Email <span
                                             class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="Email" value="{{ old('email', $user->email) }}" required>
+                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                        id="email" name="email" value="{{ old('email', $user->email) }}"
+                                        placeholder="Email" required>
                                     @error('email')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
+
+                                <div class="col-md-6">
                                     <label for="phone" class="form-label">Phone</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
-                                        placeholder="Phone" value="{{ old('phone', $user->phone) }}">
+                                    <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                                        id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
+                                        placeholder="Phone">
                                     @error('phone')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
+
+                                <div class="col-md-6">
                                     <label for="country" class="form-label">Country</label>
-                                    <input type="text" class="form-control" id="country" name="country"
-                                        placeholder="Country" value="{{ old('country', $user->country) }}">
+                                    <input type="text" class="form-control @error('country') is-invalid @enderror"
+                                        id="country" name="country" value="{{ old('country', $user->country) }}"
+                                        placeholder="Country">
                                     @error('country')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="towncity" class="form-label">City</label>
-                                    <input type="text" class="form-control" id="towncity" name="towncity"
-                                        placeholder="City" value="{{ old('towncity', $user->towncity) }}">
+
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control @error('towncity') is-invalid @enderror"
+                                        id="city" name="towncity" value="{{ old('towncity', $user->towncity) }}"
+                                        placeholder="City">
                                     @error('towncity')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="address" class="form-label">Address Line 1</label>
-                                    <textarea name="address" rows="3" placeholder="Address Line 1" class="form-control" resize="none">{{ old('address', $user->address) }}</textarea>
+
+                                <div class="col-md-6">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" class="form-control @error('address') is-invalid @enderror"
+                                        id="address" name="address" value="{{ old('address', $user->address) }}"
+                                        placeholder="Address">
                                     @error('address')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="address2" class="form-label">Address Line 2</label>
-                                    <textarea name="address2" rows="3" placeholder="Address Line 2" class="form-control" resize="none">{{ old('address2', $user->address2) }}</textarea>
+
+                                <div class="col-md-6">
+                                    <label for="address2" class="form-label">Address 2</label>
+                                    <input type="text" class="form-control @error('address2') is-invalid @enderror"
+                                        id="address2" name="address2" value="{{ old('address2', $user->address2) }}"
+                                        placeholder="Address 2">
                                     @error('address2')
-                                        <div class="invalid-feedback">
-                                            {{ $message }}
-                                        </div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="wallet_balance" class="form-label">Wallet Balance</label>
-                                    <input type="number" class="form-control readonly" id="wallet_balance"
-                                        placeholder="0.00" step="0.1" value="{{ $user->wallet_balance }}" readonly>
+                                <div class="col-md-6">
+                                    <label for="avatar" class="form-label">Avatar</label>
+                                    <input type="file" class="form-control @error('avatar') is-invalid @enderror"
+                                        id="avatar" name="avatar" accept="image/*">
+                                    @error('avatar')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
 
+                                    @if ($user->avatar && file_exists(public_path($user->avatar)))
+                                        <div class="mt-2">
+                                            <a href="{{ asset($user->avatar) }}" class="text-danger" target="_blank">
+                                                Uploaded Avatar <i class="ri-external-link-line"></i>
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="col-md-6 col-lg-6 col-sm-12">
-                                    <label for="account_type" class="form-label">Account Type</label>
-                                    <input type="text" class="form-control readonly" id="account_type"
-                                        placeholder="Account Type" value="{{ ucfirst($user->account_type) }}" readonly>
+
+                                <div class="col-md-6">
+                                    <label for="role" class="form-label">Role <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control form-select @error('role') is-invalid @enderror"
+                                        id="role" name="role" required>
+                                        <option value="" disabled>Select Role</option>
+                                        @foreach ($roles as $role)
+                                            <option value="{{ $role->name }}"
+                                                {{ old('role', $user->roles->pluck('name')->first()) == $role->name ? 'selected' : '' }}>
+                                                {{ ucfirst($role->name) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('role')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="form-check form-check-right mb-2">
-                                        <input class="form-check-input" type="checkbox" name="is_suspended"
-                                            id="is_suspended1" {{ $user->is_suspended == 1 ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="is_suspended1">
-                                            Suspended
-                                        </label>
-                                    </div>
+
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                        id="password" name="password"
+                                        placeholder="Leave blank to keep current password">
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <div class="col-12">
-                                    <div class="text-right">
-                                        <button class="btn btn-danger" type="submit">Update</button>
-                                    </div>
+
+                                <div class="col-md-6">
+                                    <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="password_confirmation"
+                                        name="password_confirmation" placeholder="Confirm Password">
+                                </div>
+
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-danger">Update</button>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                 </div><!--end col-->

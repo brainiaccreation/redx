@@ -10,18 +10,19 @@ use App\Models\WalletTransaction;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Blade;
 
 class UserController extends Controller
 {
     public function list()
     {
-        return view('admin.users.list');
+        return view('admin.customers.list');
     }
 
     public function get(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::where('role_id', '!=', 1)->select('users.*');
+            $data = User::where('role_id', 'customer')->select('users.*');
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->filterColumn('user_info', function ($query, $keyword) {
@@ -66,23 +67,31 @@ class UserController extends Controller
                     $fullName = $row->name . ' ' . $row->last_name;
                     $email = $row->email;
                     $phone = $row->phone;
+                    $canView = auth()->user()->can(\App\Services\PermissionMap::getPermission('admin.customer.view'));
+
+                    $avatarHtml = '';
+
+                    if (!empty($row->avatar) && file_exists(public_path('uploads/avatars/' . $row->avatar))) {
+                        $avatarUrl = asset('uploads/avatars/' . $row->avatar);
+                        $avatarHtml = '<img src="' . $avatarUrl . '" alt="' . e($fullName) . '" class="rounded-circle avatar-xs">';
+                    } else {
+                        $avatarHtml = usernameAvatar($fullName);
+                    }
 
                     return '
-                   <div class="d-flex justify-items-center align-items-center">
-                    <div class="user-name-avatar">' . usernameAvatar($fullName) . '</div>
-                    <div class="ms-2">
-                        <div class="font-medium text-gray-900">
-                         <a href="' . route('admin.user.view', $row->id) . '" >
-                            ' . e($fullName) . '
-                            </a>
-                        </div>
-                        <div class="text-sm text-gray-500">
-                            ' . e($email) . '
-                        </div>' .
+                    <div class="d-flex justify-items-center align-items-center">
+                        <div class="user-name-avatar">' . $avatarHtml . '</div>
+                        <div class="ms-2">
+                            <div class="font-medium text-gray-900">' .
+                        ($canView ? '<a href="' . route('admin.customer.view', $row->id) . '">' . e($fullName) . '</a>' : e($fullName)) . '
+                            </div>
+                            <div class="text-sm text-gray-500">' . e($email) . '</div>' .
                         (!empty($phone) ? '<div class="text-xs text-gray-400">' . e($phone) . '</div>' : '') . '
-                    </div>
-                </div>';
+                        </div>
+                    </div>';
                 })
+
+
                 ->addColumn('wallet_balance', function ($row) {
                     return '<span class="text-success" id="user-balance-' . $row->id . '">
                             <i class="ri-wallet-line"></i> ' . config('app.currency') . ' ' . number_format($row->wallet_balance, 2) . '
@@ -125,82 +134,116 @@ class UserController extends Controller
                     return '<div class="text-center"><h5><span class="' . $badgeClass . '">' . ucfirst($row->account_type) . '</span></h5></div>';
                 })
                 ->addColumn('action', function ($row) {
-                    $isSuspended = $row->is_suspended;
-                    $userId = $row->id;
-                    $suspendTitle = $isSuspended == 1 ? 'Unsuspend User' : 'Suspend User';
-                    $suspendIcon = $isSuspended == 1 ? 'ri-check-fill' : 'ri-forbid-line';
-                    $suspendText = $isSuspended == 1 ? 'Unsuspend' : 'Suspend';
+                    return Blade::render('
+                        @php
+                            $userId = $row->id;
+                            $isSuspended = $row->is_suspended;
+                            $suspendTitle = $isSuspended ? "Unsuspend User" : "Suspend User";
+                            $suspendIcon = $isSuspended ? "ri-check-fill" : "ri-forbid-line";
+                            $suspendText = $isSuspended ? "Unsuspend" : "Suspend";
+                        @endphp
 
-                    return "
-                        <div class='d-flex align-items-center gap-2'>
+                        <div class="d-flex align-items-center gap-2">
+                            @hasRoutePermission("admin.customer.add_balance")
+                                <a href="javascript:void(0);"
+                                class="action_btn edit-item open-balance-modal"
+                                title="Add balance"
+                                data-bs-toggle="modal"
+                                data-bs-target=".bs-example-modal-center"
+                                data-name="{{ $row->name }} {{ $row->last_name }}"
+                                data-email="{{ $row->email }}"
+                                data-id="{{ $row->id }}"
+                                data-balance="{{ config("app.currency") }} {{ number_format($row->wallet_balance, 2) }}">
+                                    <i class="ri-wallet-line"></i>
+                                </a>
+                            @endhasRoutePermission
 
-                            <a href='javascript:void(0);'
-                                class='action_btn edit-item open-balance-modal'
-                                title='Add balance'
-                                data-bs-toggle='modal'
-                                data-bs-target='.bs-example-modal-center'
-                                data-name='$row->name" . ' ' . "$row->last_name'
-                                data-email='$row->email'
-                                 data-id='$row->id'
-                                data-balance='" . config('app.currency') . " " . number_format($row->wallet_balance, 2) . "'>
-                                <i class='ri-wallet-line'></i>
-                            </a>
+                            @hasRoutePermission("admin.customer.transactions")
+                                <a href="javascript:void(0);"
+                                class="action_btn view-transactions edit-item"
+                                data-user-id="{{ $userId }}"
+                                title="Transaction History"
+                                data-bs-toggle="modal"
+                                data-bs-target=".transaactionHistoryModal">
+                                    <i class="ri-history-line"></i>
+                                </a>
+                            @endhasRoutePermission
 
-                            <a href='javascript:void(0);' 
-                                class='action_btn view-transactions edit-item' 
-                                data-user-id='$userId' 
-                                title='Transaction History' 
-                                data-bs-toggle='modal' 
-                                data-bs-target='.transaactionHistoryModal'>
-                                <i class='ri-history-line'></i>
-                            </a>
+                            @hasRoutePermission("admin.customer.add_balance")
+                                <a href="javascript:void(0);"
+                                class="action_btn edit-item weekly-balance-modal"
+                                title="Set limit"
+                                data-bs-toggle="modal"
+                                data-bs-target=".weeklyLimitModal"
+                                data-name="{{ $row->name }} {{ $row->last_name }}"
+                                data-email="{{ $row->email }}"
+                                data-id="{{ $row->id }}"
+                                data-balance="{{ number_format($row->wallet_balance, 2) }}"
+                                data-limit="{{ number_format($row->weekly_limit, 2) }}"
+                                data-spent="{{ getWeeklySpent($row->id) }}">
+                                    <i class="ri-settings-2-line"></i>
+                                </a>
+                            @endhasRoutePermission
 
-                            <a href='javascript:void(0);'
-                                class='action_btn edit-item weekly-balance-modal'
-                                title='Set limit'
-                                data-bs-toggle='modal'
-                                data-bs-target='.weeklyLimitModal'
-                                data-name='$row->name" . ' ' . "$row->last_name'
-                                data-email='$row->email'
-                                 data-id='$row->id'
-                                data-balance='" . number_format($row->wallet_balance, 2) . "'
-                                data-limit='" . number_format($row->weekly_limit, 2) . "'
-                                data-spent='" . getWeeklySpent($row->id) . "'>
-                                <i class='ri-settings-2-line'></i>
-                            </a>
-                            
-                            <div class='dropdown d-inline-block'>
-                                <button class='btn btn-soft-danger btn-sm dropdown action_dropdown_btn edit-item' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
-                                    <i class='ri-more-fill align-middle'></i>
-                                </button>
-                                <ul class='dropdown-menu dropdown-menu-end'>
-                                    <li>
-                                        <a href='" . route('admin.user.view', $userId) . "' class='dropdown-item'>
-                                            <i class='ri-eye-fill align-bottom me-2 text-muted'></i> View
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href='" . route('admin.user.edit', $userId) . "' class='dropdown-item'>
-                                            <i class='ri-pencil-fill align-bottom me-2 text-muted'></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <button type='button'
-                                            class='dropdown-item changeStatus'
-                                            data-name='User'
-                                            data-suspended='" . $isSuspended . "'
-                                            data-id='" . $userId . "' data-bs-toggle='tooltip' data-bs-placement='bottom'
-                                            title='" . $suspendTitle . "'>
-                                            <i class='" . $suspendIcon . " align-bottom me-2 text-muted'></i> " . $suspendText . "
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
+                            @if (
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.view")) ||
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.edit")) ||
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.toggle_suspend")) ||
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.destroy"))
+                            )
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-soft-danger btn-sm dropdown action_dropdown_btn edit-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="ri-more-fill align-middle"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        @hasRoutePermission("admin.customer.view")
+                                            <li>
+                                                <a href="{{ route("admin.customer.view", $userId) }}" class="dropdown-item">
+                                                    <i class="ri-eye-fill align-bottom me-2 text-muted"></i> View
+                                                </a>
+                                            </li>
+                                        @endhasRoutePermission
 
+                                        @hasRoutePermission("admin.customer.edit")
+                                            <li>
+                                                <a href="{{ route("admin.customer.edit", $userId) }}" class="dropdown-item">
+                                                    <i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit
+                                                </a>
+                                            </li>
+                                        @endhasRoutePermission
+
+                                        @hasRoutePermission("admin.customer.toggle_suspend")
+                                            <li>
+                                                <button type="button"
+                                                        class="dropdown-item changeStatus"
+                                                        data-name="User"
+                                                        data-suspended="{{ $isSuspended }}"
+                                                        data-id="{{ $userId }}"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="bottom"
+                                                        title="{{ $suspendTitle }}">
+                                                    <i class="{{ $suspendIcon }} align-bottom me-2 text-muted"></i> {{ $suspendText }}
+                                                </button>
+                                            </li>
+                                        @endhasRoutePermission
+
+                                        @hasRoutePermission("admin.customer.destroy")
+                                            <li>
+                                                <form method="POST" action="{{ route("admin.customer.destroy", $userId) }}" onsubmit="return confirm(\'Are you sure?\')" class="d-inline">
+                                                    @csrf
+                                                    @method("DELETE")
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bx bx-trash align-bottom me-2 text-muted"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        @endhasRoutePermission
+                                    </ul>
+                                </div>
+                            @endif
                         </div>
-                    ";
+                    ', ['row' => $row]);
                 })
-
 
                 ->rawColumns(['user_info', 'wallet_balance', 'weekly_limit', 'weekly_spent', 'account_type', 'action'])
                 ->make(true);
@@ -210,13 +253,13 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        return view('admin.users.edit', compact('user'));
+        return view('admin.customers.edit', compact('user'));
     }
 
     public function view($id)
     {
         $user = User::find($id);
-        return view('admin.users.view', compact('user'));
+        return view('admin.customers.view', compact('user'));
     }
     public function update(Request $request, $id)
     {
@@ -260,7 +303,7 @@ class UserController extends Controller
             $user->avatar = 'user/avatar/' . $filename;
         }
         $user->update();
-        return redirect()->route('admin.users.list')->with('success', 'Request has been completed');
+        return redirect()->route('admin.customers.list')->with('success', 'Request has been completed');
     }
 
     public function toggleSuspend(Request $request)

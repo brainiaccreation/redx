@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
-    public function settings() {
+    public function settings()
+    {
         return view('admin.profile.settings');
     }
     public function updateProfile(Request $request)

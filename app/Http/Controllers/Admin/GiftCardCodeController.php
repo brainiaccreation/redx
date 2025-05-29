@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Blade;
 
 class GiftCardCodeController extends Controller
 {
@@ -47,20 +48,19 @@ class GiftCardCodeController extends Controller
                 })
 
                 ->addColumn('action', function ($code) {
-                    if ($code->status == 'used') {
-                        $editIcon = '<div style="display: flex;justify-content:center; gap: 8px;">--
-                            </div>';
-                    } else {
-                        $editIcon = '
-                            <div style="display: flex;justify-content:center; gap: 8px;">
-                                <a href="' . route('admin.code.edit', $code->id) . '" class="action_btn edit-item">
-                                    <i class="ri-edit-line"></i>
-                                </a>
-                            </div>
-                        ';
-                    }
-                    return $editIcon;
+                    $canEdit = auth()->user()->can(\App\Services\PermissionMap::getPermission('admin.code.edit'));
+
+                    return '
+                        <div style="display: flex; justify-content: center; gap: 8px;">
+                            ' . ($code->status != 'index' && $canEdit
+                        ? '<a href="' . route('admin.code.edit', $code->id) . '" class="action_btn edit-item">
+                                        <i class="ri-edit-line"></i>
+                                </a>'
+                        : '<span>-</span>') . '
+                        </div>
+                    ';
                 })
+
                 ->addColumn('published_date', function ($code) {
                     return runTimeDateFormat($code->created_at);
                 })

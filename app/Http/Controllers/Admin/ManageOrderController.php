@@ -29,6 +29,7 @@ class ManageOrderController extends Controller
                     'orders.status',
                     'orders.total_amount',
                     'orders.payment_method',
+                    'orders.refund_status',
                     'orders.user_id',
                     'users.name as user_name',
                     'users.last_name as user_last_name',
@@ -41,17 +42,29 @@ class ManageOrderController extends Controller
                 ->addIndexColumn()
 
                 ->addColumn('order_id', function ($order) {
-                    return '<a href="' . route('admin.order.details', $order->unique_id) . '">' . $order->order_number . '</a>';
+                    $canView = auth()->user()->can(\App\Services\PermissionMap::getPermission('admin.order.details'));
+
+                    if ($canView) {
+                        return '<a href="' . route('admin.order.details', $order->unique_id) . '">' . $order->order_number . '</a>';
+                    }
+
+                    return $order->order_number;
                 })
 
                 ->addColumn('customer', function ($order) {
-                    if ($order->user_name || $order->user_last_name) {
+                    $canViewUser = auth()->user()->can(\App\Services\PermissionMap::getPermission('admin.customer.view'));
+
+                    if (($order->user_name || $order->user_last_name) && $canViewUser) {
                         return '<a href="' . route('admin.user.view', $order->user_id) . '">' . $order->user_name . ' ' . $order->user_last_name . '</a>';
+                    } elseif ($order->user_name || $order->user_last_name) {
+                        return $order->user_name . ' ' . $order->user_last_name;
                     } elseif ($order->guest_name) {
                         return $order->guest_name;
                     }
+
                     return 'N/A';
                 })
+
 
                 ->addColumn('order_date', function ($order) {
                     return runTimeDateFormat($order->created_at);
@@ -78,14 +91,35 @@ class ManageOrderController extends Controller
                 })
 
                 ->addColumn('action', function ($order) {
-                    return '
-                    <div style="display: flex; gap: 8px;">
-                        <a href="' . route('admin.order.details', $order->unique_id) . '" class="action_btn edit-item">
-                            <i class="ri-eye-line"></i>
-                        </a>
-                    </div>
-                ';
+                    $canView = auth()->user()->can(\App\Services\PermissionMap::getPermission('admin.order.details'));
+
+                    $html = '<div style="display: flex; gap: 8px;">';
+
+                    if ($canView) {
+                        $html .= '<a href="' . route('admin.order.details', $order->unique_id) . '" class="action_btn edit-item">
+                                        <i class="ri-eye-line"></i>
+                                </a>';
+                    } else {
+                        $html .= '<span class="text-center">-</span>';
+                    }
+                    $html .= '<a href="javascript:void(0);" class="action_btn edit-item open-refund-modal" title="Refund Amount"
+                                data-bs-toggle="modal"
+                                data-bs-target=".bs-example-modal-center"
+                                data-id="' . $order->id . '"
+                                data-order-id="' . $order->order_number . '"
+                                data-customer="' . $order->user_name . ' ' . $order->user_last_name . '"
+                                data-amount="' . $order->total_amount . '"
+                                data-status="' . ucfirst($order->status) . '"
+                                data-refund-status="' . ucfirst($order->refund_status) . '"
+                                data-user-id="' . $order->user_id . '">
+                                <i class="bx bx-rotate-left"></i>
+                            </a>';
+
+                    $html .= '</div>';
+
+                    return $html;
                 })
+
 
                 // FILTERS
                 ->filterColumn('customer', function ($query, $keyword) {

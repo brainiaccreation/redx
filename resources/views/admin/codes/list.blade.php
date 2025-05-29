@@ -28,11 +28,11 @@
                                         <h4 class="card-title mb-0 flex-grow-1">Gift Card Inventory</h4>
                                     </div>
                                     <div class="p-0">
-                                        {{-- @if (checkPermission('/members/equipment/create')) --}}
-                                        <a href="{{ route('admin.code.add') }}" class="btn btn-danger"
-                                            data-name="codeAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
-                                                width="12" class="me-1"> Add Code</a>
-                                        {{-- @endif --}}
+                                        @hasRoutePermission('admin.code.add')
+                                            <a href="{{ route('admin.code.add') }}" class="btn btn-danger"
+                                                data-name="codeAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
+                                                    width="12" class="me-1"> Add Code</a>
+                                        @endhasRoutePermission
                                     </div>
                                 </div>
                             </div>

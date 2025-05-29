@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Blade;
 
 class ProductController extends Controller
 {
@@ -56,19 +57,28 @@ class ProductController extends Controller
                 })
 
                 ->addColumn('action', function ($product) {
-                    return '
-                    <div style="display: flex; gap: 8px;">
-                        <a href="' . route('admin.product.edit', $product->id) . '" class="action_btn edit-item">
-                            <i class="ri-edit-line"></i>
-                        </a>
-                        <form method="POST" action="' . route('admin.product.destroy', $product->id) . '" style="display:inline;">
-                            ' . csrf_field() . method_field('DELETE') . '
-                            <button type="submit" class="action_btn delete-item show_confirm" data-name="Product">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
-                    </div>
-                ';
+                    return Blade::render('
+                        <div style="display: flex; gap: 8px;">
+                            @hasRoutePermission("admin.product.edit")
+                                <a href="{{ route("admin.product.edit", $product->id) }}" class="action_btn edit-item">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                            @endhasRoutePermission
+                            @hasRoutePermission("admin.product.destroy")
+                                <form method="POST" action="{{ route("admin.product.destroy", $product->id) }}" style="display:inline;">
+                                    @csrf
+                                    @method("DELETE")
+                                    <button type="submit" class="action_btn delete-item show_confirm" data-name="Product">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </form>
+                            @endhasRoutePermission
+                            @if (!auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.product.edit")) && 
+                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.product.destroy")))
+                                <span>-</span>
+                            @endif
+                        </div>
+                    ', ['product' => $product]);
                 })
                 ->addColumn('published_date', function ($product) {
                     return runTimeDateFormat($product->created_at);

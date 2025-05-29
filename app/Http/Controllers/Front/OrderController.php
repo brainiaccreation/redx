@@ -603,7 +603,7 @@ class OrderController extends Controller
                 'amount' => $totalAmount,
                 'payment_gateway' => 'stripe',
                 'status' => 'completed',
-                'transaction_id' => $session->payment_intent,
+                'payment_id' => $session->payment_intent,
             ]);
 
             if ($user) {
@@ -696,7 +696,7 @@ class OrderController extends Controller
                             'amount' => $totalAmount,
                             'payment_gateway' => 'stripe',
                             'status' => 'completed',
-                            'transaction_id' => $session->payment_intent,
+                            'payment_id' => $session->payment_intent,
                         ]);
 
                         if ($user) {

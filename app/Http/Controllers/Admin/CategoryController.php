@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Blade;
 
 class CategoryController extends Controller
 {
@@ -22,28 +23,44 @@ class CategoryController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($row) {
-                    $checked = $row->status == 1 ? 'checked' : '';
-                    return '<div class="d-flex justify-content-center">
+                    return Blade::render('
+                        <div class="d-flex justify-content-center">
+                            @hasRoutePermission("admin.category.status")
                                 <div class="form-check form-switch form-switch-md mb-3" dir="ltr">
-                                <input type="checkbox" class="form-check-input status" id="customSwitchsizemd" data-id="' . $row->id . '" ' . $checked . '>
-                            </div>
+                                    <input type="checkbox" class="form-check-input status" id="customSwitch-{{ $row->id }}"
+                                           data-id="status" {{ $row->status == 1 ? "checked" : "" }}>
+                                </div>
+                            @else
+                                <span>{{ $row->status == 1 ? "Active" : "Inactive" }}</span>
+                            @endhasRoutePermission
                         </div>
-                    ';
+                    ', ['row' => $row]);
                 })
-                ->addColumn('action', function ($row) {
-                    return '<div style="display: flex;justify-content:center; gap: 8px;">
-                        <a href="' . route('admin.category.edit', $row->id) . '" class="action_btn edit-item">
-                            <i class="ri-edit-line"></i>
-                        </a>
-                        <form method="POST" action="' . route('admin.category.destroy', $row->id) . '" style="display:inline;">
-                            ' . csrf_field() . method_field('DELETE') . '
-                            <button type="submit" class="action_btn delete-item show_confirm" data-name="Category">
-                                <i class="bx bx-trash"></i>
-                            </button>
-                        </form>
-                    </div>';
+                ->addColumn('actions', function ($row) {
+                    return Blade::render('
+                        <div style="display: flex; justify-content: center; gap: 8px;">
+                            @hasRoutePermission("admin.category.edit")
+                                <a href="{{ route("admin.category.edit", $row->id) }}" class="action_btn edit-item">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                            @endhasRoutePermission
+                            @hasRoutePermission("admin.category.destroy")
+                                <form method="POST" action="{{ route("admin.category.destroy", $row->id) }}" style="display:inline;">
+                                    @csrf
+                                    @method("DELETE")
+                                    <button type="submit" class="action_btn delete-item show_confirm" data-name="Category">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </form>
+                            @endhasRoutePermission
+                            @if (!auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.category.edit")) && 
+                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.category.destroy")))
+                                <span>-</span>
+                            @endif
+                        </div>
+                    ', ['row' => $row]);
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['status', 'actions'])
                 ->make(true);
         }
     }

@@ -1,6 +1,6 @@
 @extends('admin.master.layouts.app')
 @section('page-title')
-    Members
+    Permissions
 @endsection
 @section('head')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
@@ -9,56 +9,36 @@
     <link href="{{ asset('admin/assets') }}/css/datatable.min.css" rel="stylesheet" type="text/css" />
 @endsection
 @section('page-content')
-    @component('admin.master.layouts.partials.breadcrumb')
-        @slot('li_1')
-            Dashboard
-        @endslot
-        @slot('title')
-            Members
-        @endslot
-    @endcomponent
     <div class="page-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex justify-content-between">
-                                <div class="p-0">
-                                    <h4 class="card-title mb-0 flex-grow-1">Members</h4>
-                                </div>
-                                <div class="p-0">
-                                    {{-- @if (checkPermission('/members/equipment/create')) --}}
-                                    <a href="{{ route('admin.member.add') }}" class="btn btn-danger"
-                                        data-name="memberAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
-                                            width="12" class="me-1"> Add Member</a>
-                                    {{-- @endif --}}
-                                </div>
-                            </div>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="card-title mb-0">Roles List</h4>
                         </div>
                         <div class="card-body">
-                            <table class="table table-bordered dt-responsive nowrap table-striped align-middle"
-                                id="members-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Profile</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th class="text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                            </table>
+                            <div class="table-responsive">
+                                <table class="table table-bordered dt-responsive nowrap table-striped align-middle"
+                                    id="roles-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Created At</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div><!--end col-->
-            </div><!--end row-->
+                </div>
+            </div>
         </div>
     </div>
 @endsection
 @section('scripts')
-    <!--datatable js-->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
@@ -70,16 +50,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
     <script src="{{ asset('admin/assets') }}/js/pages/datatables.init.js"></script>
-
     <script>
         $(document).ready(function() {
-            var table = $('#members-table').DataTable({
+
+
+
+            var table = $('#roles-table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,
                 autoWidth: false,
                 ajax: {
-                    url: "{{ route('admin.member.get') }}",
+                    url: "{{ route('admin.permissions.get') }}",
                     type: "GET",
                     error: function(xhr, error, code) {
                         console.error(xhr.responseText);
@@ -88,7 +70,9 @@
                 dom: "<'d-flex align-items-center justify-content-start'<'search-container me-1'><'dropdown-container ms-1 position-relative'>>" +
                     "<'row'<'col-md-12'tr>>" +
                     "<'row'<'col-md-5'i><'col-md-7'p>>",
-                order: [],
+                order: [
+                    [2, 'desc']
+                ],
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -96,22 +80,12 @@
                         orderable: false
                     },
                     {
-                        data: 'profile',
-                        name: 'profile',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
                         data: 'name',
                         name: 'name'
                     },
                     {
-                        data: 'email',
-                        name: 'email'
-                    },
-                    {
-                        data: 'role',
-                        name: 'role'
+                        data: 'created_at',
+                        name: 'created_at'
                     },
                     {
                         data: 'action',
@@ -166,8 +140,6 @@
 
                 }
             });
-
-
         });
     </script>
 @endsection

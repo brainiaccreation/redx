@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HomeSlider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -32,28 +33,40 @@ class HomeSliderController extends Controller
                 })
 
                 ->addColumn('action', function ($row) {
-                    return '
-                        <div style="display: flex;justify-content: center; gap: 8px;">
-                            
-                            <a href="javascript:void(0);" 
-                                class="action_btn edit-item editSlide" 
-                                data-id="' . $row->id . ' "
-                                data-heading="' . $row->heading . '"
-                                data-content="' . $row->content . '"
-                                data-image="' . asset($row->background_image) . '"
-                                data-action="' . route('admin.home_slider.update', $row->id) . '">
-                                <i class="ri-edit-line"></i>
-                            </a>
+                    return Blade::render('
+                        <div style="display: flex; justify-content: center; gap: 8px;">
+                            @hasRoutePermission("admin.home_slider.edit")
+                                <a href="javascript:void(0);" 
+                                    class="action_btn edit-item editSlide" 
+                                    data-id="{{ $row->id }}"
+                                    data-heading="{{ $row->heading }}"
+                                    data-content="{{ $row->content }}"
+                                    data-image="{{ asset($row->background_image) }}"
+                                    data-action="{{ route("admin.home_slider.update", $row->id) }}">
+                                    <i class="ri-edit-line"></i>
+                                </a>
+                            @endhasRoutePermission
 
-                            <form method="POST" action="' . route('admin.home_slider.destroy', $row->id) . '" style="display:inline;">
-                                ' . csrf_field() . method_field('DELETE') . '
-                                <button type="submit" class="action_btn delete-item show_confirm" data-name="Product">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                            </form>
+                            @hasRoutePermission("admin.home_slider.destroy")
+                                <form method="POST" action="{{ route("admin.home_slider.destroy", $row->id) }}" style="display:inline;">
+                                    @csrf
+                                    @method("DELETE")
+                                    <button type="submit" class="action_btn delete-item show_confirm" data-name="Slider">
+                                        <i class="bx bx-trash"></i>
+                                    </button>
+                                </form>
+                            @endhasRoutePermission
+
+                            @if (
+                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.home_slider.edit")) &&
+                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.home_slider.destroy"))
+                            )
+                                <span>-</span>
+                            @endif
                         </div>
-                    ';
+                    ', ['row' => $row]);
                 })
+
                 ->filterColumn('heading', function ($query, $keyword) {
                     $query->whereRaw('LOWER(heading) LIKE ?', ["%" . strtolower($keyword) . "%"]);
                 })

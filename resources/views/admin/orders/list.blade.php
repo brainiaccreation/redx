@@ -53,6 +53,52 @@
             </div><!--end row-->
         </div>
     </div>
+    {{-- add balanace modal --}}
+    <div class="modal fade bs-example-modal-center" tabindex="-1" aria-labelledby="mySmallModalLabel" aria-modal="true"
+        role="dialog" id="refundModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gridModalLabel">Initiate Refund</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="bg-white p-6 rounded w-1/2">
+                        <p id="refundManageOrderId" class="mb-2 flex items-center"><i
+                                class="fa-solid fa-hashtag mr-2"></i>Order ID: ORD001</p>
+                        <p id="refundManageCustomer" class="mb-2 flex items-center"><i
+                                class="fa-solid fa-user mr-2"></i>Customer: Ali Khan</p>
+                        <p id="refundManageAmount" class="mb-2 flex items-center"><i
+                                class="fa-solid fa-money-bill mr-2"></i>Amount: 1500 PKR</p>
+                        <p id="refundManageStatus" class="mb-2 flex items-center"><i
+                                class="fa-solid fa-clock mr-2"></i>Status: Pending</p>
+                        <p id="refundManageRefundStatus" class="mb-4 flex items-center"><i
+                                class="fa-solid fa-undo mr-2"></i>Refund Status: Not Requested</p>
+                        <div id="form-group" class="mb-4">
+                            <label class="form-label"><i class="fa-solid fa-wallet mr-2"></i>Select Refund Method:</label>
+                            <select id="adminRefundMethodSelect" class="form-select">
+                                <option value="Wallet">Wallet</option>
+                                <option value="Stripe">Stripe</option>
+                                <option value="Paydibs">Paydibs</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <input type="hidden" id="modalUserId">
+                    <div class="d-flex justify-content-end algin-items-center mt-3">
+                        <div class="px-2"><button class="btn btn-light" data-bs-dismiss="modal" aria-label="Close"
+                                type="button" id="cancelRefundManage">Cancel</button></div>
+                        <div>
+                            <button class="btn btn-danger add-balance-btn" type="button" id="confirmRefundBtn">Confirm
+                                Refund</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div>
 @endsection
 @section('scripts')
     <!--datatable js-->
@@ -238,6 +284,58 @@
 
                     }
                 });
+            });
+        });
+    </script>
+
+    <script>
+        // open modal refund
+        $(document).on('click', '.open-refund-modal', function() {
+            const orderId = $(this).data('order-id');
+            const customer = $(this).data('customer');
+            const amount = $(this).data('amount');
+            const status = $(this).data('status');
+            const refundStatus = $(this).data('refund-status');
+
+            const userId = $(this).data('user-id');
+            const currency = '{{ config('app.currency') }}';
+            $('#refundManageOrderId').html('Order ID: ' + orderId);
+            $('#refundManageCustomer').html('Customer: ' + customer);
+            $('#refundManageAmount').html('Amount: ' + amount + ' ' +
+                currency);
+            $('#refundManageStatus').html('Status: ' + status);
+            $('#refundManageRefundStatus').html('Refund Status: ' +
+                refundStatus);
+            $('#modalUserId').val(userId);
+        });
+        // confirm refund
+        $('#confirmRefundBtn').click(function(e) {
+            e.preventDefault();
+            const refundMethod = $('#adminRefundMethodSelect').val();
+            const orderId = $('.open-refund-modal').data('id');
+            const $btn = $(this);
+            $btn.prop('disabled', true).text('Processing...');
+            $.ajax({
+                url: "{{ route('admin.initiate.refund') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    refund_method: refundMethod,
+                    order_id: orderId
+                },
+                success: function(response) {
+                    toastr.success(response.success);
+                    $('#orders-table').DataTable().ajax.reload(null, false);
+                    $('#refundModal').modal('hide');
+                },
+                error: function(xhr) {
+
+                    toastr.error(xhr.responseJSON.error);
+
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('Confirm Refund');
+                }
             });
         });
     </script>

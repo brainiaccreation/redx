@@ -28,11 +28,11 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Categories</h4>
                                 </div>
                                 <div class="p-0">
-                                    {{-- @if (checkPermission('/members/equipment/create')) --}}
-                                    <a href="{{ route('admin.category.add') }}" class="btn btn-danger"
-                                        data-name="categoryAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
-                                            width="12" class="me-1"> Add Category</a>
-                                    {{-- @endif --}}
+                                    @hasRoutePermission('admin.category.add')
+                                        <a href="{{ route('admin.category.category') }}" class="btn btn-danger"
+                                            data-name="categoryAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
+                                                width="12" class="me-1"> Add Category</a>
+                                    @endhasRoutePermission
                                 </div>
                             </div>
                         </div>
@@ -106,8 +106,8 @@
                         width: '15%'
                     },
                     {
-                        data: 'action',
-                        name: 'action',
+                        data: 'actions',
+                        name: 'actions',
                         orderable: false,
                         searchable: false,
                         width: '15%'

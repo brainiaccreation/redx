@@ -77,74 +77,129 @@
 
              <div id="two-column-menu">
              </div>
+             <!-- resources/views/layouts/partials/sidebar.blade.php -->
              <ul class="navbar-nav" id="navbar-nav">
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                         href="{{ route('admin.dashboard') }}">
-                         <i class="ri-dashboard-line"></i> <span data-key="t-dashboards">Dashboard</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.categories*', 'admin.category*') ? 'active' : '' }}"
-                         href="{{ route('admin.categories.list') }}">
-                         <i class="ri-list-unordered"></i> <span data-key="t-widgets">Categories</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.products*', 'admin.product*') ? 'active' : '' }}"
-                         href="{{ route('admin.products.list') }}">
-                         <i class="ri-gamepad-line"></i> <span data-key="t-widgets">Products</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.code*') ? 'active' : '' }}"
-                         href="{{ route('admin.code.list') }}">
-                         <i class="ri-gamepad-line"></i> <span data-key="t-widgets">Gift Card Inventory</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
-                         href="{{ route('admin.orders.list') }}">
-                         <i class="bx bx-archive"></i> <span data-key="t-widgets">Orders</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
-                         href="{{ route('admin.users.list') }}">
-                         <i class=" ri-user-3-line"></i> <span data-key="t-widgets">User Management</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.wallet*') ? 'active' : '' }}"
-                         href="{{ route('admin.wallet.list') }}">
-                         <i class="ri-wallet-line"></i> <span data-key="t-widgets">Wallet Transactions</span>
-                     </a>
-                 </li>
-                 <li class="nav-item">
-                     <a class="nav-link menu-link {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'active' : '' }}"
-                         href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false"
-                         aria-controls="sidebarSettings">
-                         <i class="ri-settings-2-line"></i> <span data-key="t-settingss">Settings</span>
-                     </a>
-                     <div class="collapse menu-dropdown {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'show' : '' }}"
-                         id="sidebarSettings">
-                         <ul class="nav nav-sm flex-column">
-                             <li class="nav-item">
-                                 <a href="{{ route('admin.home_sliders.list') }}"
-                                     class="nav-link {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*') ? 'active' : '' }}"
-                                     data-key="t-home-sliders">
-                                     Home Sliders </a>
-                             </li>
-                             <li class="nav-item">
-                                 <a href="{{ route('admin.footer.index') }}"
-                                     class="nav-link {{ request()->routeIs('admin.footer*') ? 'active' : '' }}"
-                                     data-key="t-home-sliders">
-                                     Footer Management </a>
-                             </li>
-                         </ul>
-                     </div>
-                 </li> <!-- end Dashboard Menu -->
+
+                 @hasRoutePermission('admin.dashboard')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                             href="{{ route('admin.dashboard') }}">
+                             <i class="ri-dashboard-line"></i> <span data-key="t-dashboards">Dashboard</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @hasRoutePermission('admin.categories.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.categories*', 'admin.category*') ? 'active' : '' }}"
+                             href="{{ route('admin.categories.list') }}">
+                             <i class="ri-list-unordered"></i> <span data-key="t-widgets">Categories</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @hasRoutePermission('admin.products.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.products*', 'admin.product*') ? 'active' : '' }}"
+                             href="{{ route('admin.products.list') }}">
+                             <i class="ri-gamepad-line"></i> <span data-key="t-widgets">Products</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @hasRoutePermission('admin.code.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.code*') ? 'active' : '' }}"
+                             href="{{ route('admin.code.list') }}">
+                             <i class="ri-gift-line"></i> <span data-key="t-widgets">Gift Card Inventory</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @hasRoutePermission('admin.orders.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
+                             href="{{ route('admin.orders.list') }}">
+                             <i class="bx bx-archive"></i> <span data-key="t-widgets">Orders</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @hasRoutePermission('admin.customers.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.customers*', 'admin.customer*') ? 'active' : '' }}"
+                             href="{{ route('admin.customers.list') }}">
+                             <i class="ri-user-3-line"></i> <span data-key="t-widgets">Customer Management</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @hasRoutePermission('admin.users.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
+                             href="{{ route('admin.users.list') }}">
+                             <i class="ri-user-settings-line"></i> <span data-key="t-widgets">Users</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @if (auth()->user()->hasRole('admin'))
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.permissions*') ? 'active' : '' }}"
+                             href="{{ route('admin.permissions.list') }}">
+                             <i class="ri-shield-user-line"></i> <span data-key="t-widgets">Role Permissions</span>
+                         </a>
+                     </li>
+                 @endif
+
+                 @hasRoutePermission('admin.wallet.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.wallet*') ? 'active' : '' }}"
+                             href="{{ route('admin.wallet.list') }}">
+                             <i class="ri-wallet-line"></i> <span data-key="t-widgets">Wallet Transactions</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 @if (auth()->check() &&
+                         auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission('admin.home_sliders.list')))
+                     <li class="nav-item">
+                         <a class="nav-link settings {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'active' : '' }}"
+                             href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false"
+                             aria-controls="sidebarSettings">
+                             <i class="ri-settings-2-line"></i>
+                             <span data-key="t-settings">Settings</span>
+                         </a>
+                         <div class="collapse menu-dropdown {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'show' : '' }}"
+                             id="sidebarSettings">
+                             <ul class="nav nav-sm flex-column">
+
+                                 @hasRoutePermission('admin.home_sliders.list')
+                                     <li class="nav-item">
+                                         <a href="{{ route('admin.home_sliders.list') }}"
+                                             class="nav-link {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*') ? 'active' : '' }}"
+                                             data-key="t-home-sliders">
+                                             Home Sliders
+                                         </a>
+                                     </li>
+                                 @endhasRoutePermission
+
+                                 {{-- Footer Management (no permission check for now) --}}
+                                 <li class="nav-item">
+                                     <a href="{{ route('admin.footer.index') }}"
+                                         class="nav-link {{ request()->routeIs('admin.footer*') ? 'active' : '' }}"
+                                         data-key="t-footer">
+                                         Footer Management
+                                     </a>
+                                 </li>
+
+                             </ul>
+                         </div>
+                     </li>
+                 @endif
+
              </ul>
+
          </div>
          <!-- Sidebar -->
      </div>

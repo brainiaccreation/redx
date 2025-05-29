@@ -167,47 +167,6 @@
 
                 }
             });
-            // change suspended status
-            $(document).on('click', '.changeStatus', function(e) {
-                e.preventDefault();
-
-                let button = $(this);
-                let userId = button.closest('form').attr('action').split('/').pop();
-                let currentStatus = parseInt(button.data('suspended'));
-
-                $.ajax({
-                    url: "{{ route('admin.user.toggle_suspend') }}",
-                    type: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id: userId,
-                        is_suspended: currentStatus
-                    },
-                    success: function(response) {
-                        let newStatus = response.is_suspended;
-                        let iconClass = newStatus == 1 ? 'ri-check-fill' : 'ri-forbid-line';
-                        let buttonClass = newStatus == 1 ? 'success-item' : 'delete-item';
-                        let titleText = newStatus == 1 ? 'Unsuspend User' : 'Suspend User';
-
-                        button
-                            .data('suspended', newStatus)
-                            .attr('title', titleText)
-                            .removeClass('delete-item success-item')
-                            .addClass(buttonClass)
-                            .find('i')
-                            .attr('class', iconClass);
-
-                        if (typeof bootstrap !== 'undefined') {
-                            var tooltip = bootstrap.Tooltip.getInstance(button[0]);
-                            if (tooltip) tooltip.dispose();
-                            new bootstrap.Tooltip(button[0]);
-                        }
-                    },
-                    error: function() {
-                        alert('Something went wrong.');
-                    }
-                });
-            });
         });
     </script>
 @endsection

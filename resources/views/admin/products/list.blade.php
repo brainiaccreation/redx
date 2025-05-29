@@ -28,11 +28,11 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Products</h4>
                                 </div>
                                 <div class="p-0">
-                                    {{-- @if (checkPermission('/members/equipment/create')) --}}
-                                    <a href="{{ route('admin.product.add') }}" class="btn btn-danger"
-                                        data-name="productAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
-                                            width="12" class="me-1"> Add Product</a>
-                                    {{-- @endif --}}
+                                    @hasRoutePermission('admin.product.add')
+                                        <a href="{{ route('admin.product.add') }}" class="btn btn-danger"
+                                            data-name="productAdd"><img src="{{ asset('admin/assets/images/svg/add.svg') }}"
+                                                width="12" class="me-1"> Add Product</a>
+                                    @endhasRoutePermission
                                 </div>
                             </div>
                         </div>

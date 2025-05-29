@@ -1,6 +1,6 @@
 @extends('admin.master.layouts.app')
 @section('page-title')
-    Edit User
+    View Customer
 @endsection
 
 @section('page-content')
@@ -111,7 +111,7 @@
                                 </li> --}}
                             {{-- </ul> --}}
                             <div class="flex-shrink-0">
-                                <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-light"><i
+                                <a href="{{ route('admin.customer.edit', $user->id) }}" class="btn btn-light"><i
                                         class="ri-edit-box-line align-bottom"></i> Edit Profile</a>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 @extends('admin.master.layouts.app')
 @section('page-title')
-    Edit User
+    Edit Customer
 @endsection
 
 @section('page-content')
@@ -20,12 +20,12 @@
                         <div class="card-header">
                             <div class="d-flex justify-content-between">
                                 <div class="p-0">
-                                    <h4 class="card-title mb-0 flex-grow-1">User Edit</h4>
+                                    <h4 class="card-title mb-0 flex-grow-1">Customer Edit</h4>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
-                            <form class="row g-3" method="POST" action="{{ route('admin.user.update', $user->id) }}"
+                            <form class="row g-3" method="POST" action="{{ route('admin.customer.update', $user->id) }}"
                                 enctype="multipart/form-data">
                                 @method('PUT')
                                 @csrf

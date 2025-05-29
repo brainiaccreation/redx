@@ -28,14 +28,13 @@
                                     <h4 class="card-title mb-0 flex-grow-1">Home Sliders</h4>
                                 </div>
                                 <div class="p-0">
-                                    {{-- @if (checkPermission('/members/equipment/create')) --}}
-                                    <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#addSlideModal">
-                                        <img src="{{ asset('admin/assets/images/svg/add.svg') }}" width="12"
-                                            class="me-1"> Add Slide
-                                    </a>
-
-                                    {{-- @endif --}}
+                                    @hasRoutePermission('admin.home_slider.add')
+                                        <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#addSlideModal">
+                                            <img src="{{ asset('admin/assets/images/svg/add.svg') }}" width="12"
+                                                class="me-1"> Add Slide
+                                        </a>
+                                    @endhasRoutePermission
                                 </div>
                             </div>
                         </div>

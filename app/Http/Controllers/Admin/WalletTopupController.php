@@ -8,6 +8,7 @@ use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Blade;
 
 class WalletTopupController extends Controller
 {
@@ -33,8 +34,17 @@ class WalletTopupController extends Controller
                 return DataTables::of($data)
                     ->addIndexColumn()
                     ->addColumn('user', function ($row) {
-                        return '<a href="' . route('admin.user.view', $row->user_id) . '">' . $row->user_name . ' ' . $row->user_last_name . '</a>';
+                        return Blade::render('
+                            @hasRoutePermission("admin.customer.view")
+                                <a href="{{ route("admin.user.view", $row->user_id) }}">
+                                    {{ $row->user_name }} {{ $row->user_last_name }}
+                                </a>
+                            @else
+                                {{ $row->user_name }} {{ $row->user_last_name }}
+                            @endhasRoutePermission
+                        ', ['row' => $row]);
                     })
+
                     ->addColumn('amount', function ($row) {
                         return config('app.currency') . ' ' . number_format($row->amount, 2);
                     })
@@ -51,13 +61,26 @@ class WalletTopupController extends Controller
                     ->addColumn('type', fn($row) => ucfirst(strtolower($row->type)))
                     ->addColumn('submitted_at', fn($row) => runTimeDateFormat($row->created_at))
                     ->addColumn('action', function ($row) {
-                        return '
-                        <div style="display: flex; justify-content: center; gap: 8px;">
-                            <a href="' . route('admin.wallet.show', $row->id) . '" class="action_btn edit-item">
-                                <i class="ri-eye-line"></i>
-                            </a>
-                        </div>';
+                        $user = auth()->user();
+
+                        $hasViewPermission = $user->hasPermissionTo(\App\Services\PermissionMap::getPermission('admin.wallet.show'));
+
+                        return Blade::render('
+                            <div style="display: flex; justify-content: center; gap: 8px;">
+                                @hasRoutePermission("admin.wallet.show")
+                                    <a href="{{ route("admin.wallet.show", $row->id) }}" class="action_btn edit-item">
+                                        <i class="ri-eye-line"></i>
+                                    </a>
+                                @endhasRoutePermission
+
+                                @if (!' . json_encode($hasViewPermission) . ')
+                                    <span>-</span>
+                                @endif
+                            </div>
+                        ', ['row' => $row]);
                     })
+
+
                     // Filtering
                     ->filterColumn('payment_method', function ($query, $keyword) {
                         $query->whereRaw("LOWER(wallet_transactions.payment_method) LIKE ?", ["%" . strtolower($keyword) . "%"]);

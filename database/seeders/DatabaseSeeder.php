@@ -12,11 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(GiftCardCodeSeeder::class);
-        $this->call(CodeEmailedSeeder::class);
-        $this->call(FooterSeeder::class);
-        $this->call(UpdateCategoryUniqueIdSeeder::class);
-
+        // $this->call(GiftCardCodeSeeder::class);
+        // $this->call(CodeEmailedSeeder::class);
+        // $this->call(FooterSeeder::class);
+        // $this->call(UpdateCategoryUniqueIdSeeder::class);
+        $this->call(UpdatePermissionsSeeder::class);
+        $this->call(CustomerRoleSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
