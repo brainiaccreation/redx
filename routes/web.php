@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\HomeSliderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\WalletTopupController;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\CartController;
@@ -177,13 +178,13 @@ Route::put('/admin/footer/{id}', [FooterController::class, 'update'])->name('adm
 Route::delete('/admin/footer/{id}', [FooterController::class, 'destroy'])->name('admin.footer.destroy');
 Route::get('/footer-data', [FooterController::class, 'getFooterData'])->name('footer.data');
 // Admin routes with 'admin' prefix
-Route::prefix('admin')->group(function () {
+Route::prefix('account')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', [LoginController::class, 'showLoginForm'])->name('admin.login');
         Route::post('/login', [LoginController::class, 'login'])->name('admin.login.submit');
     });
 
-    Route::middleware('admin')->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         // category routes
         Route::get('/categories', [CategoryController::class, 'list'])->name('admin.categories.list');
@@ -210,19 +211,31 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
         Route::get('/profile-settings', [ProfileController::class, 'settings'])->name('admin.profile.settings');
         Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
-        // users management
-        Route::get('/users', [UserController::class, 'list'])->name('admin.users.list');
-        Route::get('/users/get', [UserController::class, 'get'])->name('admin.users.get');
+        // customer management
+        Route::get('/customers', [UserController::class, 'list'])->name('admin.customers.list');
+        Route::get('/customers/get', [UserController::class, 'get'])->name('admin.customers.get');
+        Route::prefix('customer')->group(function () {
+            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.customer.edit');
+            Route::get('/view/{id}', [UserController::class, 'view'])->name('admin.customer.view');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('admin.customer.update');
+            Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.customer.status');
+            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.customer.destroy');
+            Route::post('/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('admin.customer.toggle_suspend');
+            Route::post('/add-balance', [UserController::class, 'addBalance'])->name('admin.customer.add_balance');
+            Route::post('/user/update-weekly-limit', [UserController::class, 'updateWeeklyLimit'])->name('customer.updateWeeklyLimit');
+            Route::get('/transactions', [UserController::class, 'fetchTransactions'])->name('admin.customer.transactions');
+        });
+        // member management
+        Route::get('/users', [StaffController::class, 'list'])->name('admin.users.list');
+        Route::get('/users/get', [StaffController::class, 'get'])->name('admin.users.get');
         Route::prefix('user')->group(function () {
-            Route::get('/edit/{id}', [UserController::class, 'edit'])->name('admin.user.edit');
-            Route::get('/view/{id}', [UserController::class, 'view'])->name('admin.user.view');
-            Route::put('/update/{id}', [UserController::class, 'update'])->name('admin.user.update');
-            Route::post('/status/{id}', [UserController::class, 'status'])->name('admin.user.status');
-            Route::delete('/delete/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
-            Route::post('/toggle-suspend', [UserController::class, 'toggleSuspend'])->name('admin.user.toggle_suspend');
-            Route::post('/add-balance', [UserController::class, 'addBalance'])->name('admin.user.add_balance');
-            Route::post('/user/update-weekly-limit', [UserController::class, 'updateWeeklyLimit'])->name('user.updateWeeklyLimit');
-            Route::get('/transactions', [UserController::class, 'fetchTransactions'])->name('admin.user.transactions');
+            Route::get('/add', [StaffController::class, 'add'])->name('admin.user.add');
+            Route::post('/store', [StaffController::class, 'store'])->name('admin.user.store');
+            Route::get('/edit/{id}', [StaffController::class, 'edit'])->name('admin.user.edit');
+            Route::get('/view/{id}', [StaffController::class, 'view'])->name('admin.user.view');
+            Route::put('/update/{id}', [StaffController::class, 'update'])->name('admin.user.update');
+            Route::post('/status/{id}', [StaffController::class, 'status'])->name('admin.user.status');
+            Route::delete('/delete/{id}', [StaffController::class, 'destroy'])->name('admin.user.destroy');
         });
         // gift card inventory management
         Route::get('/gift-card-codes', [GiftCardCodeController::class, 'list'])->name('admin.code.list');
