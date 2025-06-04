@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\Logger;
 
 class LoginController extends Controller
 {
@@ -34,15 +35,19 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             if (!auth()->user()->hasRole('customer')) {
                 $request->session()->regenerate();
+                Logger::log('login', 'admin', auth()->id(), 'Admin logged in successfully');
 
                 return redirect()->intended('account/dashboard');
             } else {
+                Logger::log('login_failed', 'admin', auth()->id(), 'Non-admin tried to access admin login', 'User ID: ' . auth()->id(), 'failed', 'warning');
+
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'You do not have admin privileges.',
                 ])->withInput($request->only('email'));
             }
         }
+        Logger::log('login_failed', 'admin', null, 'Failed login attempt', 'Email: ' . $request->email, 'failed', 'warning');
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',

@@ -97,7 +97,34 @@ class AccountController extends Controller
                             ' . ucfirst($order->status) . '
                         </span>';
             })
-            ->rawColumns(['order_number', 'payment_method', 'total_amount', 'status'])
+            ->addColumn('refund_status', function ($order) {
+                return ' <span class="price-usd">
+                            ' . ucfirst($order->refund_status) . '
+                        </span>';
+            })
+            ->addColumn('action', function ($order) {
+                $html = '<div style="display: flex; gap: 8px; justify-content: center;">';
+
+                if ($order->refund_status !== 'Not Requested') {
+                    $html .= '<span class="text-center">-</span>';
+                } else {
+                    $html .= '<a href="javascript:void(0);" class="action_btn edit-item open-refund-modal" title="Refund Amount"
+                    data-bs-toggle="modal"
+                    data-bs-target="#refundModal"
+                    data-id="' . $order->id . '"
+                    data-order-id="' . $order->order_number . '"
+                    data-amount="' . $order->total_amount . '"
+                    data-user-id="' . $order->user_id . '">
+                    <i class="fa fa-undo" aria-hidden="true"></i>
+                </a>';
+                }
+
+                $html .= '</div>';
+
+                return $html;
+            })
+
+            ->rawColumns(['order_number', 'payment_method', 'total_amount', 'status', 'refund_status', 'action'])
             ->make(true);
     }
 }

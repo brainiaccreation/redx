@@ -59,10 +59,11 @@ class PermissionController extends Controller
             'Categories' => ['list categories', 'add category', 'edit category', 'toggle category status', 'delete category'],
             'Products' => ['list products', 'add product', 'edit product', 'toggle product status', 'delete product'],
             'Customers' => ['list customers', 'edit customer', 'view customer', 'toggle customer status', 'delete customer', 'toggle customer suspend', 'add customer balance', 'update customer weekly limit', 'view customer transactions'],
-            'Users' => ['list users', 'add user', 'edit user', 'view user', 'toggle user status', 'delete user'],
+            'Users' => ['list users', 'add user', 'edit user', 'view user', 'toggle user status', 'delete user', 'change user password'],
             'Gift Card Codes' => ['list gift card codes', 'add gift card code', 'edit gift card code', 'toggle gift card code status', 'delete gift card code'],
             'Home Sliders' => ['list home sliders', 'add home slider', 'edit home slider', 'delete home slider'],
             'Orders' => ['list orders', 'view order details'],
+            'Sales Report' => ['sales report', 'sales report generate'],
             'Wallet' => ['list wallet topups', 'view wallet topup', 'approve wallet topup'],
             // 'Permissions' => ['view permissions'],
         ];

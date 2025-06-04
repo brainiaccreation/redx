@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\RefundRequest;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
@@ -16,12 +17,17 @@ class RefundController extends Controller
 {
     public function initiate(Request $request)
     {
+
         $request->validate([
             'order_id' => 'required|exists:orders,id',
             'refund_method' => 'required|in:Wallet,Stripe,Paydibs',
         ]);
 
         $order = Order::with('payment')->findOrFail($request->order_id);
+        if (!$order->user_id) {
+            return response()->json(['error' => 'Guest user do not have wallets, so the refund cannot be processed to the wallet.'], 400);
+        }
+
         if ($order->refund_status !== 'Not Requested') {
             return response()->json(['error' => 'Refund already processed or in progress.'], 400);
         }
@@ -49,6 +55,26 @@ class RefundController extends Controller
         }
     }
 
+    public function requestRefund(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'order_id' => 'required|exists:orders,id',
+            'refund_method' => 'required|in:Wallet,Stripe,Paydibs',
+        ]);
+
+        RefundRequest::create([
+            'user_id' => $request->user_id,
+            'order_id' => $request->order_id,
+            'refund_method' => $request->refund_method,
+            'status' => 'pending'
+        ]);
+        $order = Order::find($request->order_id);
+        $order->refund_status = 'Refund Requested';
+        $order->update();
+        return response()->json(['message' => 'Refund request submitted for admin approval.']);
+    }
+
     private function processWalletRefund($order)
     {
         $wallet = Wallet::firstOrCreate(['user_id' => $order->user_id]);
@@ -63,8 +89,9 @@ class RefundController extends Controller
             'description' => 'Refund for Order #' . $order->order_number,
         ]);
 
-        $order->refund_status = 'Refunded to Wallet';
-
+        $order->refund_status = 'Refunded via Stripe';
+        $order->status = 'refunded';
+        $order->update();
         $user = User::find($order->user_id);
         $user->wallet_balance += $order->total_amount;
         $user->save();
@@ -86,7 +113,8 @@ class RefundController extends Controller
         ]);
 
         $order->refund_status = 'Refunded via Stripe';
-
+        $order->status = 'refunded';
+        $order->update();
         $wallet = Wallet::firstOrCreate(['user_id' => $order->user_id]);
         $wallet->balance += $order->total_amount;
         $wallet->save();

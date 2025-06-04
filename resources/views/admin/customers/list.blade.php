@@ -517,6 +517,7 @@
 
         });
     </script>
+
     <script>
         $(document).ready(function() {
             var table = $('#users-table').DataTable({

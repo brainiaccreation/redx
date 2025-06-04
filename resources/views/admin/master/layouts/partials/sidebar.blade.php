@@ -79,7 +79,7 @@
              </div>
              <!-- resources/views/layouts/partials/sidebar.blade.php -->
              <ul class="navbar-nav" id="navbar-nav">
-
+                 <!-- Dashboard -->
                  @hasRoutePermission('admin.dashboard')
                      <li class="nav-item">
                          <a class="nav-link menu-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
@@ -89,6 +89,27 @@
                      </li>
                  @endhasRoutePermission
 
+                 <!-- Orders -->
+                 @hasRoutePermission('admin.orders.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
+                             href="{{ route('admin.orders.list') }}">
+                             <i class="ri-shopping-bag-3-line"></i> <span data-key="t-widgets">Orders</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 <!-- Sales Report -->
+                 @hasRoutePermission('admin.sales.report')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.sales.report*') ? 'active' : '' }}"
+                             href="{{ route('admin.sales.report') }}">
+                             <i class="ri-pages-line"></i> <span data-key="t-widgets">Sales Report</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 <!-- Categories -->
                  @hasRoutePermission('admin.categories.list')
                      <li class="nav-item">
                          <a class="nav-link menu-link {{ request()->routeIs('admin.categories*', 'admin.category*') ? 'active' : '' }}"
@@ -98,6 +119,7 @@
                      </li>
                  @endhasRoutePermission
 
+                 <!-- Products -->
                  @hasRoutePermission('admin.products.list')
                      <li class="nav-item">
                          <a class="nav-link menu-link {{ request()->routeIs('admin.products*', 'admin.product*') ? 'active' : '' }}"
@@ -107,6 +129,7 @@
                      </li>
                  @endhasRoutePermission
 
+                 <!-- Gift Card Inventory -->
                  @hasRoutePermission('admin.code.list')
                      <li class="nav-item">
                          <a class="nav-link menu-link {{ request()->routeIs('admin.code*') ? 'active' : '' }}"
@@ -116,15 +139,7 @@
                      </li>
                  @endhasRoutePermission
 
-                 @hasRoutePermission('admin.orders.list')
-                     <li class="nav-item">
-                         <a class="nav-link menu-link {{ request()->routeIs('admin.orders*', 'admin.order*') ? 'active' : '' }}"
-                             href="{{ route('admin.orders.list') }}">
-                             <i class="bx bx-archive"></i> <span data-key="t-widgets">Orders</span>
-                         </a>
-                     </li>
-                 @endhasRoutePermission
-
+                 <!-- Customer Management -->
                  @hasRoutePermission('admin.customers.list')
                      <li class="nav-item">
                          <a class="nav-link menu-link {{ request()->routeIs('admin.customers*', 'admin.customer*') ? 'active' : '' }}"
@@ -134,24 +149,7 @@
                      </li>
                  @endhasRoutePermission
 
-                 @hasRoutePermission('admin.users.list')
-                     <li class="nav-item">
-                         <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
-                             href="{{ route('admin.users.list') }}">
-                             <i class="ri-user-settings-line"></i> <span data-key="t-widgets">Users</span>
-                         </a>
-                     </li>
-                 @endhasRoutePermission
-
-                 @if (auth()->user()->hasRole('admin'))
-                     <li class="nav-item">
-                         <a class="nav-link menu-link {{ request()->routeIs('admin.permissions*') ? 'active' : '' }}"
-                             href="{{ route('admin.permissions.list') }}">
-                             <i class="ri-shield-user-line"></i> <span data-key="t-widgets">Role Permissions</span>
-                         </a>
-                     </li>
-                 @endif
-
+                 <!-- Wallet Transactions -->
                  @hasRoutePermission('admin.wallet.list')
                      <li class="nav-item">
                          <a class="nav-link menu-link {{ request()->routeIs('admin.wallet*') ? 'active' : '' }}"
@@ -161,6 +159,33 @@
                      </li>
                  @endhasRoutePermission
 
+                 <!-- Users -->
+                 @hasRoutePermission('admin.users.list')
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.users*', 'admin.user*') ? 'active' : '' }}"
+                             href="{{ route('admin.users.list') }}">
+                             <i class="ri-user-settings-line"></i> <span data-key="t-widgets">Users</span>
+                         </a>
+                     </li>
+                 @endhasRoutePermission
+
+                 <!-- Role Permissions -->
+                 @if (auth()->user()->hasRole('admin'))
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.permissions*') ? 'active' : '' }}"
+                             href="{{ route('admin.permissions.list') }}">
+                             <i class="ri-shield-user-line"></i> <span data-key="t-widgets">Role Permissions</span>
+                         </a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link menu-link {{ request()->routeIs('admin.logs*') ? 'active' : '' }}"
+                             href="{{ route('admin.logs.list') }}">
+                             <i class=" ri-history-line"></i> <span data-key="t-widgets">Logs & History</span>
+                         </a>
+                     </li>
+                 @endif
+
+                 <!-- Settings (Collapsible) -->
                  @if (auth()->check() &&
                          auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission('admin.home_sliders.list')))
                      <li class="nav-item">
@@ -173,7 +198,6 @@
                          <div class="collapse menu-dropdown {{ request()->routeIs('admin.home_sliders*', 'admin.home_slider*', 'admin.footer*') ? 'show' : '' }}"
                              id="sidebarSettings">
                              <ul class="nav nav-sm flex-column">
-
                                  @hasRoutePermission('admin.home_sliders.list')
                                      <li class="nav-item">
                                          <a href="{{ route('admin.home_sliders.list') }}"
@@ -183,8 +207,6 @@
                                          </a>
                                      </li>
                                  @endhasRoutePermission
-
-                                 {{-- Footer Management (no permission check for now) --}}
                                  <li class="nav-item">
                                      <a href="{{ route('admin.footer.index') }}"
                                          class="nav-link {{ request()->routeIs('admin.footer*') ? 'active' : '' }}"
@@ -192,14 +214,11 @@
                                          Footer Management
                                      </a>
                                  </li>
-
                              </ul>
                          </div>
                      </li>
                  @endif
-
              </ul>
-
          </div>
          <!-- Sidebar -->
      </div>

@@ -907,3 +907,12 @@ textarea {
     color: #166534;
     border: 2px solid #bbf7d0;
 }
+
+img.rounded-circle {
+    object-fit: cover;
+}
+
+.avatar-xs {
+    height: 2.5rem;
+    width: 2.5rem;
+}

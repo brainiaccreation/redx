@@ -39,6 +39,7 @@ class PermissionMap
         'admin.user.edit' => 'edit user',
         'admin.user.status' => 'toggle user status',
         'admin.user.destroy' => 'delete user',
+        'admin.users.change-password' => 'change user password',
 
         // Gift Card Codes
         'admin.code.list' => 'list gift card codes',
@@ -56,6 +57,10 @@ class PermissionMap
         // Orders
         'admin.orders.list' => 'list orders',
         'admin.order.details' => 'view order details',
+
+        // Sales Report
+        'admin.sales.report' => 'sales report',
+        'admin.sales.pdf' => 'sales report generate',
 
         // Wallet Topups
         'admin.wallet.list' => 'list wallet topups',

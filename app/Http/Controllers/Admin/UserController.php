@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SendPasswordChangedEmail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Wallet;
@@ -11,6 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -146,50 +148,47 @@ class UserController extends Controller
                         <div class="d-flex align-items-center gap-2">
                             @hasRoutePermission("admin.customer.add_balance")
                                 <a href="javascript:void(0);"
-                                class="action_btn edit-item open-balance-modal"
-                                title="Add balance"
-                                data-bs-toggle="modal"
-                                data-bs-target=".bs-example-modal-center"
-                                data-name="{{ $row->name }} {{ $row->last_name }}"
-                                data-email="{{ $row->email }}"
-                                data-id="{{ $row->id }}"
-                                data-balance="{{ config("app.currency") }} {{ number_format($row->wallet_balance, 2) }}">
+                                   class="action_btn edit-item open-balance-modal"
+                                   title="Add balance"
+                                   data-bs-toggle="modal"
+                                   data-bs-target=".bs-example-modal-center"
+                                   data-name="{{ $row->name }} {{ $row->last_name }}"
+                                   data-email="{{ $row->email }}"
+                                   data-id="{{ $row->id }}"
+                                   data-balance="{{ config("app.currency") }} {{ number_format($row->wallet_balance, 2) }}">
                                     <i class="ri-wallet-line"></i>
                                 </a>
                             @endhasRoutePermission
-
                             @hasRoutePermission("admin.customer.transactions")
                                 <a href="javascript:void(0);"
-                                class="action_btn view-transactions edit-item"
-                                data-user-id="{{ $userId }}"
-                                title="Transaction History"
-                                data-bs-toggle="modal"
-                                data-bs-target=".transaactionHistoryModal">
+                                   class="action_btn view-transactions edit-item"
+                                   data-user-id="{{ $userId }}"
+                                   title="Transaction History"
+                                   data-bs-toggle="modal"
+                                   data-bs-target=".transaactionHistoryModal">
                                     <i class="ri-history-line"></i>
                                 </a>
                             @endhasRoutePermission
-
                             @hasRoutePermission("admin.customer.add_balance")
                                 <a href="javascript:void(0);"
-                                class="action_btn edit-item weekly-balance-modal"
-                                title="Set limit"
-                                data-bs-toggle="modal"
-                                data-bs-target=".weeklyLimitModal"
-                                data-name="{{ $row->name }} {{ $row->last_name }}"
-                                data-email="{{ $row->email }}"
-                                data-id="{{ $row->id }}"
-                                data-balance="{{ number_format($row->wallet_balance, 2) }}"
-                                data-limit="{{ number_format($row->weekly_limit, 2) }}"
-                                data-spent="{{ getWeeklySpent($row->id) }}">
+                                   class="action_btn edit-item weekly-balance-modal"
+                                   title="Set limit"
+                                   data-bs-toggle="modal"
+                                   data-bs-target=".weeklyLimitModal"
+                                   data-name="{{ $row->name }} {{ $row->last_name }}"
+                                   data-email="{{ $row->email }}"
+                                   data-id="{{ $row->id }}"
+                                   data-balance="{{ number_format($row->wallet_balance, 2) }}"
+                                   data-limit="{{ number_format($row->weekly_limit, 2) }}"
+                                   data-spent="{{ number_format($row->weekly_spent, 2) }}">
                                     <i class="ri-settings-2-line"></i>
                                 </a>
                             @endhasRoutePermission
-
                             @if (
-                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.view")) ||
-                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.edit")) ||
-                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.toggle_suspend")) ||
-                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.destroy"))
+                                auth()->user()->hasPermissionTo("admin.customer.view") ||
+                                auth()->user()->hasPermissionTo("admin.customer.edit") ||
+                                auth()->user()->hasPermissionTo("admin.customer.toggle_suspend") ||
+                                auth()->user()->hasPermissionTo("admin.customer.destroy")
                             )
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-danger btn-sm dropdown action_dropdown_btn edit-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -203,7 +202,6 @@ class UserController extends Controller
                                                 </a>
                                             </li>
                                         @endhasRoutePermission
-
                                         @hasRoutePermission("admin.customer.edit")
                                             <li>
                                                 <a href="{{ route("admin.customer.edit", $userId) }}" class="dropdown-item">
@@ -211,7 +209,6 @@ class UserController extends Controller
                                                 </a>
                                             </li>
                                         @endhasRoutePermission
-
                                         @hasRoutePermission("admin.customer.toggle_suspend")
                                             <li>
                                                 <button type="button"
@@ -226,7 +223,6 @@ class UserController extends Controller
                                                 </button>
                                             </li>
                                         @endhasRoutePermission
-
                                         @hasRoutePermission("admin.customer.destroy")
                                             <li>
                                                 <form method="POST" action="{{ route("admin.customer.destroy", $userId) }}" onsubmit="return confirm(\'Are you sure?\')" class="d-inline">
@@ -244,7 +240,6 @@ class UserController extends Controller
                         </div>
                     ', ['row' => $row]);
                 })
-
                 ->rawColumns(['user_info', 'wallet_balance', 'weekly_limit', 'weekly_spent', 'account_type', 'action'])
                 ->make(true);
         }
@@ -393,5 +388,20 @@ class UserController extends Controller
             'data' => $data,
             'has_more' => $transactions->hasMorePages()
         ]);
+    }
+    public function changePassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = User::findOrFail($id);
+        $newPassword = $request->password;
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        SendPasswordChangedEmail::dispatch($user, $newPassword);
+
+        return response()->json(['message' => 'Request has been completed.']);
     }
 }

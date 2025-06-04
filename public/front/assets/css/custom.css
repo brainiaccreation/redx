@@ -507,3 +507,39 @@ span.active {
   font-size: 1rem;
   color: #333;
 }
+
+.action_btn {
+  font-size: 18px;
+  background: #fff;
+  border: 1px solid #0000005e;
+  border-radius: 5px;
+  padding: 1px 7px 1px 7px;
+
+}
+
+.action_btn:hover,
+.action_btn:active,
+.action_btn:focus {
+  color: red;
+  border: 1px solid red;
+}
+
+.nice-select {
+  border: 1px solid #00000026;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+.nice-select:active,
+.nice-select.open,
+.nice-select:focus {
+  border-color: #dc35456e !important;
+}
+
+table.dataTable {
+  font-size: 12px;
+}
+
+.page-link {
+  color: #ff0000 !important;
+}

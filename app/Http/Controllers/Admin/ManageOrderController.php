@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderHistory;
+use App\Models\RefundRequest;
 use Yajra\DataTables\Facades\DataTables;
 
 class ManageOrderController extends Controller
@@ -36,7 +37,7 @@ class ManageOrderController extends Controller
                     'order_details.name as guest_name'
                 )
 
-                ->with(['user', 'order_detail']);
+                ->with(['user', 'order_detail', 'refundRequest']);
 
             return DataTables::of($orders)
                 ->addIndexColumn()
@@ -78,9 +79,21 @@ class ManageOrderController extends Controller
                         'failed'     => 'badge bg-danger-subtle text-danger fw-medium',
                         'cancelled'  => 'badge bg-secondary-subtle text-secondary fw-medium',
                     ];
-                    $badgeClass = $statusClasses[$order->status] ?? 'badge bg-primary-subtle text-primary';
-                    return '<h5><span class="' . $badgeClass . '">' . ucfirst($order->status) . '</span></h5>';
+                    $statusBadgeClass = $statusClasses[$order->status] ?? 'badge bg-secondary-subtle text-secondary';
+                    $statusBadge = '<span class="' . $statusBadgeClass . '">' . ucfirst($order->status) . '</span>';
+
+                    $refundBadge = '';
+                    if ($order->refund_status === 'Rejected') {
+                        $refundBadge = '<span class="badge bg-danger-subtle text-danger fw-medium">Refund Rejected</span>';
+                    }
+
+                    return '<div class="d-flex flex-column gap-1 text-center">'
+                        . '<h5>' . $statusBadge . '</h5>'
+                        . ($refundBadge ? '<h5>' . $refundBadge . '</h5>' : '')
+                        . '</div>';
                 })
+
+
 
                 ->addColumn('payment_method', function ($order) {
                     return ucfirst($order->payment_method);
@@ -102,18 +115,36 @@ class ManageOrderController extends Controller
                     } else {
                         $html .= '<span class="text-center">-</span>';
                     }
-                    $html .= '<a href="javascript:void(0);" class="action_btn edit-item open-refund-modal" title="Refund Amount"
+
+                    if ($order->refund_status === 'Refund Requested') {
+                        $html .= '<a href="javascript:void(0);" class="action_btn view-refund-request edit-item" title="Manage Refund Request"
+                            data-bs-toggle="modal"
+                            data-bs-target="#refundRequestManageModal"
+                            data-id="' . $order->id . '"
+                            data-order-id="' . $order->order_number . '"
+                            data-customer="' . ($order->user_name || $order->user_last_name ? trim($order->user_name . ' ' . $order->user_last_name) : $order->guest_name) . '"
+                            data-amount="' . $order->total_amount . '"
+                            data-status="' . ucfirst($order->status) . '"
+                            data-refund-request-id="' . $order->refundRequest->id . '"
+                            data-refund-status="' . ucfirst($order->refund_status) . '"
+                            data-refund-method="' . $order->refundRequest->refund_method . '"
+                            data-user-id="' . $order->user_id . '">
+                            <i class="ri-refund-2-fill" aria-hidden="true"></i>
+                        </a>';
+                    } else {
+                        $html .= '<a href="javascript:void(0);" class="action_btn edit-item open-refund-modal" title="Refund Amount"
                                 data-bs-toggle="modal"
                                 data-bs-target=".bs-example-modal-center"
                                 data-id="' . $order->id . '"
                                 data-order-id="' . $order->order_number . '"
-                                data-customer="' . $order->user_name . ' ' . $order->user_last_name . '"
+                                data-customer="' . ($order->user_name || $order->user_last_name ? trim($order->user_name . ' ' . $order->user_last_name) : $order->guest_name) . '"
                                 data-amount="' . $order->total_amount . '"
                                 data-status="' . ucfirst($order->status) . '"
                                 data-refund-status="' . ucfirst($order->refund_status) . '"
                                 data-user-id="' . $order->user_id . '">
-                                <i class="bx bx-rotate-left"></i>
+                                <i class="ri-refund-line"></i>
                             </a>';
+                    }
 
                     $html .= '</div>';
 
@@ -178,8 +209,6 @@ class ManageOrderController extends Controller
         }
     }
 
-
-
     public function detail($unique_id)
     {
         $order = Order::where('unique_id', $unique_id)->first();
@@ -223,5 +252,39 @@ class ManageOrderController extends Controller
             ]);
         }
         return redirect()->back()->with('success', 'Request has been completed.');
+    }
+
+    public function approve(Request $request)
+    {
+        $request->validate([
+            'refund_request_id' => 'required|exists:refund_requests,id',
+        ]);
+
+        $refund = RefundRequest::findOrFail($request->refund_request_id);
+        $refund->status = 'approved';
+        $refund->save();
+
+        $order = Order::find($refund->order_id);
+        $order->refund_status = 'Refunded via ' . $refund->refund_method;
+        $order->save();
+
+        return response()->json(['success' => 'Request has been completed.']);
+    }
+
+    public function reject(Request $request)
+    {
+        $request->validate([
+            'refund_request_id' => 'required|exists:refund_requests,id',
+        ]);
+
+        $refund = RefundRequest::findOrFail($request->refund_request_id);
+        $refund->status = 'rejected';
+        $refund->save();
+
+        $order = Order::find($refund->order_id);
+        $order->refund_status = 'Rejected';
+        $order->save();
+
+        return response()->json(['success' => 'Request has been completed.']);
     }
 }

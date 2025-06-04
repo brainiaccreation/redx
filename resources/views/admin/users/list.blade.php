@@ -56,6 +56,53 @@
             </div><!--end row-->
         </div>
     </div>
+    <div class="modal fade bs-example-modal-center" id="changePasswordModal" tabindex="-1"
+        aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password for <span id="userName"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="passwordForm" method="POST" class="password-form">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label" for="password-input">New Password</label>
+                            <div class="position-relative auth-pass-inputgroup">
+                                <input type="password" name="password" class="form-control pe-5 password-input"
+                                    placeholder="Enter password" id="password-input">
+                                <button
+                                    class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon material-shadow-none"
+                                    type="button" id="password-addon">
+                                    <i class="ri-eye-fill align-middle"></i>
+                                </button>
+                                <div class="invalid-feedback" id="password-error"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="password-confirmation-input">Confirm Password</label>
+                            <div class="position-relative auth-pass-inputgroup">
+                                <input type="password" name="password_confirmation" class="form-control pe-5 password-input"
+                                    placeholder="Confirm password" id="password-confirmation-input">
+                                <button
+                                    class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon material-shadow-none"
+                                    type="button" id="password-confirmation-addon">
+                                    <i class="ri-eye-fill align-middle"></i>
+                                </button>
+                                <div class="invalid-feedback" id="password-confirmation-error"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <!--datatable js-->
@@ -70,6 +117,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 
     <script src="{{ asset('admin/assets') }}/js/pages/datatables.init.js"></script>
+    <script src="{{ asset('admin/assets') }}/js/pages/password-addon.init.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -167,6 +215,132 @@
                 }
             });
 
+            $(document).on('click', '.changeStatus', function(e) {
+                e.preventDefault();
+
+                let button = $(this);
+                let userId = button.data('id');
+                let currentStatus = parseInt(button.data('suspended'));
+
+                $.ajax({
+                    url: "{{ route('admin.customer.toggle_suspend') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: userId,
+                        is_suspended: currentStatus
+                    },
+                    success: function(response) {
+                        let newStatus = response.is_suspended;
+                        let iconClass = newStatus == 1 ? 'ri-check-fill text-dark' :
+                            'ri-forbid-line text-danger';
+                        let buttonText = newStatus == 1 ? 'Unsuspend' : 'Suspend';
+                        let titleText = newStatus == 1 ? 'Unsuspend User' : 'Suspend User';
+
+                        button.find('i')
+                            .removeClass('ri-check-fill ri-forbid-line text-danger text-dark')
+                            .addClass(iconClass);
+
+                        button.contents().filter(function() {
+                            return this.nodeType === 3;
+                        }).remove();
+                        // button.append(' ' + buttonText);
+
+                        button
+                            .data('suspended', newStatus)
+                            .attr('title', titleText);
+
+                        // if (typeof bootstrap !== 'undefined') {
+                        //     var tooltip = bootstrap.Tooltip.getInstance(button[0]);
+                        //     if (tooltip) tooltip.dispose();
+                        //     new bootstrap.Tooltip(button[0]);
+                        // }
+
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(
+                                `User has been ${newStatus == 1 ? 'suspended' : 'unsuspended'} successfully.`
+                            );
+                        }
+                    },
+                    error: function() {
+                        toastr.error('Something went wrong.');
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        const changePasswordRoute = @json(route('admin.users.change-password', ['id' => ':id']));
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            $(document).on('click', '.change-password', function() {
+                const userId = $(this).data('id');
+                const userName = $(this).data('name');
+
+                $('#userName').text(userName);
+                $('#passwordForm').data('user-id', userId);
+                $('#passwordForm')[0].reset();
+                $('#password-error, #password-confirmation-error').text('').hide();
+            });
+
+            $('#changePasswordModal').on('hidden.bs.modal', function() {
+                $('#userName').text('');
+                $('#passwordForm').removeData('user-id');
+                $('#passwordForm')[0].reset();
+                $('#password-error, #password-confirmation-error').text('').hide();
+            });
+            // submit form for change passsword
+            $('#passwordForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let $form = $(this);
+                let $button = $form.find('button[type="submit"]');
+                let userId = $form.data('user-id');
+                let url = changePasswordRoute.replace(':id', userId);
+                $('#password-error').text('');
+                $('#password-confirmation-error').text('');
+
+                $button.prop('disabled', true).text('Processing...');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: $form.serialize(),
+                    success: function(res) {
+                        $('#changePasswordModal').modal('hide');
+                        toastr.success(res.message);
+                        $form[0].reset();
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            if (errors.password) {
+                                $('#password-error').text(errors.password[0]).show();
+                            }
+                            if (errors.password_confirmation) {
+                                $('#password-confirmation-error').text(errors
+                                    .password_confirmation[0]).show();
+                            }
+                        } else {
+                            toastr.error('Something went wrong. Please try again.');
+                        }
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false).text('Change Password');
+                    }
+                });
+            });
+
+            function openChangePasswordModal(userId, userName) {
+                $('#userName').text(userName);
+                $('#passwordForm').data('user-id', userId);
+                $('#passwordForm')[0].reset();
+                $('#password-error, #password-confirmation-error').hide();
+                $('#changePasswordModal').modal('show');
+            }
 
         });
     </script>

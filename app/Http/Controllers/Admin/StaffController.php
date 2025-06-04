@@ -70,12 +70,42 @@ class StaffController extends Controller
                     return ucfirst($row->getRoleNames()->implode(', '));
                 })
                 ->addColumn('action', function ($row) {
+                    $isSuspended = $row->is_suspended;
+                    $userId = $row->id;
+
+                    $suspendText = $isSuspended ? 'Unsuspend' : 'Suspend';
+                    $suspendIconClass = $isSuspended ? 'ri-forbid-line text-danger' : 'ri-check-line text-dark';
+                    $suspendTitle = $isSuspended ? 'Unsuspend this user' : 'Suspend this user';
+
                     return Blade::render('
                         <div style="display: flex; gap: 8px;">
+                            <button type="button"
+                                    class="action_btn edit-item changeStatus"
+                                    data-name="User"
+                                    data-suspended="{{ $isSuspended }}"
+                                    data-id="{{ $userId }}"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom"
+                                    title="{{ $suspendTitle }}">
+                                <i class="{{ $suspendIconClass }} align-bottom fs-5"></i>
+                            </button>
+
                             @hasRoutePermission("admin.user.edit")
                                 <a href="{{ route("admin.user.edit", $row->id) }}" class="action_btn edit-item">
                                     <i class="ri-edit-line"></i>
                                 </a>
+                            @endhasRoutePermission
+
+                            @hasRoutePermission("admin.users.change-password")
+                                <button type="button"
+                                        class="action_btn edit-item change-password"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#changePasswordModal"
+                                        data-id="{{ $row->id }}"
+                                        data-name="{{ $row->name }} {{ $row->last_name }}"
+                                        title="Change Password">
+                                    <i class="ri-lock-2-line"></i>
+                                </button>
                             @endhasRoutePermission
 
                             @hasRoutePermission("admin.user.destroy")
@@ -90,13 +120,22 @@ class StaffController extends Controller
 
                             @if (
                                 !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.user.edit")) &&
-                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.user.destroy"))
+                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.user.destroy")) &&
+                                !auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.users.change-password"))
                             )
                                 <span>-</span>
                             @endif
                         </div>
-                    ', ['row' => $row]);
+                    ', [
+                        'row' => $row,
+                        'isSuspended' => $isSuspended,
+                        'userId' => $userId,
+                        'suspendText' => $suspendText,
+                        'suspendIconClass' => $suspendIconClass,
+                        'suspendTitle' => $suspendTitle,
+                    ]);
                 })
+
 
                 ->rawColumns(['profile', 'action'])
                 ->make(true);

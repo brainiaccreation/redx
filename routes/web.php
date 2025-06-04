@@ -4,14 +4,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\GiftCardCodeController;
 use App\Http\Controllers\Admin\HomeSliderController;
+use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ManageOrderController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RefundController;
+use App\Http\Controllers\Admin\SalesReportController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\WalletTopupController;
 use App\Http\Controllers\Front\HomeController;
@@ -179,6 +182,8 @@ Route::post('/admin/footer', [FooterController::class, 'store'])->name('admin.fo
 Route::put('/admin/footer/{id}', [FooterController::class, 'update'])->name('admin.footer.update');
 Route::delete('/admin/footer/{id}', [FooterController::class, 'destroy'])->name('admin.footer.destroy');
 Route::get('/footer-data', [FooterController::class, 'getFooterData'])->name('footer.data');
+Route::post('/refund-request', [RefundController::class, 'requestRefund'])->name('refund.request.store');
+
 // Admin routes with 'admin' prefix
 Route::prefix('account')->group(function () {
     Route::middleware('guest')->group(function () {
@@ -188,6 +193,11 @@ Route::prefix('account')->group(function () {
 
     Route::middleware(['auth', 'role:admin|staff', 'global.permission'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+        // logs routes
+        Route::get('logs', [LogController::class, 'list'])->name('admin.logs.list');
+        Route::get('logs/get', [LogController::class, 'get'])->name('admin.logs.get');
+
+
         // category routes
         Route::get('/categories', [CategoryController::class, 'list'])->name('admin.categories.list');
         Route::get('/categories/get', [CategoryController::class, 'get'])->name('admin.categories.get');
@@ -210,6 +220,30 @@ Route::prefix('account')->group(function () {
             Route::post('/status/{id}', [ProductController::class, 'status'])->name('admin.product.status');
             Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('admin.product.destroy');
         });
+        // coupons routes
+
+        Route::get('/coupons', [CouponController::class, 'list'])->name('admin.coupon.index');
+        Route::get('/coupons/get', [CouponController::class, 'get'])->name('admin.coupon.get');
+        Route::prefix('coupon')->group(function () {
+            Route::get('/add', [CouponController::class, 'add'])->name('admin.coupon.add');
+            Route::post('/store', [CouponController::class, 'store'])->name('admin.coupon.store');
+            Route::get('/edit/{id}', [CouponController::class, 'edit'])->name('admin.coupon.edit');
+            Route::put('/update/{id}', [CouponController::class, 'update'])->name('admin.coupon.update');
+            Route::post('/status/{id}', [CouponController::class, 'status'])->name('admin.coupon.status');
+            Route::delete('/delete/{id}', [CouponController::class, 'destroy'])->name('admin.coupon.destroy');
+            Route::post('/bulk', [CouponController::class, 'bulkAction'])->name('admin.coupon.bulk');
+        });
+
+        // Route::prefix('admin/coupons')->name('admin.coupon.')->group(function () {
+        //     Route::get('/', [CouponController::class, 'index'])->name('index');
+        //     Route::post('/', [CouponController::class, 'store'])->name('store');
+        //     Route::get('/{coupon}', [CouponController::class, 'show'])->name('show');
+        //     Route::get('/{coupon}/edit', [CouponController::class, 'edit'])->name('edit');
+        //     Route::put('/{coupon}', [CouponController::class, 'update'])->name('update');
+        //     Route::delete('/{coupon}', [CouponController::class, 'destroy'])->name('destroy');
+        //     Route::put('/{coupon}/toggle', [CouponController::class, 'toggleStatus'])->name('toggle');
+        //     Route::post('/bulk', [CouponController::class, 'bulkAction'])->name('bulk');
+        // });
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
         Route::get('/profile-settings', [ProfileController::class, 'settings'])->name('admin.profile.settings');
         Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
@@ -238,8 +272,8 @@ Route::prefix('account')->group(function () {
             Route::put('/update/{id}', [StaffController::class, 'update'])->name('admin.user.update');
             Route::post('/status/{id}', [StaffController::class, 'status'])->name('admin.user.status');
             Route::delete('/delete/{id}', [StaffController::class, 'destroy'])->name('admin.user.destroy');
+            Route::post('/{id}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password')->middleware('throttle:5,60');
         });
-
         // Permissions management
         Route::get('/permissions', [PermissionController::class, 'list'])->name('admin.permissions.list');
         Route::get('/permissions/get', [PermissionController::class, 'get'])->name('admin.permissions.get');
@@ -267,13 +301,24 @@ Route::prefix('account')->group(function () {
             Route::put('/update/{id}', [HomeSliderController::class, 'update'])->name('admin.home_slider.update');
             Route::delete('/delete/{id}', [HomeSliderController::class, 'destroy'])->name('admin.home_slider.destroy');
         });
-        Route::post('/admin/initiate-refund', [RefundController::class, 'initiate'])->name('admin.initiate.refund');
+        Route::post('/initiate-refund', [RefundController::class, 'initiate'])->name('admin.initiate.refund');
 
         Route::get('/orders', [ManageOrderController::class, 'list'])->name('admin.orders.list');
         Route::get('/orders/get', [ManageOrderController::class, 'get'])->name('admin.orders.get');
         Route::get('/order/details/{id}', [ManageOrderController::class, 'detail'])->name('admin.order.details');
         Route::post('/order/status/{id}', [ManageOrderController::class, 'status'])->name('admin.order.status');
-
+        Route::post('/approve-refund', [ManageOrderController::class, 'approve'])->name('admin.approve.refund');
+        Route::post('/reject-refund', [ManageOrderController::class, 'reject'])->name('admin.reject.refund');
+        // sales report
+        Route::get('/sales-report', [SalesReportController::class, 'index'])->name('admin.sales.report');
+        Route::prefix('api/sales')->group(function () {
+            Route::get('/stats', [SalesReportController::class, 'getStats'])->name('api.sales.stats');
+            Route::get('/payment-breakdown', [SalesReportController::class, 'getPaymentBreakdown'])->name('api.sales.payment-breakdown');
+            Route::get('/new-customers', [SalesReportController::class, 'getNewCustomers'])->name('api.sales.new-customers');
+            Route::get('/heatmap', [SalesReportController::class, 'getHeatmapData'])->name('api.sales.heatmap');
+            Route::get('/orders', [SalesReportController::class, 'getOrdersData'])->name('api.sales.orders');
+        });
+        Route::post('/sales/pdf', [SalesReportController::class, 'generatePDF'])->name('admin.sales.pdf');
         // wallet
         Route::get('/wallet/topups/get', [WalletTopupController::class, 'get'])->name('admin.wallet.get');
         Route::get('/wallet/topups', [WalletTopupController::class, 'list'])->name('admin.wallet.list');

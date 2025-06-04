@@ -43,6 +43,7 @@
                                         <th>Amount</th>
                                         <th>Payment Method</th>
                                         <th>Status</th>
+                                        {{-- <th>Refund Status</th> --}}
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -86,6 +87,7 @@
 
                     </div>
                     <input type="hidden" id="modalUserId">
+                    <input type="hidden" id="modalOrderId">
                     <div class="d-flex justify-content-end algin-items-center mt-3">
                         <div class="px-2"><button class="btn btn-light" data-bs-dismiss="modal" aria-label="Close"
                                 type="button" id="cancelRefundManage">Cancel</button></div>
@@ -98,6 +100,39 @@
 
             </div>
         </div><!-- /.modal-content -->
+    </div>
+    <div class="modal fade" id="refundRequestManageModal" tabindex="-1" aria-labelledby="refundRequestModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Refund Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="bg-white">
+                        <p id="manageRequestOrderId"><b><i class="fa-solid fa-hashtag me-2"></i>Order ID:</b> ORD001</p>
+                        <p id="manageRequestCustomer"><b><i class="fa-solid fa-user me-2"></i>Customer:</b> Ali Khan</p>
+                        <p id="manageRequestAmount"><b><i class="fa-solid fa-money-bill me-2"></i>Amount:</b> 1500 PKR</p>
+                        <p id="manageRequestStatus"><b><i class="fa-solid fa-clock me-2"></i>Status:</b> Pending</p>
+                        <p id="manageRequestRefundStatus"><b><i class="fa-solid fa-undo me-2"></i>Refund Status:</b>
+                            Refund Requested</p>
+                        <p id="manageRequestMethod"><b><i class="fa-solid fa-wallet me-2"></i>Requested Method:</b> Stripe
+                        </p>
+                    </div>
+
+                    <input type="hidden" id="refundManageUserId">
+                    <input type="hidden" id="refundManageOrderId">
+                    <input type="hidden" id="refundId">
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-danger me-2" id="rejectRefundBtn">Reject</button>
+                        <button type="button" class="btn btn-success" id="approveRefundBtn">Approve</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 @section('scripts')
@@ -170,6 +205,7 @@
                         data: 'status',
                         name: 'status'
                     },
+
                     {
                         data: 'action',
                         name: 'action',
@@ -292,11 +328,12 @@
         // open modal refund
         $(document).on('click', '.open-refund-modal', function() {
             const orderId = $(this).data('order-id');
+            const id = $(this).data('id');
+
             const customer = $(this).data('customer');
             const amount = $(this).data('amount');
             const status = $(this).data('status');
             const refundStatus = $(this).data('refund-status');
-
             const userId = $(this).data('user-id');
             const currency = '{{ config('app.currency') }}';
             $('#refundManageOrderId').html('Order ID: ' + orderId);
@@ -307,12 +344,15 @@
             $('#refundManageRefundStatus').html('Refund Status: ' +
                 refundStatus);
             $('#modalUserId').val(userId);
+            $('#modalOrderId').val(id);
+
         });
         // confirm refund
         $('#confirmRefundBtn').click(function(e) {
             e.preventDefault();
             const refundMethod = $('#adminRefundMethodSelect').val();
-            const orderId = $('.open-refund-modal').data('id');
+            const refundOrderId = $('#modalOrderId').val();
+
             const $btn = $(this);
             $btn.prop('disabled', true).text('Processing...');
             $.ajax({
@@ -321,12 +361,14 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     refund_method: refundMethod,
-                    order_id: orderId
+                    order_id: refundOrderId
                 },
                 success: function(response) {
                     toastr.success(response.success);
                     $('#orders-table').DataTable().ajax.reload(null, false);
                     $('#refundModal').modal('hide');
+                    $('#modalOrderId').val("");
+
                 },
                 error: function(xhr) {
 
@@ -335,6 +377,75 @@
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('Confirm Refund');
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on('click', '.view-refund-request', function() {
+            $('#manageRequestOrderId').html('<b>Order ID:</b> ' + $(this)
+                .data('order-id'));
+            $('#manageRequestCustomer').html('<b>Customer:</b> ' + $(this)
+                .data('customer'));
+            $('#manageRequestAmount').html('<b>Amount:</b> ' + $(this)
+                .data('amount') + ' PKR');
+            $('#manageRequestStatus').html('<b>Status:</b> ' + $(this).data(
+                'status'));
+            $('#manageRequestRefundStatus').html('<b>Refund Status:</b> ' + $(
+                this).data('refund-status'));
+            $('#manageRequestMethod').html('<b>Requested Method:</b> ' + $(
+                this).data('refund-method'));
+
+            $('#refundManageUserId').val($(this).data('user-id'));
+            $('#refundManageOrderId').val($(this).data('id'));
+            $('#refundId').val($(this).data('refund-request-id'));
+        });
+
+        $('#approveRefundBtn').click(function() {
+            const userId = $('#refundManageUserId').val();
+            const orderId = $('#refundManageOrderId').val();
+            const refundId = $('#refundId').val();
+
+            $.ajax({
+                url: "{{ route('admin.approve.refund') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    user_id: userId,
+                    order_id: orderId,
+                    refund_request_id: refundId
+                },
+                success: function(response) {
+                    toastr.success(response.message);
+                    $('#refundRequestManageModal').modal('hide');
+                    $('#orders-table').DataTable().ajax.reload(null, false);
+                },
+                error: function(xhr) {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong');
+                }
+            });
+        });
+
+        $('#rejectRefundBtn').click(function() {
+            const orderId = $('#refundManageOrderId').val();
+            const refundId = $('#refundId').val();
+
+            $.ajax({
+                url: "{{ route('admin.reject.refund') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    order_id: orderId,
+                    refund_request_id: refundId
+
+                },
+                success: function(response) {
+                    toastr.info(response.message);
+                    $('#refundRequestManageModal').modal('hide');
+                    $('#orders-table').DataTable().ajax.reload(null, false);
+                },
+                error: function(xhr) {
+                    toastr.error(xhr.responseJSON.message || 'Something went wrong');
                 }
             });
         });

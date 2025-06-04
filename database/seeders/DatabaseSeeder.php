@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(UpdateCategoryUniqueIdSeeder::class);
         $this->call(UpdatePermissionsSeeder::class);
         $this->call(CustomerRoleSeeder::class);
+        $this->call(CouponSeeder::class);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

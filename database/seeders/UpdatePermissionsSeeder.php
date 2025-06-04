@@ -58,6 +58,7 @@ class UpdatePermissionsSeeder extends Seeder
             'view user',
             'toggle user status',
             'delete user',
+            'change user password',
 
             'list gift card codes',
             'add gift card code',
@@ -72,6 +73,9 @@ class UpdatePermissionsSeeder extends Seeder
 
             'list orders',
             'view order details',
+
+            'sales report',
+            'sales report generate',
 
             'list wallet topups',
             'view wallet topup',

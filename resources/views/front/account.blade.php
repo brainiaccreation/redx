@@ -288,6 +288,8 @@
                                                     <th class="text-center">Payment Method</th>
                                                     <th class="text-center">Amount</th>
                                                     <th class="text-center">Status</th>
+                                                    <th class="text-center">Refund Status</th>
+                                                    <th class="text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             {{-- <tbody>
@@ -506,6 +508,45 @@
                         </div>
                     </div>
                     {{-- model end --}}
+                    {{-- refund modal --}}
+                    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="topUpModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="refundModalLabel">Request Refund</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <form id="requestRefundForm">
+                                    @csrf
+                                    <div class="modal-body">
+                                        <div id="payment-details">
+                                            <div class="method-details" id="method-bank" style="display: block;">
+                                                <p id="refundManageOrderId"><b>Order ID:</b></p>
+                                                <p id="refundManageAmount"><b>Amount:</b></p>
+                                            </div>
+                                        </div>
+                                        <div id="form-group" class="mb-4">
+                                            <label class="form-label">Select Refund Method:</label>
+                                            <select id="adminRefundMethodSelect" class="form-control">
+                                                <option value="Wallet">Wallet</option>
+                                                <option value="Stripe">Stripe</option>
+                                                <option value="Paydibs">Paydibs</option>
+                                            </select>
+                                        </div>
+                                        <input type="hidden" id="modalUserId">
+                                        <input type="hidden" id="modalOrderId">
+                                        <button type="submit" id="submitRefundRequest"
+                                            class="btn-confirm">Submit</button>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    {{-- refund modal end --}}
                 </div>
             </div>
         </div>
@@ -526,6 +567,57 @@
                 targetInput.attr('type', 'password');
                 icon.removeClass('fa-eye').addClass('fa-eye-slash');
             }
+        });
+    </script>
+    <script>
+        $(document).on('click', '.open-refund-modal', function() {
+            const orderId = $(this).data('order-id');
+            const id = $(this).data('id');
+
+            const customer = $(this).data('customer');
+            const amount = $(this).data('amount');
+            const status = $(this).data('status');
+            const refundStatus = $(this).data('refund-status');
+            const userId = $(this).data('user-id');
+            const currency = '{{ config('app.currency') }}';
+            $('#refundManageOrderId').html('<b>Order ID: </b>' + orderId);
+            $('#refundManageAmount').html('<b>Amount: </b>' + amount + ' ' +
+                currency);
+
+            $('#modalUserId').val(userId);
+            $('#modalOrderId').val(id);
+
+        });
+        $('#requestRefundForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const refundMethod = $('#adminRefundMethodSelect').val();
+            const userId = $('#modalUserId').val();
+            const orderId = $('#modalOrderId').val();
+
+            const $btn = $('#submitRefundRequest');
+            $btn.prop('disabled', true).text('Processing...');
+
+            $.ajax({
+                url: "{{ route('refund.request.store') }}",
+                type: "POST",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    user_id: userId,
+                    order_id: orderId,
+                    refund_method: refundMethod
+                },
+                success: function(res) {
+                    toastr.success(res.message);
+                    $('#refundModal').modal('hide');
+                },
+                error: function(xhr) {
+                    toastr.error(xhr.responseJSON.error);
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).text('Submit');
+                }
+            });
         });
     </script>
     <script>
@@ -555,7 +647,7 @@
                         name: 'status',
                         orderable: false,
                         searchable: false
-                    },
+                    }
                 ]
             });
             $('#orderTable').DataTable({
@@ -579,6 +671,18 @@
                     {
                         data: 'status',
                         name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'refund_status',
+                        name: 'refund_status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
                         orderable: false,
                         searchable: false
                     },

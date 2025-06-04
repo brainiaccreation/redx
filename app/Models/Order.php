@@ -25,7 +25,8 @@ class Order extends Model
         'discount_amount',
         'notes',
         'unique_id',
-        'delivery_status'
+        'delivery_status',
+        'refund_status'
     ];
 
     public function items()
@@ -47,6 +48,12 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function refundRequest()
+    {
+        return $this->hasOne(RefundRequest::class, 'order_id');
+    }
+
     public function order_detail()
     {
         return $this->belongsTo(OrderDetail::class, 'id', 'order_id');
