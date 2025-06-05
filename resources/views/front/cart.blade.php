@@ -102,12 +102,20 @@
                     @if ($cartItems)
                         <div
                             class="coupon-items d-flex flex-md-nowrap flex-wrap justify-content-end align-items-center gap-4 pt-4">
-                            {{-- <form action="#" class="d-flex flex-sm-nowrap flex-wrap align-items-center gap-3">
-                                <input type="text" placeholder="Enter coupon code">
+                            {{-- <form id="apply-coupon-form" class="d-flex flex-sm-nowrap flex-wrap align-items-center gap-3">
+                                <input type="text" name="coupon_code" id="coupon_code" placeholder="Enter coupon code">
                                 <button type="submit" class="custom-rdxbtnr">Apply</button>
                             </form> --}}
+
                             <button type="button" class="custom-rdxbtnr">Update Cart</button>
                             <a href="{{ route('checkout') }}" class="custom-rdxbtnr">Checkout</a>
+                        </div>
+                        <div class="coupon-items row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <div id="coupon-error" class="text-danger mt-2"></div>
+
+                            </div>
                         </div>
                     @endif
                 </div>
@@ -276,5 +284,38 @@
                 }
             });
         });
+    </script>
+    <script>
+        // $(document).ready(function() {
+        //     $('#apply-coupon-form').on('submit', function(e) {
+        //         e.preventDefault();
+
+        //         let code = $('#coupon_code').val();
+        //         let total = parseFloat("{{ $total ?? 0 }}");
+
+        //         $.ajax({
+        //             url: "{{ route('coupon.apply') }}",
+        //             type: "POST",
+        //             data: {
+        //                 code: code,
+        //                 total: total,
+        //                 _token: "{{ csrf_token() }}"
+        //             },
+        //             success: function(response) {
+        //                 if (response.error) {
+        //                     $('#coupon-error').text(response.error);
+        //                 } else {
+        //                     $('#coupon-error').text('');
+        //                     toastr.success('Coupon applied! Discount: ' + response.formatted);
+
+        //                     // Update displayed total
+        //                     $('.cart-list-area h2').html(
+        //                         'Total: {{ config('app.currency') }} ' + response.new_total
+        //                         .toFixed(2));
+        //                 }
+        //             }
+        //         });
+        //     });
+        // });
     </script>
 @endsection

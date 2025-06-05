@@ -185,10 +185,10 @@ class UserController extends Controller
                                 </a>
                             @endhasRoutePermission
                             @if (
-                                auth()->user()->hasPermissionTo("admin.customer.view") ||
-                                auth()->user()->hasPermissionTo("admin.customer.edit") ||
-                                auth()->user()->hasPermissionTo("admin.customer.toggle_suspend") ||
-                                auth()->user()->hasPermissionTo("admin.customer.destroy")
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.view")) ||
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.edit")) ||
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.toggle_suspend")) ||
+                                auth()->user()->hasPermissionTo(\App\Services\PermissionMap::getPermission("admin.customer.destroy"))
                             )
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-soft-danger btn-sm dropdown action_dropdown_btn edit-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">

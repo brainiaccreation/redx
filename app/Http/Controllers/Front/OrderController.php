@@ -15,6 +15,7 @@ use App\Models\OrderItem;
 use App\Models\OrderHistory;
 use App\Models\Payment;
 use App\Models\Wallet;
+use App\Models\Coupon;
 use Illuminate\Support\Str;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -61,11 +62,86 @@ class OrderController extends Controller
 
         return view('front.checkout', compact('cartItems', 'total'));
     }
-
     public function processCheckout(Request $request)
     {
         $payment_mode = $request->payment_mode;
         $user = auth()->user();
+
+        $cartItems = [];
+        $totalAmount = 0;
+        $discountAmount = 0;
+        $coupon_id = $request->coupon_id;
+        $coupon = Coupon::find($coupon_id);
+
+        if ($user) {
+            $cartItems = $user->cartItems()->with('product', 'product_variant')->get();
+
+            if ($cartItems->isEmpty()) {
+                return redirect()->route('checkout')->with('error', 'Your cart is empty!');
+            }
+
+            $totalAmount = $cartItems->sum(fn($item) => $item->price * $item->quantity);
+        } else {
+            $sessionCart = session('cart', []);
+
+            if (empty($sessionCart)) {
+                return redirect()->route('checkout')->with('error', 'Your cart is empty!');
+            }
+
+            foreach ($sessionCart as $item) {
+                $variant = \App\Models\ProductVariant::with('product')->find($item['variant_id']);
+                if ($variant) {
+                    $subtotal = $item['price'] * $item['quantity'];
+                    $totalAmount += $subtotal;
+
+                    $cartItems[] = (object) [
+                        'product' => $variant->product,
+                        'product_variant' => $variant,
+                        'quantity' => $item['quantity'],
+                        'price' => $item['price'],
+                    ];
+                }
+            }
+
+            $cartItems = collect($cartItems);
+        }
+
+        if ($coupon) {
+            if ($coupon->type === 'fixed') {
+                $discountAmount = min($coupon->value, $totalAmount);
+            } elseif ($coupon->type === 'percentage') {
+                $discountAmount = ($coupon->value / 100) * $totalAmount;
+            }
+
+            if ($coupon->max_discount) {
+                $discountAmount = min($discountAmount, $coupon->max_discount);
+            }
+
+            $discountAmount = min($discountAmount, $totalAmount);
+        }
+
+        $grandTotal = $totalAmount - $discountAmount;
+
+        if ($payment_mode === "paydibs") {
+            return $this->processPaydibsPayment($grandTotal, $totalAmount, $cartItems, $request);
+        }
+
+        if ($payment_mode === "stripe") {
+            return $this->stripeCheckout($grandTotal, $totalAmount, $cartItems, $request);
+        }
+
+        if ($payment_mode === "wallet") {
+            return $this->processCheckoutWallet($grandTotal, $totalAmount, $cartItems, $request);
+        }
+
+        return redirect()->route('checkout')->with('error', 'Invalid payment method selected.');
+    }
+
+    public function processCheckoutOLD(Request $request)
+    {
+        $payment_mode = $request->payment_mode;
+        $user = auth()->user();
+        $coupon = $request->coupon_id;
 
         $cartItems = [];
         $totalAmount = 0;
@@ -194,7 +270,7 @@ class OrderController extends Controller
 
 
 
-    private function stripeCheckout($totalAmount, $cartItems, $request)
+    private function stripeCheckout($grandTotal, $totalAmount, $cartItems, $request)
     {
         Stripe::setApiKey(config('stripe.key'));
 
@@ -726,7 +802,7 @@ class OrderController extends Controller
         return $id;
     }
 
-    private function processCheckoutWallet($totalAmount, $cartItems, $request)
+    private function processCheckoutWalletOLD($totalAmount, $cartItems, $request)
     {
         $user = auth()->user();
         $cartTotal = $totalAmount;
@@ -852,6 +928,103 @@ class OrderController extends Controller
         }
 
         return redirect()->route('order.success')->with('success', 'Order placed using wallet!');
+    }
+    private function processCheckoutWallet($grandTotal, $totalAmount, $cartItems, $request)
+    {
+        $user = auth()->user();
+        $cartTotal = $totalAmount;
+        $useWallet = $request->has('use_wallet');
+        $weeklySpent = getWeeklySpent($user->id);
+        $coupon_id = $request->coupon_id;
+        if (($weeklySpent + $cartTotal) > $user->weekly_limit) {
+            return redirect()->back()->with([
+                'error' => 'You have exceeded your weekly purchase limit.',
+            ]);
+        }
+
+        $wallet = $user->wallet ?? Wallet::create(['user_id' => $user->id, 'balance' => $cartTotal]);
+        $walletBalance = $wallet ? $wallet->balance : 0;
+
+        $paidFromWallet = 0;
+        $remainingToPay = $cartTotal;
+
+        if ($walletBalance > 0) {
+            if ($walletBalance >= $cartTotal) {
+                $paidFromWallet = $cartTotal;
+                $remainingToPay = 0;
+            } else {
+                $paidFromWallet = $walletBalance;
+                $remainingToPay = $cartTotal - $walletBalance;
+            }
+
+            $wallet->transactions()->create([
+                'type' => 'debit',
+                'amount' => $paidFromWallet,
+                'payment_method' => 'wallet',
+                'description' => 'Used for order payment',
+                'status' => 'approved',
+            ]);
+            $user->wallet_balance -= $cartTotal;
+            $user->save();
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $orderNumber = 'ORD-' . strtoupper(Str::random(13));
+
+            // Create the order and save the coupon, discount, and grand_total
+            $order = Order::create([
+                'unique_id' => $this->generateUniqueOrderId(),
+                'order_number' => $orderNumber,
+                'user_id' => $user ? $user->id : null,
+                'total_amount' => $cartTotal,
+                'payment_method' => 'wallet',
+                'status' => 'processing',
+                'coupon_id' => $coupon_id ?? null, // Save coupon_id
+                'discount_applied' => $cartTotal - $grandTotal,  // Discount applied
+                'grand_total' => $grandTotal,  // Grand total after discount
+                'notes' => $request->notes,
+            ]);
+
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'user_id' => $user ? $user->id : null,
+                'name' => $request->name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'towncity' => $request->towncity,
+                'country' => $request->country,
+                'address' => $request->address,
+                'address2' => $request->address2
+            ]);
+
+            foreach ($cartItems as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'product_variant_id' => $item['variant_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'delivery_method' => 'manual',
+                ]);
+            }
+
+            if ($user) {
+                $user->cartItems()->delete();
+            } else {
+                session()->forget('cart');
+            }
+            session()->forget('checkout_data');
+
+            DB::commit();
+
+            return redirect()->route('front.home')->with('success', 'Order placed successfully!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('checkout')->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
     }
 
     private function giftCardCode($orderId)

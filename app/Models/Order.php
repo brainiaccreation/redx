@@ -26,7 +26,10 @@ class Order extends Model
         'notes',
         'unique_id',
         'delivery_status',
-        'refund_status'
+        'refund_status',
+        'coupon_id',
+        'discount_applied',
+        'grand_total',
     ];
 
     public function items()

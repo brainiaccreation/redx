@@ -97,22 +97,41 @@ class Coupon extends Model
         $this->increment('used_count');
     }
 
+    // public function calculateDiscount($amount)
+    // {
+    //     if (!$this->canBeUsed() || $amount < $this->min_amount) {
+    //         return 0;
+    //     }
+
+    //     $discount = 0;
+
+    //     if ($this->type === 'percentage') {
+    //         $discount = ($amount * $this->value) / 100;
+    //     } else {
+    //         $discount = $this->value;
+    //     }
+
+    //     // Apply maximum discount limit if set
+    //     if ($this->max_discount && $discount > $this->max_discount) {
+    //         $discount = $this->max_discount;
+    //     }
+
+    //     return round($discount, 2);
+    // }
+
     public function calculateDiscount($amount)
     {
         if (!$this->canBeUsed() || $amount < $this->min_amount) {
             return 0;
         }
-
         $discount = 0;
 
-        if ($this->type === 'percentage') {
-            $discount = ($amount * $this->value) / 100;
-        } else {
-            $discount = $this->value;
-        }
+        $discount = $this->type === 'percentage'
+            ? ($amount * $this->value) / 100
+            : $this->value;
 
-        // Apply maximum discount limit if set
-        if ($this->max_discount && $discount > $this->max_discount) {
+        // Apply maximum discount only for percentage type
+        if ($this->type === 'percentage' && $this->max_discount && $discount > $this->max_discount) {
             $discount = $this->max_discount;
         }
 

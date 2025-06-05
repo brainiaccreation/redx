@@ -41,7 +41,7 @@
                             <p class="text-muted">Manage your discount codes and promotional offers</p>
                         </div>
                         <button class="btn btn-danger d-flex align-items-center gap-2" data-bs-toggle="modal"
-                            data-bs-target="#couponModal">
+                            data-bs-target="#couponModal" onclick="openModal(null)">
                             <img src="{{ asset('admin/assets/images/svg/add.svg') }}" width="12" class="me-1">
                             Add New Coupon
                         </button>
@@ -344,7 +344,7 @@
                     e.preventDefault();
                     const couponId = $('#coupon-id').val();
                     const url = couponId ? '{{ route('admin.coupon.update', ':id') }}'.replace(':id',
-                        couponId) :
+                            couponId) :
                         '{{ route('admin.coupon.store') }}';
                     const method = couponId ? 'PUT' : 'POST';
 
@@ -377,7 +377,10 @@
             });
 
             function openModal(coupon = null) {
+
                 if (coupon) {
+                    console.log(coupon.expiry_date);
+
                     $('#modalTitle').text('Edit Coupon');
                     $('#coupon-id').val(coupon.id);
                     $('#code').val(coupon.code);
@@ -386,7 +389,16 @@
                     $('#min_amount').val(coupon.min_amount);
                     $('#max_discount').val(coupon.max_discount || '');
                     $('#usage_limit').val(coupon.usage_limit);
-                    $('#expiry_date').val(coupon.expiry_date);
+                    if (coupon.expiry_date) {
+                        const date = new Date(coupon.expiry_date);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const formattedDate = `${year}-${month}-${day}`;
+                        $('#expiry_date').val(formattedDate);
+                    } else {
+                        $('#expiry_date').val('');
+                    }
                     $('#status').val(coupon.status);
                     $('#description').val(coupon.description || '');
                 } else {
@@ -394,6 +406,14 @@
                     $('#coupon-form')[0].reset();
                     $('#coupon-id').val('');
                     $('#status').val('active');
+                    $('#code').val('');
+                    $('#type').val('');
+                    $('#value').val('');
+                    $('#min_amount').val('');
+                    $('#max_discount').val('');
+                    $('#usage_limit').val('');
+                    $('#expiry_date').val('');
+                    $('#description').val('');
                 }
                 $('#couponModal').modal('show');
             }
@@ -403,14 +423,37 @@
             }
 
             function deleteCoupon(id) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'You won\'t be able to revert this!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
+                // swal({
+                //     title: 'Are you sure?',
+                //     text: 'You won\'t be able to revert this!',
+                //     icon: 'warning',
+                //     showCancelButton: true,
+                //     confirmButtonText: 'Yes, delete it!'
+                // }).then((result) => {
+                //     if (result.isConfirmed) {
+
+                //     }
+                // });
+
+                swal({
+                    title: "Are you sure you want to delete this record?",
+                    text: "If you delete this, it will be gone forever.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "Cancel",
+                            visible: true,
+                            className: "custom-cancel-btn",
+                        },
+                        confirm: {
+                            text: "OK",
+                            closeModal: true,
+                            className: "custom-confirm-btn"
+                        }
+                    },
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
                         $.ajax({
                             url: '{{ route('admin.coupon.destroy', ':id') }}'.replace(':id', id),
                             method: 'DELETE',

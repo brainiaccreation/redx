@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Coupon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -167,6 +168,41 @@ class CartController extends Controller
         return response()->json(['message' => 'Item removed from cart successfully.']);
     }
 
+    public function applyCoupon(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string',
+            'total' => 'required|numeric'
+        ]);
+
+        $coupon = Coupon::where('code', strtoupper($request->code))->first();
+
+        if (!$coupon) {
+            return response()->json(['error' => 'Invalid coupon code.']);
+        }
+
+        if (!$coupon->canBeUsed()) {
+            return response()->json(['error' => 'This coupon cannot be used.']);
+        }
+
+        if ($request->total < $coupon->min_amount) {
+            return response()->json(['error' => 'Minimum amount required for this coupon is ' . number_format($coupon->min_amount, 2)]);
+        }
+
+        $discount = $coupon->calculateDiscount($request->total);
+
+        return response()->json([
+            'success' => true,
+            'coupon_code' => $coupon->code,
+            'coupon_id' => $coupon->id,
+            'discount' => $discount,
+            'formatted' => '-' . number_format($discount, 2),
+            'new_total' => round($request->total - $discount, 2),
+            'discount_type' => $coupon->type,
+            'discount_value' => $coupon->value,
+            'description' => $coupon->type === 'percentage' ? $coupon->value . '% OFF' : config('app.currency') . ' ' . $coupon->value . ' OFF' // Optional: Add description from backend
+        ]);
+    }
     // public function checkout(Request $request)
     // {
     //     $cartItems = Cart::where('user_id',auth()->id())->get();

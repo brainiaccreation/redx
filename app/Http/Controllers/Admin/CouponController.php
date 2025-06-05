@@ -267,50 +267,61 @@ class CouponController extends Controller
      */
     public function applyCoupon(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'code' => 'required|string',
-            'amount' => 'required|numeric|min:0'
+        $request->validate([
+            'coupon_code' => 'required|string',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $coupon = Coupon::where('code', strtoupper($request->code))->first();
+        $coupon = Coupon::where('code', $request->coupon_code)
+            ->where('status', 'active')
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->first();
 
         if (!$coupon) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid coupon code'
-            ], 404);
+            return redirect()->back()->with('error', 'Invalid or expired coupon.');
         }
 
-        if (!$coupon->canBeUsed()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Coupon is not valid or has expired'
-            ], 400);
+        // Calculate cart total
+        $cartItems = session('cartItems', []);
+        $cartTotal = 0;
+        foreach ($cartItems as $item) {
+            $cartTotal += $item['price'] * $item['quantity'];
         }
 
-        if ($request->amount < $coupon->min_amount) {
-            return response()->json([
-                'success' => false,
-                'message' => "Minimum order amount should be $" . number_format($coupon->min_amount, 2)
-            ], 400);
+        if ($cartTotal <= 0) {
+            return redirect()->back()->with('error', 'Your cart is empty.');
         }
 
-        $discount = $coupon->calculateDiscount($request->amount);
+        // Calculate discount
+        $discountAmount = 0;
 
-        return response()->json([
-            'success' => true,
-            'coupon' => $coupon,
-            'discount' => $discount,
-            'final_amount' => $request->amount - $discount
+        if ($coupon->type === 'fixed') {
+            $discountAmount = min($coupon->value, $cartTotal);
+        } elseif ($coupon->type === 'percentage') {
+            $discountAmount = ($coupon->value / 100) * $cartTotal;
+        }
+
+        // Respect max_discount if set
+        if ($coupon->max_discount) {
+            $discountAmount = min($discountAmount, $coupon->max_discount);
+        }
+
+        // Avoid discount going negative
+        $discountAmount = min($discountAmount, $cartTotal);
+
+        // Save to session
+        session([
+            'applied_coupon' => [
+                'code' => $coupon->code,
+                'type' => $coupon->type,
+                'value' => $coupon->value,
+            ],
+            'discount_amount' => $discountAmount,
         ]);
+
+        return redirect()->back()->with('success', 'Coupon applied successfully.');
     }
+
 
     /**
      * Bulk actions

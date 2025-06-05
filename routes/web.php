@@ -135,6 +135,7 @@ Route::get('/cart', [CartController::class, 'showCart'])->name('front.cart');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/apply-coupon', [CartController::class, 'applyCoupon'])->name('coupon.apply');
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 Route::post('/checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
 Route::get('/payment/return', [OrderController::class, 'handlePaymentReturn'])->name('payment.return');
@@ -234,19 +235,23 @@ Route::prefix('account')->group(function () {
             Route::post('/bulk', [CouponController::class, 'bulkAction'])->name('admin.coupon.bulk');
         });
 
-        // Route::prefix('admin/coupons')->name('admin.coupon.')->group(function () {
-        //     Route::get('/', [CouponController::class, 'index'])->name('index');
-        //     Route::post('/', [CouponController::class, 'store'])->name('store');
-        //     Route::get('/{coupon}', [CouponController::class, 'show'])->name('show');
-        //     Route::get('/{coupon}/edit', [CouponController::class, 'edit'])->name('edit');
-        //     Route::put('/{coupon}', [CouponController::class, 'update'])->name('update');
-        //     Route::delete('/{coupon}', [CouponController::class, 'destroy'])->name('destroy');
-        //     Route::put('/{coupon}/toggle', [CouponController::class, 'toggleStatus'])->name('toggle');
-        //     Route::post('/bulk', [CouponController::class, 'bulkAction'])->name('bulk');
-        // });
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
         Route::get('/profile-settings', [ProfileController::class, 'settings'])->name('admin.profile.settings');
         Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('admin.profile.update');
+
+        // user management
+        Route::get('/users', [StaffController::class, 'list'])->name('admin.users.list');
+        Route::get('/users/get', [StaffController::class, 'get'])->name('admin.users.get');
+        Route::prefix('user')->group(function () {
+            Route::get('/add', [StaffController::class, 'add'])->name('admin.user.add');
+            Route::post('/store', [StaffController::class, 'store'])->name('admin.user.store');
+            Route::get('/edit/{id}', [StaffController::class, 'edit'])->name('admin.user.edit');
+            Route::get('/view/{id}', [StaffController::class, 'view'])->name('admin.user.view');
+            Route::put('/update/{id}', [StaffController::class, 'update'])->name('admin.user.update');
+            Route::post('/status/{id}', [StaffController::class, 'status'])->name('admin.user.status');
+            Route::delete('/delete/{id}', [StaffController::class, 'destroy'])->name('admin.user.destroy');
+            Route::post('/{id}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password')->middleware('throttle:5,60');
+        });
         // customer management
         Route::get('/customers', [UserController::class, 'list'])->name('admin.customers.list');
         Route::get('/customers/get', [UserController::class, 'get'])->name('admin.customers.get');
@@ -260,19 +265,6 @@ Route::prefix('account')->group(function () {
             Route::post('/add-balance', [UserController::class, 'addBalance'])->name('admin.customer.add_balance');
             Route::post('/user/update-weekly-limit', [UserController::class, 'updateWeeklyLimit'])->name('customer.updateWeeklyLimit');
             Route::get('/transactions', [UserController::class, 'fetchTransactions'])->name('admin.customer.transactions');
-        });
-        // user management
-        Route::get('/users', [StaffController::class, 'list'])->name('admin.users.list');
-        Route::get('/users/get', [StaffController::class, 'get'])->name('admin.users.get');
-        Route::prefix('user')->group(function () {
-            Route::get('/add', [StaffController::class, 'add'])->name('admin.user.add');
-            Route::post('/store', [StaffController::class, 'store'])->name('admin.user.store');
-            Route::get('/edit/{id}', [StaffController::class, 'edit'])->name('admin.user.edit');
-            Route::get('/view/{id}', [StaffController::class, 'view'])->name('admin.user.view');
-            Route::put('/update/{id}', [StaffController::class, 'update'])->name('admin.user.update');
-            Route::post('/status/{id}', [StaffController::class, 'status'])->name('admin.user.status');
-            Route::delete('/delete/{id}', [StaffController::class, 'destroy'])->name('admin.user.destroy');
-            Route::post('/{id}/change-password', [UserController::class, 'changePassword'])->name('admin.users.change-password')->middleware('throttle:5,60');
         });
         // Permissions management
         Route::get('/permissions', [PermissionController::class, 'list'])->name('admin.permissions.list');
